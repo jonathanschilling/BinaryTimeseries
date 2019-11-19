@@ -43,18 +43,28 @@ public class TestBinaryTimeseries {
 			values[i] = (short) (i%Short.MAX_VALUE);
 		}
 
-		filesize = 24+numValues*2;
+		filesize = 64+numValues*2;
 		System.out.println("size of temporary file is " + filesize/(1024*1024)+" MB");
 
-		assertEquals(filesize, BinaryTimeseries.filesize(Short.BYTES, numValues));
+		assertEquals(filesize, BinaryTimeseries.fileOffset(Short.BYTES, numValues));
 		
 		// write
 		try (RandomAccessFile memoryFile = new RandomAccessFile(tmpFile.toFile(), "rw")) {
 			MappedByteBuffer mappedByteBuffer = memoryFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, filesize);
 
 			long start = -System.nanoTime();
-			BinaryTimeseries.write((ByteBuffer)mappedByteBuffer, t0, dt, values);
-			System.out.println("writing took " + (int)(Math.round((start+System.nanoTime())/1e6))+"ms");
+			assertEquals(0, mappedByteBuffer.position());
+			BinaryTimeseries.writeEndianessCheckValue(mappedByteBuffer);
+			assertEquals(2, mappedByteBuffer.position());
+			BinaryTimeseries.writeTimebase(mappedByteBuffer, t0, dt);
+			assertEquals(19, mappedByteBuffer.position());
+			BinaryTimeseries.writeScalingDisabled(mappedByteBuffer);
+			assertEquals(36, mappedByteBuffer.position());
+			BinaryTimeseries.writeReservedDummy(mappedByteBuffer);
+			assertEquals(59, mappedByteBuffer.position());
+			BinaryTimeseries.writeData(mappedByteBuffer, values);
+			assertEquals(filesize, mappedByteBuffer.position());
+			System.out.println("writing took " + (int)(Math.round((start+System.nanoTime())/1e3))+" us");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -64,18 +74,33 @@ public class TestBinaryTimeseries {
 		try (RandomAccessFile memoryFile = new RandomAccessFile(tmpFile.toFile(), "r")) {
 			MappedByteBuffer mappedByteBuffer = memoryFile.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, filesize);
 
-			long[] t0_dt = new long[2];
+			long[] _t0_dt = new long[2];
 			short[] _values = new short[numValues];
 
-			Object[] target = new Object[] { t0_dt, _values };
-
 			long start = -System.nanoTime();
-			BinaryTimeseries.read_tL_dS(mappedByteBuffer, target);
-			System.out.println("reading took " + (int)(Math.round((start+System.nanoTime())/1e6))+"ms");
+			assertEquals(0, mappedByteBuffer.position());
+			assertEquals(true, BinaryTimeseries.readEndianessOk(mappedByteBuffer));
+			assertEquals(2, mappedByteBuffer.position());
+			assertEquals(BinaryTimeseries.DTYPE_LONG, BinaryTimeseries.readTimeType(mappedByteBuffer));
+			_t0_dt[0] = BinaryTimeseries.readTimeT0_long(mappedByteBuffer);
+			_t0_dt[1] = BinaryTimeseries.readTimeDt_long(mappedByteBuffer);
+			assertEquals(19, mappedByteBuffer.position());
+			assertEquals(BinaryTimeseries.DTYPE_NONE, BinaryTimeseries.readScalingType(mappedByteBuffer));
+			BinaryTimeseries.readScalingDisabled(mappedByteBuffer);
+			assertEquals(36, mappedByteBuffer.position());
+			BinaryTimeseries.readReservedDummy(mappedByteBuffer);
+			assertEquals(59, mappedByteBuffer.position());
+			assertEquals(BinaryTimeseries.DTYPE_SHORT, BinaryTimeseries.readDataType(mappedByteBuffer));
+			assertEquals(60, mappedByteBuffer.position());
+			assertEquals(numValues, BinaryTimeseries.readNumSamples(mappedByteBuffer));
+			assertEquals(64, mappedByteBuffer.position());
+			BinaryTimeseries.readRawData(mappedByteBuffer, _values, 0, numValues);
+			assertEquals(filesize, mappedByteBuffer.position());
+			System.out.println("reading took " + (int)(Math.round((start+System.nanoTime())/1e3))+" us");
 
 			// check
-			assertEquals(t0, t0_dt[0]);
-			assertEquals(dt, t0_dt[1]);
+			assertEquals(t0, _t0_dt[0]);
+			assertEquals(dt, _t0_dt[1]);
 			assertArrayEquals(values, _values);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -119,46 +144,80 @@ public class TestBinaryTimeseries {
 			values[i] = (short) (i%Short.MAX_VALUE);
 		}
 
-		filesize = 24+numValues*2;
+		filesize = 64+numValues*2;
 		System.out.println("size of temporary file is " + filesize/(1024*1024)+" MB");
 
-		assertEquals(filesize, BinaryTimeseries.filesize(Short.BYTES, numValues));
+		assertEquals(filesize, BinaryTimeseries.fileOffset(Short.BYTES, numValues));
 		
 		// write
 		try (RandomAccessFile memoryFile = new RandomAccessFile(tmpFile.toFile(), "rw")) {
 			MappedByteBuffer mappedByteBuffer = memoryFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, filesize);
 
 			long start = -System.nanoTime();
-			BinaryTimeseries.write((ByteBuffer)mappedByteBuffer, t0, dt, values);
-			System.out.println("writing took " + (int)(Math.round((start+System.nanoTime())/1e6))+"ms");
+			assertEquals(0, mappedByteBuffer.position());
+			BinaryTimeseries.writeEndianessCheckValue(mappedByteBuffer);
+			assertEquals(2, mappedByteBuffer.position());
+			BinaryTimeseries.writeTimebase(mappedByteBuffer, t0, dt);
+			assertEquals(19, mappedByteBuffer.position());
+			BinaryTimeseries.writeScalingDisabled(mappedByteBuffer);
+			assertEquals(36, mappedByteBuffer.position());
+			BinaryTimeseries.writeReservedDummy(mappedByteBuffer);
+			assertEquals(59, mappedByteBuffer.position());
+			BinaryTimeseries.writeData(mappedByteBuffer, values);
+			assertEquals(filesize, mappedByteBuffer.position());
+			System.out.println("writing took " + (int)(Math.round((start+System.nanoTime())/1e3))+" us");
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		// subset of data to read
-		int readStart = (int) (7*f);
-		int readEnd = (int) (8*f);
+		long from = 7*f;
+		long upto = 8*f;
 
-		// equivalent timestamps
-		long from = t0+readStart*dt;
-		long upto = t0+readEnd*dt;
+		
 
 		// read
 		try (RandomAccessFile memoryFile = new RandomAccessFile(tmpFile.toFile(), "r")) {
 			MappedByteBuffer mappedByteBuffer = memoryFile.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, filesize);
 
-			// target for reading
-			short[][] _values = new short[1][];
-
+			
 			long start = -System.nanoTime();
-			BinaryTimeseries.read_timeRange(mappedByteBuffer, _values, 0, from , upto);
-			System.out.println("reading of subset took " + (int)(Math.round((start+System.nanoTime())/1e6))+"ms");
+			
+			// target for reading
+			assertEquals(0, mappedByteBuffer.position());
+			assertEquals(true, BinaryTimeseries.readEndianessOk(mappedByteBuffer));
+			assertEquals(2, mappedByteBuffer.position());
+			assertEquals(BinaryTimeseries.DTYPE_LONG, BinaryTimeseries.readTimeType(mappedByteBuffer));
+			assertEquals(3, mappedByteBuffer.position());
+			final long _t0 = BinaryTimeseries.readTimeT0_long(mappedByteBuffer);
+			assertEquals(11, mappedByteBuffer.position());
+			final long _dt = BinaryTimeseries.readTimeDt_long(mappedByteBuffer);
+			assertEquals(19, mappedByteBuffer.position());
+			
+			int fromIdx = BinaryTimeseries.firstIndexInside(_t0, _dt, from);
+			int uptoIdx = BinaryTimeseries.lastIndexInside(_t0, _dt, upto);
+			
+			short[] _values = new short[uptoIdx-fromIdx+1];
+			
+			assertEquals(BinaryTimeseries.DTYPE_NONE, BinaryTimeseries.readScalingType(mappedByteBuffer));
+			assertEquals(20, mappedByteBuffer.position());
+			BinaryTimeseries.readScalingDisabled(mappedByteBuffer);
+			assertEquals(36, mappedByteBuffer.position());
+			BinaryTimeseries.readReservedDummy(mappedByteBuffer);
+			assertEquals(59, mappedByteBuffer.position());
+			assertEquals(BinaryTimeseries.DTYPE_SHORT, BinaryTimeseries.readDataType(mappedByteBuffer));
+			assertEquals(60, mappedByteBuffer.position());
+			assertEquals(numValues, BinaryTimeseries.readNumSamples(mappedByteBuffer));
+			assertEquals(64, mappedByteBuffer.position());
+			mappedByteBuffer.position(BinaryTimeseries.fileOffset(Short.BYTES, fromIdx));
+			BinaryTimeseries.readRawData(mappedByteBuffer, _values, 0, uptoIdx-fromIdx+1);
+			System.out.println("reading of subset took " + (int)(Math.round((start+System.nanoTime())/1e3))+" us");
 
 			// check
-			short[] testSubsetValues = new short[readEnd-readStart+1];
-			System.arraycopy(values, readStart, testSubsetValues, 0, readEnd-readStart+1);
-			assertArrayEquals(testSubsetValues, _values[0]);
+			short[] testSubsetValues = new short[uptoIdx-fromIdx+1];
+			System.arraycopy(values, fromIdx, testSubsetValues, 0, uptoIdx-fromIdx+1);
+			assertArrayEquals(testSubsetValues, _values);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
