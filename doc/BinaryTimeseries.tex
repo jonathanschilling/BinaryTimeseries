@@ -5,28 +5,43 @@
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage{multirow}
+\usepackage{titling}
+\usepackage{amssymb}
 \usepackage{geometry}
 \geometry{verbose,a4paper, tmargin=25mm, bmargin=25mm, lmargin=25mm, rmargin=25mm}
 
 \title{Binary Timeseries File Format Specification}
-\author{\href{mailto:jonathan.schilling@ipp.mpg.de}{Jonathan Schilling}}
+\author{Jonathan Schilling}
 \date{\today}
+
+\usepackage{attachfile2}
+\attachfilesetup{color=1 0 0,
+                 author={\theauthor},
+                 subject={Attached File}}
 
 \begin{document}
 \maketitle
 
+\section{Scope}\label{sec:scope}
+
 This is the specification for a really simple binary file format for storing a regularly-spaced sequence of measurement data
 in an efficiently writeable and readable format.
-The basic assumption is that the time axis can be computed on the fly from the array indices of the corresponding data values $y_i$:
+The basic assumption is that the time axis~$t_i$ of a series of $N$~measurements can be computed on the fly from the array indices:
 \begin{equation}
-  t_i = t_0 + i \cdot \Delta t \quad \mathrm{for} \quad i = 0\, ...\, N \quad .
+  t_i = t_0 + i \cdot \Delta t \quad \mathrm{for} \quad i = 0, 1, ..., (N-1) \quad ,
 \end{equation}
-Optionally, also the data values $y_i$ can be stored as raw values $\hat{y}_i$ with an offset value $o$ and a scaling factor $s$:
-\begin{equation}
-  y_i = o + s \cdot \hat{y}_i \quad \mathrm{for} \quad i = 0\, ...\, N \quad .
-\end{equation}
+where $t_0$ is the (reference) timestamp of the first sample and $\Delta t$ is the sampling interval.
 
-\section{Definitions}
+The data values $y_i$ are stored as raw values $\hat{y}_i$, optionally with an offset value~$o$ and a scaling factor~$s$:
+\begin{equation}
+  y_i = o + s \cdot \hat{y}_i \quad \mathrm{for} \quad i = 0, 1, ..., (N-1) \quad .
+\end{equation}
+The number of samples is limited by the maximum value of the (signed) \texttt{int} type, which is
+$$2\,147\,483\,647 \approx 2.1 \cdot 10^9 \quad .$$
+In case of raw \texttt{double} values, the corresponding maximum file size is $(64 + 8 \cdot 2\,147\,483\,647)\,\mathrm{bytes} \approx 16\,\mathrm{GB}$,
+where 64~bytes are reserved for the file header information.
+
+\section{Definitions}\label{sec:definitions}
 In Tab.~\ref{tab:datatypes} you find an overview of the datatypes considered in this specification.
 \begin{table}[htbp]
  \centering
@@ -51,7 +66,7 @@ In Tab.~\ref{tab:datatypes} you find an overview of the datatypes considered in 
  \label{tab:datatypes}
 \end{table}
 
-The first column lists the C-style name of the given types.
+The first column lists the Java-style name of the given types.
 In the second column, the size of the types in bytes is listed.
 The third column lists the numeric value of the \texttt{dtype} bytes identifying the type of data in the file (see below).
 The last two columns tell you if a given type can be used to specify the time axis (ok for time)
@@ -60,43 +75,45 @@ and the data values (ok for data).
 Throughout this document, the datatypes refer to the signed version of these. Unsigned versions of the datatypes are not
 considered here, as they are not available in certain programming languages (e.g. Java).
 
-\section{File Structure}
+\section{File Structure}\label{sec:file_structure}
 The contents of the files are structured as shown in Tab.~\ref{tab:structure}.
 \begin{table}[htbp]
  \centering
  \begin{tabular}{|c|c|c|c|c|}
     \hline
-    offset         & size             & type                             & value                  & description \\
+    offset  & size             & type                             & value                  & description \\
     \hline                                                                                        
-    0              & 2                & \texttt{short}                   & 1                      & used to verify correct endianess  \\
+    0       & 2                & \texttt{short}                   & 1                      & used to verify correct endianess  \\
     \hline                                                                                        
-    2              & 1                & \texttt{byte}                    & 3 or 5                 & dtype of time: 3 (long) or 5 (double) \\
+    2       & 1                & \texttt{byte}                    & 3 or 5                 & data type of time: 3 (long) or 5 (double) \\
     \hline                                                                                        
-    3              & 8                & \texttt{long} or \texttt{double} & \textit{varying}       & $t_0$: reference timestamp \\
+    3       & 8                & \texttt{long} or \texttt{double} & \textit{varying}       & $t_0$: reference timestamp \\
     \hline                                                                                        
-    11             & 8                & \texttt{long} or \texttt{double} & \textit{varying}       & $\Delta t$: time interval between two samples \\
+    11      & 8                & \texttt{long} or \texttt{double} & \textit{varying}       & $\Delta t$: time interval between two samples \\
     \hline                            
-    19             & 1                & \texttt{byte}                    & (0 ... 5) +            & dtype of raw data: 0 (byte) to 5 (double) \\
-     ~             & ~                &      ~                           & (0 or -128)            & highest bit indicates scaling for data values \\
+    19      & 1                & \texttt{byte}                    & (0 ... 5) +            & dtype of raw data: 0 (byte) to 5 (double) \\
+     ~      & ~                &      ~                           & (0 or -128)            & highest bit indicates scaling for data values \\
     \hline                                                               
-    [20]           & 1                & \texttt{byte}                    & 0 ... 5                & dtype of scaling for data values \\
+    [20]    & 1                & \texttt{byte}                    & 0 ... 5                & data type of scaling for data values \\
     \hline                            
-    [21]           & 1 ... 8          & \textit{varying}                 & \textit{varying}       & offset $o$ of data values \\
+    [21]    & 8                & \textit{varying}                 & \textit{varying}       & offset $o$ of data values \\
     \hline                                                                                        
-    [22 ... 29]    & 1 ... 8          & \textit{varying}                 & \textit{varying}       & scaling factor $s$ for data values \\
+    [29]    & 8                & \textit{varying}                 & \textit{varying}       & scaling factor $s$ for data values \\
     \hline                                                                                        
-    20 [23 ... 37] & 4                & \texttt{int}                     & \textit{varying}       & number $N$ of data values; has to be $>0$ \\
+    [37]    & 4                & \texttt{int}                     & \textit{varying}       & number $N$ of data values; has to be $>0$ \\
+    \hline
+    41      & 23               & \textit{reserved}                & \textit{varying}       & reserved for future use, e.g. units \\
     \hline                                                                                        
-    24 [27 ... 41] & \textit{varying} & \textit{varying}                 &\textit{varying}        & data values $\hat{y}_i$ of type given by dtype \\
+    64      & \textit{varying} & \textit{varying}                 &\textit{varying}        & data values $\hat{y}_i$ of type given by dtype \\
     \hline
  \end{tabular}
- \caption{Structure of the binary timeseries files. Values in [ ] are optional.}
+ \caption{Structure of the binary timeseries files. If no scaling for the data values is provided, the values in [ ] are not valid and should contains zeros in the file.}
  \label{tab:structure}
 \end{table}
 
 The first field at offset 0 in the file is a \texttt{short}, which is always 1.
 It should be read using a readShort() or similar function, which implicitly assumes the system's endianess.
-Then it should be checked if the value was read as 1 or if the read value is 256. In the latter case,
+Then it should be checked if the returned value is $1$ or $-128$. In the latter case,
 the endianess of the reading method is wrong and needs to be flipped in order to proceed.
 
 The next field at offset 2 defines the datatype of the time axis definition values $t_0$ and $\Delta t$.
@@ -111,42 +128,78 @@ The next field at offset 11 defines the sampling interval $\Delta t$ and has to 
 depending on the value read at offset 2.
 The time axis definition values $t_0$ and $\Delta t$ always have to be of the same datatype and should use the same unit.
 
-The field at offset 19 defines the datatype of the actual data values to come.
-
+The field at offset 19 defines the datatype of the raw data values to come.
 If the highest bit is zero in the datatype of the raw data, no scaling information is available.
-The next field at offset 20 defines the number of data values $N$ to come.
-From offset 24 on, the raw data values $\hat{y}_i$ are stored, which have to be read as the type defined by the value at offset 19.
-
 If the highest bit is set in the datatype of the raw data, scaling information is available.
 The next field at offset 20 defines the datatype of the scaling information.
 The datatype of the offset and the scaling factor is assumed to be equal.
-At offset 21, the constant offset $o$ of the actual data is stored. Its size can range from one byte to at most eight bytes.
-Right after the data offset value, at an offset of 22 to 29 (depending on the size of the scaling datatype), the scaling factor $s$ is stored.
-Right after the data scaling value, at an offset of 23 to 37 (depending on the size of the scaling datatype), the number of data values $N$ to come is stored.
-From offset 27 to 41 on, the raw data values $\hat{y}_i$ are stored, which have to be read as the type defined by the datatype
-identified by the value at offset 19, where the highest bit is ignored.
+At offset 21, the constant offset $o$ of the raw data is stored. Its size can range from one byte to at most eight bytes
+and is always stored from offset 21 on; the remaining (unused bytes) in case of a type smaller than 8 bytes are unused and should be written as zeros.
+Right after the data offset value, at an offset of 29, the scaling factor $s$ is stored.
+Its size can range from one byte to at most eight bytes
+and is always stored from offset 29 on; the remaining (unused bytes) in case of a type smaller than 8 bytes are unused and should be written as zeros.
+Right after the data scaling value, at an offset of 37, the number of data values $N$ to come is stored.
+The bytes at offsets 41 to 63 are reserved for future use.
+From offset 64 on, the raw data values $\hat{y}_i$ are stored, which have to be read as the type defined by the datatype
+identified by the value at offset 19 where the highest bit (which indicates if a scaling is available or not) is ignored.
 
-\begin{table}[htbp]
- \centering
- \begin{tabular}{|c|l|}
-    \hline
-    scaling dtype   & start offset of data \\
-    \hline                              
-    \texttt{byte}   & 21 + 2*1 + 4 = 27 \\
-    \hline
-    \texttt{short}  & 21 + 2*2 + 4 = 29 \\
-     \hline
-    \texttt{int}    & 21 + 2*4 + 4 = 33 \\
-     \hline
-    \texttt{long}   & 21 + 2*8 + 4 = 41 \\
-     \hline
-    \texttt{float}  & 21 + 2*4 + 4 = 33 \\
-     \hline
-    \texttt{double} & 21 + 2*8 + 4 = 41 \\
-    \hline
- \end{tabular}
- \caption{Starting positions of the data block for timeseries with scaling, depending on the datatype of the scaling parameters.}
- \label{tab:starts_data}
-\end{table}
+\section{Subset Reading}\label{sec:subset_reading}
+The main goal of this file format is to allow easy and fast reading of subsets of the whole time series data.
+Having an equally spaced time axis allows to compute the data indices inside a given time interval and using the definitions in Sec.~\ref{sec:file_structure},
+the offsets in the file can be computed for seeking to the computed position in the file and reading only from there on.
+
+Suppose you have read $t_0$ and $\Delta t$ from the binary timeseries file header and now want to read all available samples
+inside the interval $[t_l, t_u]$ where $t_l < t_u$ and the subscripts $l$ ($u$) stand for \textit{lower} (\textit{upper}).
+This situation is illustrated in Fig.~\ref{fig:timeAxis}
+(\textattachfile[description={SVG version of Fig.~\ref{fig:timeAxis}}]{timeAxis.svg}{SVG},~\textattachfile[
+                 description={EPS version of Fig.~\ref{fig:timeAxis}}]{timeAxis.eps}{EPS}).
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.6\textwidth]{timeAxis.eps}
+  \caption{Time axis of a time series, where all data between $t_l$ and $t_u$ should be read.
+  The resulting interval to be read is indicated by the grey rectangle.}
+  \label{fig:timeAxis}
+\end{figure}
+
+It is evident that the timestamps $t_l$ and $t_u$ are not necessarily aligned with the time axis of the available data.
+Therefore, rounding has to be used to compute the indices of data:
+\begin{itemize}
+  \item \texttt{double} timestamps: $t_0, \Delta t \in \mathbb{R}$
+  \begin{eqnarray*}
+    i & = & \left\lceil  \frac{t_l - t_0}{\Delta t} \right\rceil  \in \mathbb{N}\\
+    j & = & \left\lfloor \frac{t_u - t_0}{\Delta t} \right\rfloor \in \mathbb{N}
+  \end{eqnarray*}
+  \item \texttt{long} timestamps: $t_0, \Delta t \in \mathbb{N}$
+  \begin{eqnarray*}
+    i & = & \frac{t_l - t_0 + \Delta t - 1}{\Delta t} \in \mathbb{N}\\
+    j & = & \frac{t_u - t_0}{\Delta t} \in \mathbb{N}
+  \end{eqnarray*}
+\end{itemize}
+In case of the \texttt{long} timestamps, implicit computation of the floor of the division result is implied.
+Using these formulas, the relevant part of the file to be read starts at index $i$ and ends at index $j$.
+
+
+
+
+
+
+
+\section{Finalizing Remarks}
+An implementation of this file format in Java and Python is available on GitHub:
+\begin{center}
+\href{https://github.com/jonathanschilling/BinaryTimeseries}{https://github.com/jonathanschilling/BinaryTimeseries}
+\end{center}
+and the Java version is also on Maven~Central:
+\begin{verbatim}
+<dependency>
+  <groupId>de.labathome</groupId>
+  <artifactId>BinaryTimeseries</artifactId>
+  <version>1.0.0</version>
+</dependency>
+\end{verbatim}
+In case of questions or bug reports, please contact the author via an eMail to
+\begin{center}
+\href{mailto:jonathan.schilling@mail.de}{jonathan.schilling@mail.de}
+\end{center}
 
 \end{document}
