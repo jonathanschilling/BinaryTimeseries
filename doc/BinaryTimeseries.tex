@@ -185,17 +185,17 @@ Therefore, rounding has to be used to compute the indices of data:
 \begin{itemize}
   \item \texttt{double} timestamps: $t_0, \Delta t \in \mathbb{R}_\mathrm{64\,bit}$
   \begin{gather}
-   \begin{aligned}
+   \begin{align}
     i & = \left\lceil  \frac{t_l - t_0}{\Delta t} \right\rceil  \in \mathbb{N} \\
     j & = \left\lfloor \frac{t_u - t_0}{\Delta t} \right\rfloor \in \mathbb{N}
-   \end{aligned}
+   \end{align}
   \end{gather}
   \item \texttt{long} timestamps: $t_0, \Delta t \in \mathbb{Z}_\mathrm{64\,bit}$
   \begin{gather}
-   \begin{aligned}
+   \begin{align}
     i & = \frac{t_l - t_0 + \Delta t - 1}{\Delta t} \in \mathbb{N} \\
     j & = \qquad \frac{t_u - t_0}{\Delta t} \qquad  \in \mathbb{N}
-   \end{aligned}
+   \end{align}
   \end{gather}
 \end{itemize}
 In case of the \texttt{long} timestamps, implicit computation of the floor of the division result is assumed.

@@ -5,10 +5,10 @@ import java.nio.ByteOrder;
 
 /**
  * This is a class to save evenly-sampled time series data in a very simple and easy-to-read format.
- * The key idea is to simply dump a header and then the values one after another into a ByteBuffer.
- * When you want to read only a small subset of the data, you can specify a time or index range.
- * A scaling and an offset can be defined for raw values (e.g. from an ADC).
- * Examples of how to use this class can be found in TestBinaryTimeseries.java .
+ * The key idea is to simply dump a header and then the raw data values one after another into a ByteBuffer.
+ * When you want to read only a small subset of the data, you can specify a time or an index range.
+ * A scaling and an offset can be defined for the data values (e.g. from an ADC).
+ * Examples of how to use this class can be found in Examples.java.
  * 
  * @author Jonathan Schilling (jonathan.schilling@mail.de)
  */
@@ -48,15 +48,6 @@ public class BinaryTimeseries {
 	 * Identifier value for {@code double} datatype. <br/> Length: 8 Bytes <br/> 16 decimal digits
 	 */
 	public static final byte DTYPE_DOUBLE = 6;
-	
-	/**
-	 * Check the given dtype byte to see if the given file has a value scaling or not.
-	 * @param data_dtype dtype byte as read from input buffer
-	 * @return false if the data has no scaling; true if it has scaling
-	 */
-	public static final boolean hasScaling(final byte data_dtype) {
-		return (data_dtype != 0);
-	}
 	
 	/**
 	 * Compute the timebase values for a given t_0 and Delta_t.
@@ -115,41 +106,63 @@ public class BinaryTimeseries {
 	}
 
 	/**
-	 * Given a timebase (t_0, Delta_t), compute the first and last index of timestamps inside a given time interval [{@code from}, {@code upto}].
-	 * @param target [2] {@code target[0]} will contain the first index, {@code target[1]} the last index of samples between {@code from} and {@code upto}.
+	 * Given a timebase (t0, dt), compute the first index of timestamps inside the given time interval [{@code t_l}, {@code t_u}].
 	 * @param t0 reference timestamp from the file
-	 * @param dt time interval between two samples from the file
-	 * @param from lower boundary of the time interval to read data from; t_l in the documentation
-	 * @param upto upper boundary of the time interval to read data from; t_u in the documentation
-	 * @see <a href="https://stackoverflow.com/questions/7139382/java-rounding-up-to-an-int-using-math-ceil">https://stackoverflow.com/questions/7139382/java-rounding-up-to-an-int-using-math-ceil</a>
+	 * @param dt time interval between two consecutive samples from the file
+	 * @param t_l lower boundary of the time interval to read data from
+	 * @return first index inside the time interval [{@code t_l}, {@code t_u}]
+	 * @see Eqn. (5) in the documentation
 	 */
-	public static void indexInterval(int[] target, final long t0, final long dt, final long from, final long upto) {
-		target[0] = (int) ((from-t0 + dt - 1) / dt);
-		target[1] = (int) ((upto-t0         ) / dt);
+	public static int firstIndexInside(final double t0, final double dt, final double t_l) {
+		return (int) Math.ceil ((t_l-t0)/dt);
 	}
-
+	
 	/**
-	 * Given a timebase (t_0, Delta_t), compute the first and last index of timestamps inside a given time interval [{@code from}, {@code upto}].
-	 * @param target [2] {@code target[0]} will contain the first index, {@code target[1]} the last index of samples between {@code from} and {@code upto}.
+	 * Given a timebase (t0, dt), compute the first index of timestamps inside the given time interval [{@code t_l}, {@code t_u}].
 	 * @param t0 reference timestamp from the file
-	 * @param dt time interval between two samples from the file
-	 * @param from lower boundary of the time interval to read data from; t_l in the documentation
-	 * @param upto upper boundary of the time interval to read data from; t_u in the documentation
+	 * @param dt time interval between two consecutive samples from the file
+	 * @param t_u upper boundary of the time interval to read data from
+	 * @return last index inside the time interval [{@code t_l}, {@code t_u}]
+	 * @see Eqn. (6) in the documentation
 	 */
-	public static void indexInterval(int[] target, final double t0, final double dt, final double from, final double upto) {
-		target[0] = (int) Math.ceil ((from-t0)/dt);
-		target[1] = (int) Math.floor((upto-t0)/dt);
+	public static int lastIndexInside(final double t0, final double dt, final double t_u) {
+		return (int) Math.floor((t_u-t0)/dt);
 	}
-
+	
+	/**
+	 * Given a timebase (t0, dt), compute the first index of timestamps inside the given time interval [{@code t_l}, {@code t_u}].
+	 * @param t0 reference timestamp from the file
+	 * @param dt time interval between two consecutive samples from the file
+	 * @param t_l lower boundary of the time interval to read data from
+	 * @return first index inside the time interval [{@code t_l}, {@code t_u}]
+	 * @see <a href="https://stackoverflow.com/questions/7139382/java-rounding-up-to-an-int-using-math-ceil">https://stackoverflow.com/questions/7139382/java-rounding-up-to-an-int-using-math-ceil</a>
+	 * @see Eqn. (7) in the documentation
+	 */
+	public static int firstIndexInside(final long t0, final long dt, final long t_l) {
+		return (int) ((t_l-t0 + dt - 1) / dt);
+	}
+	
+	/**
+	 * Given a timebase (t0, dt), compute the first index of timestamps inside the given time interval [{@code t_l}, {@code t_u}].
+	 * @param t0 reference timestamp from the file
+	 * @param dt time interval between two consecutive samples from the file
+	 * @param t_u upper boundary of the time interval to read data from
+	 * @return last index inside the time interval [{@code t_l}, {@code t_u}]
+	 * @see Eqn. (8) in the documentation
+	 */
+	public static int lastIndexInside(final long t0, final long dt, final long t_u) {
+		return (int) ((t_u-t0         ) / dt);
+	}
+	
 	/**
 	 * Compute the file size (and buffer size when reading the file) given the size of the contained data and the number of samples.
 	 * These values can be obtained from first just reading the header and then continuing with reading the whole file.
-	 * @param valSize size of the raw data values in bytes
-	 * @param nSamples number of samples in the file
+	 * @param dataSize size of the raw data values in bytes
+	 * @param numSamples number of samples in the file
 	 * @return file size to hold the given amount of data using a BinaryTimeseries
 	 */
-	public static int filesize(final int valSize, final int nSamples) {
-		return 64+valSize*nSamples;
+	public static int filesize(final int dataSize, final int numSamples) {
+		return 64+dataSize*numSamples;
 	}
 	
 	/***********************
@@ -369,7 +382,14 @@ public class BinaryTimeseries {
 	 *                     *
 	 ***********************/
 	
-	
+	/**
+	 * Check the given dtype byte to see if the given file has a value scaling or not.
+	 * @param data_dtype dtype byte as read from input buffer
+	 * @return false if the data has no scaling; true if it has scaling
+	 */
+	public static final boolean hasScaling(final byte data_dtype) {
+		return (data_dtype != 0);
+	}
 	
 	
 	
