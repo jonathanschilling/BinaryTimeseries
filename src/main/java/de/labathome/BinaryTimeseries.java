@@ -15,7 +15,7 @@ import java.nio.ByteOrder;
 public class BinaryTimeseries {
 	
 	/**
-	 * Identifier value used to indicate that no scaling is used.
+	 * Identifier value used to indicate that no raw data scaling is used.
 	 */
 	public static final byte DTYPE_NONE = 0;
 	
@@ -50,12 +50,12 @@ public class BinaryTimeseries {
 	public static final byte DTYPE_DOUBLE = 6;
 	
 	/**
-	 * Extract the highest bit of the given dtype byte to see if the given file has a value scaling or not.
+	 * Check the given dtype byte to see if the given file has a value scaling or not.
 	 * @param data_dtype dtype byte as read from input buffer
 	 * @return false if the data has no scaling; true if it has scaling
 	 */
 	public static final boolean hasScaling(final byte data_dtype) {
-		return (data_dtype == 0);
+		return (data_dtype != 0);
 	}
 	
 	/**
@@ -66,21 +66,23 @@ public class BinaryTimeseries {
 	 * @param dt time interval between two samples
 	 */
 	public static void buildTimebase(double[] target, final double t0, final double dt) {
-		buildTimebase(target, t0, dt, 0, target.length-1);
+		final int sourceOffset = 0, targetOffset = 0;
+		buildTimebase(sourceOffset, target, targetOffset, target.length, t0, dt);
 	}
 	
 	/**
 	 * Compute the timebase values for a given t_0 and Delta_t.
-	 * All entries in {@code target} from {@code startIdx} up to and including {@code endIdx} are filled with appropriate values of the timebase.
-	 * @param target [N] array into which to put the timebase values t_i.
-	 * @param t0 reference timestamp; will go into {@code target[0]}
-	 * @param dt time interval between two samples
-	 * @param startIdx first index into which the timebase values will be put
-	 * @param endIdx last index into which the timebase values will be put
+	 * All entries in {@code target} from {@code sourceOffset} up to and including {@code sourceOffset+numSamples-1} are filled with appropriate values of the timebase.
+	 * @param sourceOffset offset in the time series indices
+	 * @param target [numSamples] array into which to put the timebase values t_i
+	 * @param targetOffset index at which to put t_0 in the {@code target} array
+	 * @param numSamples number of time stamps to generate; has to greater than or equal to {@code target.length}
+	 * @param t0 reference timestamp; will go into {@code target[targetOffset]}
+	 * @param dt time interval between two consecutive samples
 	 */
-	public static void buildTimebase(double[] target, final double t0, final double dt, final int startIdx, final int endIdx) {
-		for (int i=startIdx; i<=endIdx; ++i) {
-			target[i-startIdx] = t0+i*dt;
+	public static void buildTimebase(final int sourceOffset, double[] target, final int targetOffset, final int numSamples, final double t0, final double dt) {
+		for (int i=0; i<numSamples; ++i) {
+			target[targetOffset+i] = t0+(sourceOffset+i)*dt;
 		}
 	}
 
@@ -92,21 +94,23 @@ public class BinaryTimeseries {
 	 * @param dt time interval between two samples
 	 */
 	public static void buildTimebase(long[] target, final long t0, final long dt) {
-		buildTimebase(target, t0, dt, 0, target.length-1);
+		final int sourceOffset = 0, targetOffset = 0;
+		buildTimebase(sourceOffset, target, targetOffset, target.length, t0, dt);
 	}
 	
 	/**
 	 * Compute the timebase values for a given t_0 and Delta_t.
-	 * All entries in {@code target} from {@code startIdx} up to and including {@code endIdx} are filled with appropriate values of the timebase.
-	 * @param target [N] array into which to put the timebase values t_i.
-	 * @param t0 reference timestamp; will go into {@code target[0]}
-	 * @param dt time interval between two samples
-	 * @param startIdx first index into which the timebase values will be put
-	 * @param endIdx last index into which the timebase values will be put
+	 * All entries in {@code target} from {@code sourceOffset} up to and including {@code sourceOffset+numSamples-1} are filled with appropriate values of the timebase.
+	 * @param sourceOffset offset in the time series indices
+	 * @param target [numSamples] array into which to put the timebase values t_i
+	 * @param targetOffset index at which to put t_0 in the {@code target} array
+	 * @param numSamples number of time stamps to generate; has to greater than or equal to {@code target.length}
+	 * @param t0 reference timestamp; will go into {@code target[targetOffset]}
+	 * @param dt time interval between two consecutive samples
 	 */
-	public static void buildTimebase(long[] target, final long t0, final long dt, final int startIdx, final int endIdx) {
-		for (int i=startIdx; i<=endIdx; ++i) {
-			target[i-startIdx] = t0+i*dt;
+	public static void buildTimebase(int sourceOffset, long[] target, final int targetOffset, final int numSamples, final long t0, final long dt) {
+		for (int i=0; i<numSamples; ++i) {
+			target[targetOffset+i] = t0+(sourceOffset+i)*dt;
 		}
 	}
 
@@ -121,7 +125,7 @@ public class BinaryTimeseries {
 	 */
 	public static void indexInterval(int[] target, final long t0, final long dt, final long from, final long upto) {
 		target[0] = (int) ((from-t0 + dt - 1) / dt);
-		target[1] = (int) ((upto-t0)/dt);
+		target[1] = (int) ((upto-t0         ) / dt);
 	}
 
 	/**
@@ -133,7 +137,7 @@ public class BinaryTimeseries {
 	 * @param upto upper boundary of the time interval to read data from; t_u in the documentation
 	 */
 	public static void indexInterval(int[] target, final double t0, final double dt, final double from, final double upto) {
-		target[0] = (int) Math.ceil( (from-t0)/dt);
+		target[0] = (int) Math.ceil ((from-t0)/dt);
 		target[1] = (int) Math.floor((upto-t0)/dt);
 	}
 
@@ -218,7 +222,7 @@ public class BinaryTimeseries {
 	 * @param o
 	 * @param s
 	 */
-	public static void writeDtypeWithScaling(ByteBuffer target, final short o, final short s) {
+	public static void writeScaling(ByteBuffer target, final short o, final short s) {
 		target.put(DTYPE_SHORT);
 		target.putShort(o); target.put(new byte[8 - Short.BYTES]);
 		target.putShort(s); target.put(new byte[8 - Short.BYTES]);
@@ -244,8 +248,8 @@ public class BinaryTimeseries {
 	 */
 	public static void writeScaling(ByteBuffer target, final long o, final long s) {
 		target.put(DTYPE_LONG);
-		target.putLong(o);
-		target.putLong(s);
+		target.putLong(o); // assumes Long.BYTES == 8
+		target.putLong(s); // assumes Long.BYTES == 8
 	}
 	
 	/**
@@ -268,8 +272,8 @@ public class BinaryTimeseries {
 	 */
 	public static void writeScaling(ByteBuffer target, final double o, final double s) {
 		target.put(DTYPE_DOUBLE);
-		target.putDouble(o);
-		target.putDouble(s);
+		target.putDouble(o); // assumes Double.BYTES == 8
+		target.putDouble(s); // assumes Double.BYTES == 8
 	}
 	
 	
