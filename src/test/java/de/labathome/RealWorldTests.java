@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 
 import org.junit.jupiter.api.Test;
 
-public class TestBinaryTimeseries {
+public class RealWorldTests {
 
 	/**
 	 * Test the writing and reading of a whole timeseries with {@code long} timestamps and {@code short} raw data values.
