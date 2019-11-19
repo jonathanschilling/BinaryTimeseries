@@ -1,0 +1,152 @@
+\documentclass[a4paper,10pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{fontenc}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{multirow}
+\usepackage{geometry}
+\geometry{verbose,a4paper, tmargin=25mm, bmargin=25mm, lmargin=25mm, rmargin=25mm}
+
+\title{Binary Timeseries File Format Specification}
+\author{\href{mailto:jonathan.schilling@ipp.mpg.de}{Jonathan Schilling}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+This is the specification for a really simple binary file format for storing a regularly-spaced sequence of measurement data
+in an efficiently writeable and readable format.
+The basic assumption is that the time axis can be computed on the fly from the array indices of the corresponding data values $y_i$:
+\begin{equation}
+  t_i = t_0 + i \cdot \Delta t \quad \mathrm{for} \quad i = 0\, ...\, N \quad .
+\end{equation}
+Optionally, also the data values $y_i$ can be stored as raw values $\hat{y}_i$ with an offset value $o$ and a scaling factor $s$:
+\begin{equation}
+  y_i = o + s \cdot \hat{y}_i \quad \mathrm{for} \quad i = 0\, ...\, N \quad .
+\end{equation}
+
+\section{Definitions}
+In Tab.~\ref{tab:datatypes} you find an overview of the datatypes considered in this specification.
+\begin{table}[htbp]
+ \centering
+ \begin{tabular}{|c|c|c|c|c|}
+    \hline
+    type            & size in bytes & identifier value & ok for time & ok for data \\
+    \hline
+    \texttt{byte}   & 1             & 0                & no          & yes         \\
+    \hline
+    \texttt{short}  & 2             & 1                & no          & yes         \\
+    \hline
+    \texttt{int}    & 4             & 2                & no          & yes         \\
+    \hline
+    \texttt{long}   & 8             & 3                & yes         & yes         \\
+    \hline
+    \texttt{float}  & 4             & 4                & no          & yes         \\
+    \hline
+    \texttt{double} & 8             & 5                & yes         & yes         \\
+    \hline
+ \end{tabular}
+ \caption{Data types considered relevant for time series data.}
+ \label{tab:datatypes}
+\end{table}
+
+The first column lists the C-style name of the given types.
+In the second column, the size of the types in bytes is listed.
+The third column lists the numeric value of the \texttt{dtype} bytes identifying the type of data in the file (see below).
+The last two columns tell you if a given type can be used to specify the time axis (ok for time)
+and the data values (ok for data).
+
+Throughout this document, the datatypes refer to the signed version of these. Unsigned versions of the datatypes are not
+considered here, as they are not available in certain programming languages (e.g. Java).
+
+\section{File Structure}
+The contents of the files are structured as shown in Tab.~\ref{tab:structure}.
+\begin{table}[htbp]
+ \centering
+ \begin{tabular}{|c|c|c|c|c|}
+    \hline
+    offset         & size             & type                             & value                  & description \\
+    \hline                                                                                        
+    0              & 2                & \texttt{short}                   & 1                      & used to verify correct endianess  \\
+    \hline                                                                                        
+    2              & 1                & \texttt{byte}                    & 3 or 5                 & dtype of time: 3 (long) or 5 (double) \\
+    \hline                                                                                        
+    3              & 8                & \texttt{long} or \texttt{double} & \textit{varying}       & $t_0$: reference timestamp \\
+    \hline                                                                                        
+    11             & 8                & \texttt{long} or \texttt{double} & \textit{varying}       & $\Delta t$: time interval between two samples \\
+    \hline                            
+    19             & 1                & \texttt{byte}                    & (0 ... 5) +            & dtype of raw data: 0 (byte) to 5 (double) \\
+     ~             & ~                &      ~                           & (0 or -128)            & highest bit indicates scaling for data values \\
+    \hline                                                               
+    [20]           & 1                & \texttt{byte}                    & 0 ... 5                & dtype of scaling for data values \\
+    \hline                            
+    [21]           & 1 ... 8          & \textit{varying}                 & \textit{varying}       & offset $o$ of data values \\
+    \hline                                                                                        
+    [22 ... 29]    & 1 ... 8          & \textit{varying}                 & \textit{varying}       & scaling factor $s$ for data values \\
+    \hline                                                                                        
+    20 [23 ... 37] & 4                & \texttt{int}                     & \textit{varying}       & number $N$ of data values; has to be $>0$ \\
+    \hline                                                                                        
+    24 [27 ... 41] & \textit{varying} & \textit{varying}                 &\textit{varying}        & data values $\hat{y}_i$ of type given by dtype \\
+    \hline
+ \end{tabular}
+ \caption{Structure of the binary timeseries files. Values in [ ] are optional.}
+ \label{tab:structure}
+\end{table}
+
+The first field at offset 0 in the file is a \texttt{short}, which is always 1.
+It should be read using a readShort() or similar function, which implicitly assumes the system's endianess.
+Then it should be checked if the value was read as 1 or if the read value is 256. In the latter case,
+the endianess of the reading method is wrong and needs to be flipped in order to proceed.
+
+The next field at offset 2 defines the datatype of the time axis definition values $t_0$ and $\Delta t$.
+If it is equal to 3, the time definition is given as \texttt{long}.
+If it is equal to 5, the time definition is given as \texttt{double}.
+No assumption should be made on the unit of these values, altough it is recommended to reserve \texttt{double} for seconds and
+\texttt{long} for nanoseconds.
+
+The next field at offset 3 defines the reference timestamp $t_0$ and has to be read as a \texttt{long} or \texttt{double}
+depending on the value read at offset 2.
+The next field at offset 11 defines the sampling interval $\Delta t$ and has to be read as a \texttt{long} or \texttt{double}
+depending on the value read at offset 2.
+The time axis definition values $t_0$ and $\Delta t$ always have to be of the same datatype and should use the same unit.
+
+The field at offset 19 defines the datatype of the actual data values to come.
+
+If the highest bit is zero in the datatype of the raw data, no scaling information is available.
+The next field at offset 20 defines the number of data values $N$ to come.
+From offset 24 on, the raw data values $\hat{y}_i$ are stored, which have to be read as the type defined by the value at offset 19.
+
+If the highest bit is set in the datatype of the raw data, scaling information is available.
+The next field at offset 20 defines the datatype of the scaling information.
+The datatype of the offset and the scaling factor is assumed to be equal.
+At offset 21, the constant offset $o$ of the actual data is stored. Its size can range from one byte to at most eight bytes.
+Right after the data offset value, at an offset of 22 to 29 (depending on the size of the scaling datatype), the scaling factor $s$ is stored.
+Right after the data scaling value, at an offset of 23 to 37 (depending on the size of the scaling datatype), the number of data values $N$ to come is stored.
+From offset 27 to 41 on, the raw data values $\hat{y}_i$ are stored, which have to be read as the type defined by the datatype
+identified by the value at offset 19, where the highest bit is ignored.
+
+\begin{table}[htbp]
+ \centering
+ \begin{tabular}{|c|l|}
+    \hline
+    scaling dtype   & start offset of data \\
+    \hline                              
+    \texttt{byte}   & 21 + 2*1 + 4 = 27 \\
+    \hline
+    \texttt{short}  & 21 + 2*2 + 4 = 29 \\
+     \hline
+    \texttt{int}    & 21 + 2*4 + 4 = 33 \\
+     \hline
+    \texttt{long}   & 21 + 2*8 + 4 = 41 \\
+     \hline
+    \texttt{float}  & 21 + 2*4 + 4 = 33 \\
+     \hline
+    \texttt{double} & 21 + 2*8 + 4 = 41 \\
+    \hline
+ \end{tabular}
+ \caption{Starting positions of the data block for timeseries with scaling, depending on the datatype of the scaling parameters.}
+ \label{tab:starts_data}
+\end{table}
+
+\end{document}
