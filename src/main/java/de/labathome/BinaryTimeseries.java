@@ -56,7 +56,7 @@ public class BinaryTimeseries {
 	 * @param t0 reference timestamp; will go into {@code target[0]}
 	 * @param dt time interval between two samples
 	 */
-	public static void buildTimebase(double[] target, final double t0, final double dt) {
+	public static final void buildTimebase(final double[] target, final double t0, final double dt) {
 		final int sourceOffset = 0, targetOffset = 0;
 		buildTimebase(sourceOffset, target, targetOffset, target.length, t0, dt);
 	}
@@ -71,7 +71,7 @@ public class BinaryTimeseries {
 	 * @param t0 reference timestamp; will go into {@code target[targetOffset]}
 	 * @param dt time interval between two consecutive samples
 	 */
-	public static void buildTimebase(final int sourceOffset, double[] target, final int targetOffset, final int numSamples, final double t0, final double dt) {
+	public static final void buildTimebase(final int sourceOffset, final double[] target, final int targetOffset, final int numSamples, final double t0, final double dt) {
 		for (int i=0; i<numSamples; ++i) {
 			target[targetOffset+i] = t0+(sourceOffset+i)*dt;
 		}
@@ -84,7 +84,7 @@ public class BinaryTimeseries {
 	 * @param t0 reference timestamp; will go into {@code target[0]}
 	 * @param dt time interval between two samples
 	 */
-	public static void buildTimebase(long[] target, final long t0, final long dt) {
+	public static final void buildTimebase(final long[] target, final long t0, final long dt) {
 		final int sourceOffset = 0, targetOffset = 0;
 		buildTimebase(sourceOffset, target, targetOffset, target.length, t0, dt);
 	}
@@ -99,7 +99,7 @@ public class BinaryTimeseries {
 	 * @param t0 reference timestamp; will go into {@code target[targetOffset]}
 	 * @param dt time interval between two consecutive samples
 	 */
-	public static void buildTimebase(int sourceOffset, long[] target, final int targetOffset, final int numSamples, final long t0, final long dt) {
+	public static final void buildTimebase(final int sourceOffset, final long[] target, final int targetOffset, final int numSamples, final long t0, final long dt) {
 		for (int i=0; i<numSamples; ++i) {
 			target[targetOffset+i] = t0+(sourceOffset+i)*dt;
 		}
@@ -113,7 +113,7 @@ public class BinaryTimeseries {
 	 * @return first index inside the time interval [{@code t_l}, {@code t_u}]
 	 * @see Eqn. (5) in the documentation
 	 */
-	public static int firstIndexInside(final double t0, final double dt, final double t_l) {
+	public static final int firstIndexInside(final double t0, final double dt, final double t_l) {
 		return (int) Math.ceil ((t_l-t0)/dt);
 	}
 	
@@ -125,7 +125,7 @@ public class BinaryTimeseries {
 	 * @return last index inside the time interval [{@code t_l}, {@code t_u}]
 	 * @see Eqn. (6) in the documentation
 	 */
-	public static int lastIndexInside(final double t0, final double dt, final double t_u) {
+	public static final int lastIndexInside(final double t0, final double dt, final double t_u) {
 		return (int) Math.floor((t_u-t0)/dt);
 	}
 	
@@ -138,7 +138,7 @@ public class BinaryTimeseries {
 	 * @see <a href="https://stackoverflow.com/questions/7139382/java-rounding-up-to-an-int-using-math-ceil">https://stackoverflow.com/questions/7139382/java-rounding-up-to-an-int-using-math-ceil</a>
 	 * @see Eqn. (7) in the documentation
 	 */
-	public static int firstIndexInside(final long t0, final long dt, final long t_l) {
+	public static final int firstIndexInside(final long t0, final long dt, final long t_l) {
 		return (int) ((t_l-t0 + dt - 1) / dt);
 	}
 	
@@ -150,7 +150,7 @@ public class BinaryTimeseries {
 	 * @return last index inside the time interval [{@code t_l}, {@code t_u}]
 	 * @see Eqn. (8) in the documentation
 	 */
-	public static int lastIndexInside(final long t0, final long dt, final long t_u) {
+	public static final int lastIndexInside(final long t0, final long dt, final long t_u) {
 		return (int) ((t_u-t0         ) / dt);
 	}
 	
@@ -161,7 +161,7 @@ public class BinaryTimeseries {
 	 * @param numSamples number of samples in the file
 	 * @return file size to hold the given amount of data using a BinaryTimeseries
 	 */
-	public static int filesize(final int dataSize, final int numSamples) {
+	public static final int filesize(final int dataSize, final int numSamples) {
 		return 64+dataSize*numSamples;
 	}
 	
@@ -176,7 +176,7 @@ public class BinaryTimeseries {
 	 * This is used to check if correct endianess is used in reading; wrong endianess would lead to reading this as -128.
 	 * @param target buffer into which to write the time series data
 	 */
-	public static void writeEndianessCheckValue(ByteBuffer target) {
+	public static final void writeEndianessCheckValue(final ByteBuffer target) {
 		target.putShort((short)1);
 	}
 
@@ -186,7 +186,7 @@ public class BinaryTimeseries {
 	 * @param t0 reference timestamp
 	 * @param dt time interval between two consecutive samples
 	 */
-	public static void writeTimebase(ByteBuffer target, final long t0, final long dt) {
+	public static final void writeTimebase(final ByteBuffer target, final long t0, final long dt) {
 		target.put(DTYPE_LONG);
 		target.putLong(t0);
 		target.putLong(dt);
@@ -198,7 +198,7 @@ public class BinaryTimeseries {
 	 * @param t0 reference timestamp
 	 * @param dt time interval between two consecutive samples
 	 */
-	public static void writeTimebase(ByteBuffer target, final double t0, final double dt) {
+	public static final void writeTimebase(final ByteBuffer target, final double t0, final double dt) {
 		target.put(DTYPE_DOUBLE);
 		target.putDouble(t0);
 		target.putDouble(dt);
@@ -212,7 +212,7 @@ public class BinaryTimeseries {
 	 * Write the identifier value into the {@code target} buffer that tells the reader that no scaling is available.
 	 * @param target buffer into which to write the time series data
 	 */
-	public static void writeScalingDisabled(ByteBuffer target) {
+	public static final void writeScalingDisabled(final ByteBuffer target) {
 		target.put(DTYPE_NONE);
 		target.put(new byte[8+8]);
 	}
@@ -223,7 +223,7 @@ public class BinaryTimeseries {
 	 * @param o offset of the raw data values
 	 * @param s scaling factor of the raw data values
 	 */
-	public static void writeScaling(ByteBuffer target, final byte o, final byte s) {
+	public static final void writeScaling(final ByteBuffer target, final byte o, final byte s) {
 		target.put(DTYPE_BYTE);
 		target.put(o); target.put(new byte[8 - Byte.BYTES]);
 		target.put(s); target.put(new byte[8 - Byte.BYTES]);
@@ -235,7 +235,7 @@ public class BinaryTimeseries {
 	 * @param o offset of the raw data values
 	 * @param s scaling factor of the raw data values
 	 */
-	public static void writeScaling(ByteBuffer target, final short o, final short s) {
+	public static final void writeScaling(final ByteBuffer target, final short o, final short s) {
 		target.put(DTYPE_SHORT);
 		target.putShort(o); target.put(new byte[8 - Short.BYTES]);
 		target.putShort(s); target.put(new byte[8 - Short.BYTES]);
@@ -247,7 +247,7 @@ public class BinaryTimeseries {
 	 * @param o offset of the raw data values
 	 * @param s scaling factor of the raw data values
 	 */
-	public static void writeScaling(ByteBuffer target, final int o, final int s) {
+	public static final void writeScaling(final ByteBuffer target, final int o, final int s) {
 		target.put(DTYPE_INT);
 		target.putInt(o); target.put(new byte[8 - Integer.BYTES]);
 		target.putInt(s); target.put(new byte[8 - Integer.BYTES]);
@@ -259,7 +259,7 @@ public class BinaryTimeseries {
 	 * @param o offset of the raw data values
 	 * @param s scaling factor of the raw data values
 	 */
-	public static void writeScaling(ByteBuffer target, final long o, final long s) {
+	public static final void writeScaling(final ByteBuffer target, final long o, final long s) {
 		target.put(DTYPE_LONG);
 		target.putLong(o); // assumes Long.BYTES == 8
 		target.putLong(s); // assumes Long.BYTES == 8
@@ -271,7 +271,7 @@ public class BinaryTimeseries {
 	 * @param o offset of the raw data values
 	 * @param s scaling factor of the raw data values
 	 */
-	public static void writeScaling(ByteBuffer target, final float o, final float s) {
+	public static final void writeScaling(final ByteBuffer target, final float o, final float s) {
 		target.put(DTYPE_FLOAT);
 		target.putFloat(o); target.put(new byte[8 - Float.BYTES]);
 		target.putFloat(s); target.put(new byte[8 - Float.BYTES]);
@@ -283,7 +283,7 @@ public class BinaryTimeseries {
 	 * @param o offset of the raw data values
 	 * @param s scaling factor of the raw data values
 	 */
-	public static void writeScaling(ByteBuffer target, final double o, final double s) {
+	public static final void writeScaling(final ByteBuffer target, final double o, final double s) {
 		target.put(DTYPE_DOUBLE);
 		target.putDouble(o); // assumes Double.BYTES == 8
 		target.putDouble(s); // assumes Double.BYTES == 8
@@ -297,7 +297,7 @@ public class BinaryTimeseries {
 	 * Write zeros for the reserved area in the header.
 	 * @param target buffer into which to write the time series data
 	 */
-	public static void writeReservedDummy(ByteBuffer target) {
+	public static final void writeReservedDummy(final ByteBuffer target) {
 		target.put(new byte[23]);
 	}
 	
@@ -309,7 +309,7 @@ public class BinaryTimeseries {
 	 * @param target buffer into which to write the time series data
 	 * @param values raw data values; all of them will be dumped into the target buffer
 	 */
-	public static void writeData(ByteBuffer target, final byte[] values) {
+	public static final void writeData(final ByteBuffer target, final byte[] values) {
 		target.put(DTYPE_BYTE);
 		target.putInt(values.length);
 		for (byte b: values) { target.put(b); }
@@ -320,7 +320,7 @@ public class BinaryTimeseries {
 	 * @param target buffer into which to write the time series data
 	 * @param values raw data values; all of them will be dumped into the target buffer
 	 */
-	public static void writeData(ByteBuffer target, final short[] values) {
+	public static final void writeData(final ByteBuffer target, final short[] values) {
 		target.put(DTYPE_SHORT);
 		target.putInt(values.length);
 		for (short s: values) { target.putShort(s); }
@@ -331,7 +331,7 @@ public class BinaryTimeseries {
 	 * @param target buffer into which to write the time series data
 	 * @param values raw data values; all of them will be dumped into the target buffer
 	 */
-	public static void writeData(ByteBuffer target, final int[] values) {
+	public static final void writeData(final ByteBuffer target, final int[] values) {
 		target.put(DTYPE_INT);
 		target.putInt(values.length);
 		for (int i: values) { target.putInt(i); }
@@ -342,7 +342,7 @@ public class BinaryTimeseries {
 	 * @param target buffer into which to write the time series data
 	 * @param values raw data values; all of them will be dumped into the target buffer
 	 */
-	public static void writeData(ByteBuffer target, final long[] values) {
+	public static final void writeData(final ByteBuffer target, final long[] values) {
 		target.put(DTYPE_LONG);
 		target.putInt(values.length);
 		for (long l: values) { target.putLong(l); }
@@ -353,7 +353,7 @@ public class BinaryTimeseries {
 	 * @param target buffer into which to write the time series data
 	 * @param values raw data values; all of them will be dumped into the target buffer
 	 */
-	public static void writeData(ByteBuffer target, final float[] values) {
+	public static final void writeData(final ByteBuffer target, final float[] values) {
 		target.put(DTYPE_FLOAT);
 		target.putInt(values.length);
 		for (float f: values) { target.putFloat(f); }
@@ -364,7 +364,7 @@ public class BinaryTimeseries {
 	 * @param target buffer into which to write the time series data
 	 * @param values raw data values; all of them will be dumped into the target buffer
 	 */
-	public static void writeData(ByteBuffer target, final double[] values) {
+	public static final void writeData(final ByteBuffer target, final double[] values) {
 		target.put(DTYPE_DOUBLE);
 		target.putInt(values.length);
 		for (double d: values) { target.putDouble(d); }
@@ -382,14 +382,1908 @@ public class BinaryTimeseries {
 	 *                     *
 	 ***********************/
 	
+	
+	
+	
+	
+	public static final byte readTimeType(final ByteBuffer source) {
+		final byte time_dtype = source.get();
+		return time_dtype;
+	}
+	
+	public static final long readTimeT0_long(final ByteBuffer source) {
+		final long t0 = source.getLong();
+		return t0;
+	}
+	
+	public static final long readTimeDt_long(final ByteBuffer source) {
+		final long dt = source.getLong();
+		return dt;
+	}
+	
+	public static final double readTimeT0_double(final ByteBuffer source) {
+		final double t0 = source.getDouble();
+		return t0;
+	}
+	
+	public static final double readTimeDt_double(final ByteBuffer source) {
+		final double dt = source.getDouble();
+		return dt;
+	}
+	
+	
+	
+	
+	public static final Number[] readTimebase(final ByteBuffer source) {
+		final Number[] t0_dt = new Number[2];
+		
+		final byte time_dtype = readTimeType(source);
+		switch(time_dtype) {
+		case DTYPE_LONG:
+			t0_dt[0] = readTimeT0_long(source);
+			t0_dt[1] = readTimeDt_long(source);
+			break;
+		case DTYPE_DOUBLE:
+			t0_dt[0] = readTimeT0_double(source);
+			t0_dt[1] = readTimeDt_double(source);
+			break;
+		default:
+			t0_dt[0] = 0;
+			t0_dt[1] = 1;
+		}
+		
+		return t0_dt;
+	}
+	
+	
+	
+	
 	/**
 	 * Check the given dtype byte to see if the given file has a value scaling or not.
-	 * @param data_dtype dtype byte as read from input buffer
+	 * @param scaling_dtype dtype byte as read from input buffer
 	 * @return false if the data has no scaling; true if it has scaling
 	 */
-	public static final boolean hasScaling(final byte data_dtype) {
-		return (data_dtype != 0);
+	public static final boolean hasScaling(final byte scaling_dtype) {
+		return (scaling_dtype != 0);
 	}
+	
+	public static final byte readScalingType(final ByteBuffer source) {
+		final byte scaling_dtype = source.get();
+		return scaling_dtype;
+	}
+	
+	public static final void readScalingDisabled(final ByteBuffer source) {
+		final byte[] dummy = new byte[8+8];
+		source.get(dummy);
+	}
+	
+	public static final byte readScalingOffset_byte(final ByteBuffer source) {
+		final byte scalingOffset = source.get();
+		return scalingOffset;
+	}
+	
+	public static final byte readScalingFactor_byte(final ByteBuffer source) {
+		final byte scalingFactor = source.get();
+		return scalingFactor;
+	}
+	
+	public static final short readScalingOffset_short(final ByteBuffer source) {
+		final short scalingOffset = source.getShort();
+		return scalingOffset;
+	}
+	
+	public static final short readScalingFactor_short(final ByteBuffer source) {
+		final short scalingFactor = source.getShort();
+		return scalingFactor;
+	}
+	
+	public static final int readScalingOffset_int(final ByteBuffer source) {
+		final int scalingOffset = source.getInt();
+		return scalingOffset;
+	}
+	
+	public static final int readScalingFactor_int(final ByteBuffer source) {
+		final int scalingFactor = source.getInt();
+		return scalingFactor;
+	}
+	
+	public static final long readScalingOffset_long(final ByteBuffer source) {
+		final long scalingOffset = source.getLong();
+		return scalingOffset;
+	}
+	
+	public static final long readScalingFactor_long(final ByteBuffer source) {
+		final long scalingFactor = source.getLong();
+		return scalingFactor;
+	}
+	
+	public static final float readScalingOffset_float(final ByteBuffer source) {
+		final float scalingOffset = source.getFloat();
+		return scalingOffset;
+	}
+	
+	public static final float readScalingFactor_float(final ByteBuffer source) {
+		final float scalingFactor = source.getFloat();
+		return scalingFactor;
+	}
+	
+	public static final double readScalingOffset_double(final ByteBuffer source) {
+		final double scalingOffset = source.getDouble();
+		return scalingOffset;
+	}
+	
+	public static final double readScalingFactor_double(final ByteBuffer source) {
+		final double scalingFactor = source.getDouble();
+		return scalingFactor;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public static final void readReserved(final ByteBuffer source) {
+		final byte[] dummy = new byte[23];
+		source.get(dummy);
+	}
+	
+	
+	
+	public static final byte readDataType(final ByteBuffer source) {
+		final byte data_dtype = source.get();
+		return data_dtype;
+	}
+	
+	public static final int readNumSamples(final ByteBuffer source) {
+		final int numSamples = source.getInt();
+		return numSamples;
+	}
+	
+	public static final void readRawData(final ByteBuffer source, final byte[] target, final int targetOffset, final int numSamples) {
+		for (int i=0; i<numSamples; ++i) {
+			target[targetOffset+i] = source.get();
+		}
+	}
+	
+	public static final void readRawData(final ByteBuffer source, final short[] target, final int targetOffset, final int numSamples) {
+		for (int i=0; i<numSamples; ++i) {
+			target[targetOffset+i] = source.getShort();
+		}
+	}
+	
+	public static final void readRawData(final ByteBuffer source, final int[] target, final int targetOffset, final int numSamples) {
+		for (int i=0; i<numSamples; ++i) {
+			target[targetOffset+i] = source.getInt();
+		}
+	}
+	
+	public static final void readRawData(final ByteBuffer source, final long[] target, final int targetOffset, final int numSamples) {
+		for (int i=0; i<numSamples; ++i) {
+			target[targetOffset+i] = source.getLong();
+		}
+	}
+	
+	public static final void readRawData(final ByteBuffer source, final float[] target, final int targetOffset, final int numSamples) {
+		for (int i=0; i<numSamples; ++i) {
+			target[targetOffset+i] = source.getFloat();
+		}
+	}
+	
+	public static final void readRawData(final ByteBuffer source, final double[] target, final int targetOffset, final int numSamples) {
+		for (int i=0; i<numSamples; ++i) {
+			target[targetOffset+i] = source.getDouble();
+		}
+	}
+	
+	public static final byte[] readScaledDataIntoByte(final ByteBuffer source) {
+		
+		final byte scaling_dtype = readScalingType(source);
+		if (hasScaling(scaling_dtype)) {
+			
+			if (scaling_dtype == DTYPE_BYTE) {
+				final byte scalingOffset = readScalingOffset_byte(source);
+				final byte scalingFactor = readScalingFactor_byte(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final byte[] target = new byte[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			
+			} else if (scaling_dtype == DTYPE_BYTE) {
+				final short scalingOffset = readScalingOffset_short(source);
+				final short scalingFactor = readScalingFactor_short(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final byte[] target = new byte[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else if (scaling_dtype == DTYPE_INT) {
+				final int scalingOffset = readScalingOffset_int(source);
+				final int scalingFactor = readScalingFactor_int(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final byte[] target = new byte[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else if (scaling_dtype == DTYPE_LONG) {
+				final long scalingOffset = readScalingOffset_long(source);
+				final long scalingFactor = readScalingFactor_long(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final byte[] target = new byte[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else if (scaling_dtype == DTYPE_FLOAT) {
+				final float scalingOffset = readScalingOffset_float(source);
+				final float scalingFactor = readScalingFactor_float(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final byte[] target = new byte[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else if (scaling_dtype == DTYPE_DOUBLE) {
+				final double scalingOffset = readScalingOffset_double(source);
+				final double scalingFactor = readScalingFactor_double(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final byte[] target = new byte[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else {
+				// silently ignore unknown scaling values
+				readScalingDisabled(source);
+				
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final byte[] target = new byte[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = source.get();
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) source.getShort();
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) source.getInt();
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) source.getLong();
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) source.getFloat();
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (byte) source.getDouble();
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			}
+		} else {
+			// no scaling provided, so read raw data
+			readScalingDisabled(source);
+
+			final byte data_dtype = readDataType(source);
+			final int numSamples = readNumSamples(source);
+			final byte[] target = new byte[numSamples];
+			if (data_dtype == DTYPE_BYTE) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = source.get();
+				}
+			} else if (data_dtype == DTYPE_SHORT) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (byte) source.getShort();
+				}
+			} else if (data_dtype == DTYPE_INT) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (byte) source.getInt();
+				}
+			} else if (data_dtype == DTYPE_LONG) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (byte) source.getLong();
+				}
+			} else if (data_dtype == DTYPE_FLOAT) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (byte) source.getFloat();
+				}
+			} else if (data_dtype == DTYPE_DOUBLE) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (byte) source.getDouble();
+				}
+			}
+			// silently ignore unknown data dtype and return an array filled with zeros
+			return target;
+		}
+	}
+	
+	public static final short[] readScaledDataIntoShort(final ByteBuffer source) {
+		
+		final byte scaling_dtype = readScalingType(source);
+		if (hasScaling(scaling_dtype)) {
+			
+			if (scaling_dtype == DTYPE_BYTE) {
+				final byte scalingOffset = readScalingOffset_byte(source);
+				final byte scalingFactor = readScalingFactor_byte(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final short[] target = new short[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			
+			} else if (scaling_dtype == DTYPE_BYTE) {
+				final short scalingOffset = readScalingOffset_short(source);
+				final short scalingFactor = readScalingFactor_short(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final short[] target = new short[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else if (scaling_dtype == DTYPE_INT) {
+				final int scalingOffset = readScalingOffset_int(source);
+				final int scalingFactor = readScalingFactor_int(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final short[] target = new short[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else if (scaling_dtype == DTYPE_LONG) {
+				final long scalingOffset = readScalingOffset_long(source);
+				final long scalingFactor = readScalingFactor_long(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final short[] target = new short[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else if (scaling_dtype == DTYPE_FLOAT) {
+				final float scalingOffset = readScalingOffset_float(source);
+				final float scalingFactor = readScalingFactor_float(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final short[] target = new short[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else if (scaling_dtype == DTYPE_DOUBLE) {
+				final double scalingOffset = readScalingOffset_double(source);
+				final double scalingFactor = readScalingFactor_double(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final short[] target = new short[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else {
+				// silently ignore unknown scaling values
+				readScalingDisabled(source);
+				
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final short[] target = new short[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = source.get();
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) source.getShort();
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) source.getInt();
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) source.getLong();
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) source.getFloat();
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (short) source.getDouble();
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			}
+		} else {
+			// no scaling provided, so read raw data
+			readScalingDisabled(source);
+
+			final byte data_dtype = readDataType(source);
+			final int numSamples = readNumSamples(source);
+			final short[] target = new short[numSamples];
+			if (data_dtype == DTYPE_BYTE) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = source.get();
+				}
+			} else if (data_dtype == DTYPE_SHORT) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (short) source.getShort();
+				}
+			} else if (data_dtype == DTYPE_INT) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (short) source.getInt();
+				}
+			} else if (data_dtype == DTYPE_LONG) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (short) source.getLong();
+				}
+			} else if (data_dtype == DTYPE_FLOAT) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (short) source.getFloat();
+				}
+			} else if (data_dtype == DTYPE_DOUBLE) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (short) source.getDouble();
+				}
+			}
+			// silently ignore unknown data dtype and return an array filled with zeros
+			return target;
+		}
+	}
+	
+	public static final int[] readScaledDataIntoInt(final ByteBuffer source) {
+		
+		final byte scaling_dtype = readScalingType(source);
+		if (hasScaling(scaling_dtype)) {
+			
+			if (scaling_dtype == DTYPE_BYTE) {
+				final byte scalingOffset = readScalingOffset_byte(source);
+				final byte scalingFactor = readScalingFactor_byte(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final int[] target = new int[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			
+			} else if (scaling_dtype == DTYPE_BYTE) {
+				final short scalingOffset = readScalingOffset_short(source);
+				final short scalingFactor = readScalingFactor_short(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final int[] target = new int[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else if (scaling_dtype == DTYPE_INT) {
+				final int scalingOffset = readScalingOffset_int(source);
+				final int scalingFactor = readScalingFactor_int(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final int[] target = new int[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else if (scaling_dtype == DTYPE_LONG) {
+				final long scalingOffset = readScalingOffset_long(source);
+				final long scalingFactor = readScalingFactor_long(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final int[] target = new int[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else if (scaling_dtype == DTYPE_FLOAT) {
+				final float scalingOffset = readScalingOffset_float(source);
+				final float scalingFactor = readScalingFactor_float(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final int[] target = new int[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else if (scaling_dtype == DTYPE_DOUBLE) {
+				final double scalingOffset = readScalingOffset_double(source);
+				final double scalingFactor = readScalingFactor_double(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final int[] target = new int[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else {
+				// silently ignore unknown scaling values
+				readScalingDisabled(source);
+				
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final int[] target = new int[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = source.get();
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) source.getShort();
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) source.getInt();
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) source.getLong();
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) source.getFloat();
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (int) source.getDouble();
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			}
+		} else {
+			// no scaling provided, so read raw data
+			readScalingDisabled(source);
+
+			final byte data_dtype = readDataType(source);
+			final int numSamples = readNumSamples(source);
+			final int[] target = new int[numSamples];
+			if (data_dtype == DTYPE_BYTE) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = source.get();
+				}
+			} else if (data_dtype == DTYPE_SHORT) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (int) source.getShort();
+				}
+			} else if (data_dtype == DTYPE_INT) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (int) source.getInt();
+				}
+			} else if (data_dtype == DTYPE_LONG) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (int) source.getLong();
+				}
+			} else if (data_dtype == DTYPE_FLOAT) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (int) source.getFloat();
+				}
+			} else if (data_dtype == DTYPE_DOUBLE) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (int) source.getDouble();
+				}
+			}
+			// silently ignore unknown data dtype and return an array filled with zeros
+			return target;
+		}
+	}
+	
+	
+	
+	public static final long[] readScaledDataIntoLong(final ByteBuffer source) {
+		
+		final byte scaling_dtype = readScalingType(source);
+		if (hasScaling(scaling_dtype)) {
+			
+			if (scaling_dtype == DTYPE_BYTE) {
+				final byte scalingOffset = readScalingOffset_byte(source);
+				final byte scalingFactor = readScalingFactor_byte(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final long[] target = new long[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			
+			} else if (scaling_dtype == DTYPE_BYTE) {
+				final short scalingOffset = readScalingOffset_short(source);
+				final short scalingFactor = readScalingFactor_short(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final long[] target = new long[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else if (scaling_dtype == DTYPE_INT) {
+				final int scalingOffset = readScalingOffset_int(source);
+				final int scalingFactor = readScalingFactor_int(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final long[] target = new long[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else if (scaling_dtype == DTYPE_LONG) {
+				final long scalingOffset = readScalingOffset_long(source);
+				final long scalingFactor = readScalingFactor_long(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final long[] target = new long[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else if (scaling_dtype == DTYPE_FLOAT) {
+				final float scalingOffset = readScalingOffset_float(source);
+				final float scalingFactor = readScalingFactor_float(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final long[] target = new long[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else if (scaling_dtype == DTYPE_DOUBLE) {
+				final double scalingOffset = readScalingOffset_double(source);
+				final double scalingFactor = readScalingFactor_double(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final long[] target = new long[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else {
+				// silently ignore unknown scaling values
+				readScalingDisabled(source);
+				
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final long[] target = new long[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = source.get();
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) source.getShort();
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) source.getInt();
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) source.getLong();
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) source.getFloat();
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (long) source.getDouble();
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			}
+		} else {
+			// no scaling provided, so read raw data
+			readScalingDisabled(source);
+
+			final byte data_dtype = readDataType(source);
+			final int numSamples = readNumSamples(source);
+			final long[] target = new long[numSamples];
+			if (data_dtype == DTYPE_BYTE) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = source.get();
+				}
+			} else if (data_dtype == DTYPE_SHORT) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (long) source.getShort();
+				}
+			} else if (data_dtype == DTYPE_INT) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (long) source.getInt();
+				}
+			} else if (data_dtype == DTYPE_LONG) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (long) source.getLong();
+				}
+			} else if (data_dtype == DTYPE_FLOAT) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (long) source.getFloat();
+				}
+			} else if (data_dtype == DTYPE_DOUBLE) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (long) source.getDouble();
+				}
+			}
+			// silently ignore unknown data dtype and return an array filled with zeros
+			return target;
+		}
+	}
+	
+	
+	public static final float[] readScaledDataIntoFloat(final ByteBuffer source) {
+		
+		final byte scaling_dtype = readScalingType(source);
+		if (hasScaling(scaling_dtype)) {
+			
+			if (scaling_dtype == DTYPE_BYTE) {
+				final byte scalingOffset = readScalingOffset_byte(source);
+				final byte scalingFactor = readScalingFactor_byte(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final float[] target = new float[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			
+			} else if (scaling_dtype == DTYPE_BYTE) {
+				final short scalingOffset = readScalingOffset_short(source);
+				final short scalingFactor = readScalingFactor_short(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final float[] target = new float[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else if (scaling_dtype == DTYPE_INT) {
+				final int scalingOffset = readScalingOffset_int(source);
+				final int scalingFactor = readScalingFactor_int(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final float[] target = new float[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else if (scaling_dtype == DTYPE_LONG) {
+				final long scalingOffset = readScalingOffset_long(source);
+				final long scalingFactor = readScalingFactor_long(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final float[] target = new float[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else if (scaling_dtype == DTYPE_FLOAT) {
+				final float scalingOffset = readScalingOffset_float(source);
+				final float scalingFactor = readScalingFactor_float(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final float[] target = new float[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else if (scaling_dtype == DTYPE_DOUBLE) {
+				final double scalingOffset = readScalingOffset_double(source);
+				final double scalingFactor = readScalingFactor_double(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final float[] target = new float[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else {
+				// silently ignore unknown scaling values
+				readScalingDisabled(source);
+				
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final float[] target = new float[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = source.get();
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) source.getShort();
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) source.getInt();
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) source.getLong();
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) source.getFloat();
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (float) source.getDouble();
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			}
+		} else {
+			// no scaling provided, so read raw data
+			readScalingDisabled(source);
+
+			final byte data_dtype = readDataType(source);
+			final int numSamples = readNumSamples(source);
+			final float[] target = new float[numSamples];
+			if (data_dtype == DTYPE_BYTE) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = source.get();
+				}
+			} else if (data_dtype == DTYPE_SHORT) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (float) source.getShort();
+				}
+			} else if (data_dtype == DTYPE_INT) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (float) source.getInt();
+				}
+			} else if (data_dtype == DTYPE_LONG) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (float) source.getLong();
+				}
+			} else if (data_dtype == DTYPE_FLOAT) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (float) source.getFloat();
+				}
+			} else if (data_dtype == DTYPE_DOUBLE) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (float) source.getDouble();
+				}
+			}
+			// silently ignore unknown data dtype and return an array filled with zeros
+			return target;
+		}
+	}
+	
+	public static final double[] readScaledDataIntoDouble(final ByteBuffer source) {
+		
+		final byte scaling_dtype = readScalingType(source);
+		if (hasScaling(scaling_dtype)) {
+			
+			if (scaling_dtype == DTYPE_BYTE) {
+				final byte scalingOffset = readScalingOffset_byte(source);
+				final byte scalingFactor = readScalingFactor_byte(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final double[] target = new double[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			
+			} else if (scaling_dtype == DTYPE_BYTE) {
+				final short scalingOffset = readScalingOffset_short(source);
+				final short scalingFactor = readScalingFactor_short(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final double[] target = new double[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else if (scaling_dtype == DTYPE_INT) {
+				final int scalingOffset = readScalingOffset_int(source);
+				final int scalingFactor = readScalingFactor_int(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final double[] target = new double[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else if (scaling_dtype == DTYPE_LONG) {
+				final long scalingOffset = readScalingOffset_long(source);
+				final long scalingFactor = readScalingFactor_long(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final double[] target = new double[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else if (scaling_dtype == DTYPE_FLOAT) {
+				final float scalingOffset = readScalingOffset_float(source);
+				final float scalingFactor = readScalingFactor_float(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final double[] target = new double[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else if (scaling_dtype == DTYPE_DOUBLE) {
+				final double scalingOffset = readScalingOffset_double(source);
+				final double scalingFactor = readScalingFactor_double(source);
+
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final double[] target = new double[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.get());
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getShort());
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getInt());
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getLong());
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getFloat());
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) (scalingOffset + scalingFactor * source.getDouble());
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			} else {
+				// silently ignore unknown scaling values
+				readScalingDisabled(source);
+				
+				final byte data_dtype = readDataType(source);
+				final int numSamples = readNumSamples(source);
+				final double[] target = new double[numSamples];
+				if (data_dtype == DTYPE_BYTE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = source.get();
+					}
+				} else if (data_dtype == DTYPE_SHORT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) source.getShort();
+					}
+				} else if (data_dtype == DTYPE_INT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) source.getInt();
+					}
+				} else if (data_dtype == DTYPE_LONG) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) source.getLong();
+					}
+				} else if (data_dtype == DTYPE_FLOAT) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) source.getFloat();
+					}
+				} else if (data_dtype == DTYPE_DOUBLE) {
+					for (int i=0; i<numSamples; ++i) {
+						target[i] = (double) source.getDouble();
+					}
+				}
+				// silently ignore unknown data dtype and return an array filled with zeros
+				return target;
+			}
+		} else {
+			// no scaling provided, so read raw data
+			readScalingDisabled(source);
+
+			final byte data_dtype = readDataType(source);
+			final int numSamples = readNumSamples(source);
+			final double[] target = new double[numSamples];
+			if (data_dtype == DTYPE_BYTE) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = source.get();
+				}
+			} else if (data_dtype == DTYPE_SHORT) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (double) source.getShort();
+				}
+			} else if (data_dtype == DTYPE_INT) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (double) source.getInt();
+				}
+			} else if (data_dtype == DTYPE_LONG) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (double) source.getLong();
+				}
+			} else if (data_dtype == DTYPE_FLOAT) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (double) source.getFloat();
+				}
+			} else if (data_dtype == DTYPE_DOUBLE) {
+				for (int i=0; i<numSamples; ++i) {
+					target[i] = (double) source.getDouble();
+				}
+			}
+			// silently ignore unknown data dtype and return an array filled with zeros
+			return target;
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
