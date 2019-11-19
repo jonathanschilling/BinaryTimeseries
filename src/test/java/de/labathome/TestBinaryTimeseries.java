@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
@@ -33,9 +32,9 @@ public class TestBinaryTimeseries {
 		System.out.println("using '"+tmpFile+"' for testing BinaryTimeseries");
 
 		// generate test data
-		t0 = -99_000_000L;       // -99 ms
-		f  =   2_000_000L;       //   2 MHz
-		numValues = (int) (10*f);
+		t0 = -99_000_000L;        // -99 ms
+		f  =   2_000_000L;        //   2 MHz
+		numValues = (int) (10*f); //  10 periods of data in total
 		values = new short[numValues];
 		dt = 1_000_000_000L / f;
 
@@ -134,9 +133,9 @@ public class TestBinaryTimeseries {
 		System.out.println("using '"+tmpFile+"' for testing BinaryTimeseries");
 
 		// generate test data
-		t0 = -99_000_000L;       // -99 ms
-		f  =   2_000_000L;       //   2 MHz
-		numValues = (int) (10*f);
+		t0 = -99_000_000L;        // -99 ms
+		f  =   2_000_000L;        //   2 MHz
+		numValues = (int) (10*f); //  10 periods of data in total
 		values = new short[numValues];
 		dt = 1_000_000_000L / f;
 
@@ -171,16 +170,13 @@ public class TestBinaryTimeseries {
 			e.printStackTrace();
 		}
 
-		// subset of data to read
+		// subset of data to read is from 7th to 8th period
 		long from = 7*f;
 		long upto = 8*f;
-
-		
 
 		// read
 		try (RandomAccessFile memoryFile = new RandomAccessFile(tmpFile.toFile(), "r")) {
 			MappedByteBuffer mappedByteBuffer = memoryFile.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, filesize);
-
 			
 			long start = -System.nanoTime();
 			
@@ -192,8 +188,10 @@ public class TestBinaryTimeseries {
 			assertEquals(3, mappedByteBuffer.position());
 			final long _t0 = BinaryTimeseries.readTimeT0_long(mappedByteBuffer);
 			assertEquals(11, mappedByteBuffer.position());
+			assertEquals(t0, _t0);
 			final long _dt = BinaryTimeseries.readTimeDt_long(mappedByteBuffer);
 			assertEquals(19, mappedByteBuffer.position());
+			assertEquals(dt, _dt);
 			
 			int fromIdx = BinaryTimeseries.firstIndexInside(_t0, _dt, from);
 			int uptoIdx = BinaryTimeseries.lastIndexInside(_t0, _dt, upto);
