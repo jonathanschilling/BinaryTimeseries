@@ -15,34 +15,39 @@ import java.nio.ByteOrder;
 public class BinaryTimeseries {
 	
 	/**
+	 * Identifier value used to indicate that no scaling is used.
+	 */
+	public static final byte DTYPE_NONE = 0;
+	
+	/**
 	 * Identifier value for {@code byte} datatype. <br/> Length: 1 Byte <br/> Range: -128 ... 127
 	 */
-	public static final byte DTYPE_BYTE  = 0; 
+	public static final byte DTYPE_BYTE = 1;
 	
 	/**
 	 * Identifier value for {@code short} datatype. <br/> Length: 2 Bytes <br/> Range: -32768 ... 32767
 	 */
-	public static final byte DTYPE_SHORT = 1;
+	public static final byte DTYPE_SHORT = 2;
 	
 	/**
 	 * Identifier value for {@code int} datatype. <br/> Length: 4 Bytes <br/> Range: -2147483648 ... 2147483647
 	 */
-	public static final byte DTYPE_INT   = 2;
+	public static final byte DTYPE_INT = 3;
 	
 	/**
 	 * Identifier value for {@code long} datatype. <br/> Length: 8 Bytes <br/> Range: -9223372036854775808 ... 9223372036854775807
 	 */
-	public static final byte DTYPE_LONG  = 3;
+	public static final byte DTYPE_LONG = 4;
 	
 	/**
 	 * Identifier value for {@code float} datatype. <br/> Length: 4 Bytes <br/> 7 decimal digits
 	 */
-	public static final byte DTYPE_FLOAT = 4;
+	public static final byte DTYPE_FLOAT = 5;
 	
 	/**
 	 * Identifier value for {@code double} datatype. <br/> Length: 8 Bytes <br/> 16 decimal digits
 	 */
-	public static final byte DTYPE_DOUBLE= 5;
+	public static final byte DTYPE_DOUBLE = 6;
 	
 	/**
 	 * Extract the highest bit of the given dtype byte to see if the given file has a value scaling or not.
@@ -50,25 +55,7 @@ public class BinaryTimeseries {
 	 * @return false if the data has no scaling; true if it has scaling
 	 */
 	public static final boolean hasScaling(final byte data_dtype) {
-		return (data_dtype & 1<<7) == 0;
-	}
-	
-	/**
-	 * Enable scaling for the given dtype, no matter if it was enabled previously or not.
-	 * @param data_dtype input datatype
-	 * @return copy of data_dtype with the highest bit set to true
-	 */
-	public static final byte withScaling(final byte data_dtype) {
-		return (byte) (data_dtype & ~(1<<7));
-	}
-	
-	/**
-	 * Disable scaling for the given dtype, no matter if it was enabled previously or not.
-	 * @param data_dtype input dtype, 0...5
-	 * @return copy of data_dtype with the highest bit set to false
-	 */
-	public static final byte withoutScaling(final byte data_dtype) {
-		return (byte) (data_dtype | (1<<7));
+		return (data_dtype == 0);
 	}
 	
 	/**
@@ -133,8 +120,8 @@ public class BinaryTimeseries {
 	 * @see <a href="https://stackoverflow.com/questions/7139382/java-rounding-up-to-an-int-using-math-ceil">https://stackoverflow.com/questions/7139382/java-rounding-up-to-an-int-using-math-ceil</a>
 	 */
 	public static void indexInterval(int[] target, final long t0, final long dt, final long from, final long upto) {
-		target[0] = (int) ((from-t0 + dt - 1) / dt); //  ceil for lower end
-		target[1] = (int) ((upto-t0)/dt);            // floor for upper end
+		target[0] = (int) ((from-t0 + dt - 1) / dt);
+		target[1] = (int) ((upto-t0)/dt);
 	}
 
 	/**
@@ -161,15 +148,11 @@ public class BinaryTimeseries {
 		return 64+valSize*nSamples;
 	}
 	
-	
 	/***********************
 	 *                     *
 	 *   WRITING METHODS   *
 	 *                     *
 	 ***********************/
-	
-	
-	
 	
 	/**
 	 * Write a 1 as {@code short} to the {@code target} file.
@@ -180,13 +163,8 @@ public class BinaryTimeseries {
 		target.putShort((short)1);
 	}
 
-	
-	
-	
-	
-	
 	/**
-	 * 
+	 * Write the 
 	 * @param target
 	 * @param t0
 	 * @param dt
@@ -213,53 +191,95 @@ public class BinaryTimeseries {
 	
 	
 	
-	
+	/**
+	 * 
+	 * @param target
+	 */
 	public static void writeScalingDisabled(ByteBuffer target) {
-		target.put(withoutScaling((byte)0));
-		target.put(new byte[8+8]); // dummy for optional scaling values
+		target.put(DTYPE_NONE);
+		target.put(new byte[8+8]);
 	}
 	
+	/**
+	 * 
+	 * @param target
+	 * @param o
+	 * @param s
+	 */
 	public static void writeScaling(ByteBuffer target, final byte o, final byte s) {
-		target.put(withScaling(DTYPE_BYTE));
-		target.put(o); target.put(new byte[8 - Byte.BYTES]); // offset
-		target.put(s); target.put(new byte[8 - Byte.BYTES]); // scale
+		target.put(DTYPE_BYTE);
+		target.put(o); target.put(new byte[8 - Byte.BYTES]);
+		target.put(s); target.put(new byte[8 - Byte.BYTES]);
 	}
 	
+	/**
+	 * 
+	 * @param target
+	 * @param o
+	 * @param s
+	 */
 	public static void writeDtypeWithScaling(ByteBuffer target, final short o, final short s) {
-		target.put(withScaling(DTYPE_SHORT));
-		target.putShort(o); target.put(new byte[8 - Short.BYTES]); // offset
-		target.putShort(s); target.put(new byte[8 - Short.BYTES]); // scale
+		target.put(DTYPE_SHORT);
+		target.putShort(o); target.put(new byte[8 - Short.BYTES]);
+		target.putShort(s); target.put(new byte[8 - Short.BYTES]);
 	}
 	
+	/**
+	 * 
+	 * @param target
+	 * @param o
+	 * @param s
+	 */
 	public static void writeScaling(ByteBuffer target, final int o, final int s) {
-		target.put(withScaling(DTYPE_INT));
-		target.putInt(o); target.put(new byte[8 - Integer.BYTES]); // offset
-		target.putInt(s); target.put(new byte[8 - Integer.BYTES]); // scale
+		target.put(DTYPE_INT);
+		target.putInt(o); target.put(new byte[8 - Integer.BYTES]);
+		target.putInt(s); target.put(new byte[8 - Integer.BYTES]);
 	}
 	
+	/**
+	 * 
+	 * @param target
+	 * @param o
+	 * @param s
+	 */
 	public static void writeScaling(ByteBuffer target, final long o, final long s) {
-		target.put(withScaling(DTYPE_LONG));
-		target.putLong(o); // offset
-		target.putLong(s); // scale
+		target.put(DTYPE_LONG);
+		target.putLong(o);
+		target.putLong(s);
 	}
 	
+	/**
+	 * 
+	 * @param target
+	 * @param o
+	 * @param s
+	 */
 	public static void writeScaling(ByteBuffer target, final float o, final float s) {
-		target.put(withScaling(DTYPE_FLOAT));
-		target.putFloat(o); target.put(new byte[8 - Float.BYTES]); // offset
-		target.putFloat(s); target.put(new byte[8 - Float.BYTES]); // scale
+		target.put(DTYPE_FLOAT);
+		target.putFloat(o); target.put(new byte[8 - Float.BYTES]);
+		target.putFloat(s); target.put(new byte[8 - Float.BYTES]);
 	}
 	
+	/**
+	 * 
+	 * @param target
+	 * @param o
+	 * @param s
+	 */
 	public static void writeScaling(ByteBuffer target, final double o, final double s) {
-		target.put(withScaling(DTYPE_DOUBLE));
-		target.putDouble(o); // offset
-		target.putDouble(s); // scale
+		target.put(DTYPE_DOUBLE);
+		target.putDouble(o);
+		target.putDouble(s);
 	}
 	
 	
 	
 	
 	
-	
+	/**
+	 * 
+	 * @param target
+	 */
 	public static void writeReservedDummy(ByteBuffer target) {
 		target.put(new byte[23]);
 	}
@@ -267,37 +287,66 @@ public class BinaryTimeseries {
 	
 	
 	
-	
+	/**
+	 * 
+	 * @param target
+	 * @param values
+	 */
 	public static void writeData(ByteBuffer target, final byte[] values) {
 		target.put(DTYPE_BYTE);
 		target.putInt(values.length);
 		for (byte b: values) { target.put(b); }
 	}
 	
+	/**
+	 * 
+	 * @param target
+	 * @param values
+	 */
 	public static void writeData(ByteBuffer target, final short[] values) {
 		target.put(DTYPE_SHORT);
 		target.putInt(values.length);
 		for (short s: values) { target.putShort(s); }
 	}
 	
+	/**
+	 * 
+	 * @param target
+	 * @param values
+	 */
 	public static void writeData(ByteBuffer target, final int[] values) {
 		target.put(DTYPE_INT);
 		target.putInt(values.length);
 		for (int i: values) { target.putInt(i); }
 	}
 	
+	/**
+	 * 
+	 * @param target
+	 * @param values
+	 */
 	public static void writeData(ByteBuffer target, final long[] values) {
 		target.put(DTYPE_LONG);
 		target.putInt(values.length);
 		for (long l: values) { target.putLong(l); }
 	}
 	
+	/**
+	 * 
+	 * @param target
+	 * @param values
+	 */
 	public static void writeData(ByteBuffer target, final float[] values) {
 		target.put(DTYPE_FLOAT);
 		target.putInt(values.length);
 		for (float f: values) { target.putFloat(f); }
 	}
 	
+	/**
+	 * 
+	 * @param target
+	 * @param values
+	 */
 	public static void writeData(ByteBuffer target, final double[] values) {
 		target.put(DTYPE_DOUBLE);
 		target.putInt(values.length);
