@@ -50,7 +50,7 @@ public class BinaryTimeseries {
 	 * @return false if the data has no scaling; true if it has scaling
 	 */
 	public static final boolean hasScaling(final byte data_dtype) {
-		return (data_dtype & 1<<7) == 1;
+		return (data_dtype & 1<<7) == 0;
 	}
 	
 	/**
@@ -59,7 +59,7 @@ public class BinaryTimeseries {
 	 * @return copy of data_dtype with the highest bit set to true
 	 */
 	public static final byte withScaling(final byte data_dtype) {
-		return (byte) (data_dtype | (1<<7));
+		return (byte) (data_dtype & ~(1<<7));
 	}
 	
 	/**
@@ -68,7 +68,7 @@ public class BinaryTimeseries {
 	 * @return copy of data_dtype with the highest bit set to false
 	 */
 	public static final byte withoutScaling(final byte data_dtype) {
-		return (byte) (data_dtype & ~(1<<7));
+		return (byte) (data_dtype | (1<<7));
 	}
 	
 	/**
@@ -158,7 +158,150 @@ public class BinaryTimeseries {
 	 * @return file size to hold the given amount of data using a BinaryTimeseries
 	 */
 	public static int filesize(final int valSize, final int nSamples) {
-		return 24+valSize*nSamples;
+		return 64+valSize*nSamples;
+	}
+	
+	
+	/***********************
+	 *                     *
+	 *   WRITING METHODS   *
+	 *                     *
+	 ***********************/
+	
+	
+	
+	
+	/**
+	 * Write a 1 as {@code short} to the {@code target} file.
+	 * This is used to check if correct endianess is used in reading; wrong endianess would lead to reading this as -128.
+	 * @param target
+	 */
+	public static void writeEndianessCheckValue(ByteBuffer target) {
+		target.putShort((short)1);
+	}
+
+	
+	
+	
+	
+	
+	/**
+	 * 
+	 * @param target
+	 * @param t0
+	 * @param dt
+	 */
+	public static void writeTimebase(ByteBuffer target, final long t0, final long dt) {
+		target.put(DTYPE_LONG);
+		target.putLong(t0);
+		target.putLong(dt);
+	}
+
+	/**
+	 * 
+	 * @param target
+	 * @param t0
+	 * @param dt
+	 */
+	public static void writeTimebase(ByteBuffer target, final double t0, final double dt) {
+		target.put(DTYPE_DOUBLE);
+		target.putDouble(t0);
+		target.putDouble(dt);
+	}
+	
+	
+	
+	
+	
+	
+	public static void writeScalingDisabled(ByteBuffer target) {
+		target.put(withoutScaling((byte)0));
+		target.put(new byte[8+8]); // dummy for optional scaling values
+	}
+	
+	public static void writeScaling(ByteBuffer target, final byte o, final byte s) {
+		target.put(withScaling(DTYPE_BYTE));
+		target.put(o); target.put(new byte[8 - Byte.BYTES]); // offset
+		target.put(s); target.put(new byte[8 - Byte.BYTES]); // scale
+	}
+	
+	public static void writeDtypeWithScaling(ByteBuffer target, final short o, final short s) {
+		target.put(withScaling(DTYPE_SHORT));
+		target.putShort(o); target.put(new byte[8 - Short.BYTES]); // offset
+		target.putShort(s); target.put(new byte[8 - Short.BYTES]); // scale
+	}
+	
+	public static void writeScaling(ByteBuffer target, final int o, final int s) {
+		target.put(withScaling(DTYPE_INT));
+		target.putInt(o); target.put(new byte[8 - Integer.BYTES]); // offset
+		target.putInt(s); target.put(new byte[8 - Integer.BYTES]); // scale
+	}
+	
+	public static void writeScaling(ByteBuffer target, final long o, final long s) {
+		target.put(withScaling(DTYPE_LONG));
+		target.putLong(o); // offset
+		target.putLong(s); // scale
+	}
+	
+	public static void writeScaling(ByteBuffer target, final float o, final float s) {
+		target.put(withScaling(DTYPE_FLOAT));
+		target.putFloat(o); target.put(new byte[8 - Float.BYTES]); // offset
+		target.putFloat(s); target.put(new byte[8 - Float.BYTES]); // scale
+	}
+	
+	public static void writeScaling(ByteBuffer target, final double o, final double s) {
+		target.put(withScaling(DTYPE_DOUBLE));
+		target.putDouble(o); // offset
+		target.putDouble(s); // scale
+	}
+	
+	
+	
+	
+	
+	
+	public static void writeReservedDummy(ByteBuffer target) {
+		target.put(new byte[23]);
+	}
+	
+	
+	
+	
+	
+	public static void writeData(ByteBuffer target, final byte[] values) {
+		target.put(DTYPE_BYTE);
+		target.putInt(values.length);
+		for (byte b: values) { target.put(b); }
+	}
+	
+	public static void writeData(ByteBuffer target, final short[] values) {
+		target.put(DTYPE_SHORT);
+		target.putInt(values.length);
+		for (short s: values) { target.putShort(s); }
+	}
+	
+	public static void writeData(ByteBuffer target, final int[] values) {
+		target.put(DTYPE_INT);
+		target.putInt(values.length);
+		for (int i: values) { target.putInt(i); }
+	}
+	
+	public static void writeData(ByteBuffer target, final long[] values) {
+		target.put(DTYPE_LONG);
+		target.putInt(values.length);
+		for (long l: values) { target.putLong(l); }
+	}
+	
+	public static void writeData(ByteBuffer target, final float[] values) {
+		target.put(DTYPE_FLOAT);
+		target.putInt(values.length);
+		for (float f: values) { target.putFloat(f); }
+	}
+	
+	public static void writeData(ByteBuffer target, final double[] values) {
+		target.put(DTYPE_DOUBLE);
+		target.putInt(values.length);
+		for (double d: values) { target.putDouble(d); }
 	}
 	
 	
@@ -167,6 +310,11 @@ public class BinaryTimeseries {
 	
 	
 	
+	/***********************
+	 *                     *
+	 *   READING METHODS   *
+	 *                     *
+	 ***********************/
 	
 	
 	
@@ -176,11 +324,23 @@ public class BinaryTimeseries {
 	
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// old stuff below
 	
 
 	public static void write(ByteBuffer target, long t0, long dt, byte[] values) {
-		writeHeader(target);
-		writeTimeInfo(target, t0, dt);
+		writeEndianessCheckValue(target);
+		writeTimebase(target, t0, dt);
 		writeValues(target, values);
 	}
 	public static void read_tL_dB(ByteBuffer source, Object[] target) {
@@ -205,8 +365,8 @@ public class BinaryTimeseries {
 	}
 
 	public static void write(ByteBuffer target, double t0, double dt, byte[] values) {
-		writeHeader(target);
-		writeTimeInfo(target, t0, dt);
+		writeEndianessCheckValue(target);
+		writeTimebase(target, t0, dt);
 		writeValues(target, values);
 	}
 	public static void read_tD_dB(ByteBuffer source, Object[] target) {
@@ -231,8 +391,8 @@ public class BinaryTimeseries {
 	}
 
 	public static void write(ByteBuffer target, long t0, long dt, short[] values) {
-		writeHeader(target);
-		writeTimeInfo(target, t0, dt);
+		writeEndianessCheckValue(target);
+		writeTimebase(target, t0, dt);
 		writeValues(target, values);
 	}
 	public static void read_tL_dS(ByteBuffer source, Object[] target) {
@@ -257,8 +417,8 @@ public class BinaryTimeseries {
 	}
 
 	public static void write(ByteBuffer target, double t0, double dt, short[] values) {
-		writeHeader(target);
-		writeTimeInfo(target, t0, dt);
+		writeEndianessCheckValue(target);
+		writeTimebase(target, t0, dt);
 		writeValues(target, values);
 	}
 	public static void read_tD_dS(ByteBuffer source, Object[] target) {
@@ -283,8 +443,8 @@ public class BinaryTimeseries {
 	}
 
 	public static void write(ByteBuffer target, long t0, long dt, int[] values) {
-		writeHeader(target);
-		writeTimeInfo(target, t0, dt);
+		writeEndianessCheckValue(target);
+		writeTimebase(target, t0, dt);
 		writeValues(target, values);
 	}
 	public static void read_tL_dI(ByteBuffer source, Object[] target) {
@@ -309,8 +469,8 @@ public class BinaryTimeseries {
 	}
 
 	public static void write(ByteBuffer target, double t0, double dt, int[] values) {
-		writeHeader(target);
-		writeTimeInfo(target, t0, dt);
+		writeEndianessCheckValue(target);
+		writeTimebase(target, t0, dt);
 		writeValues(target, values);
 	}
 	public static void read_tD_dI(ByteBuffer source, Object[] target) {
@@ -335,8 +495,8 @@ public class BinaryTimeseries {
 	}
 
 	public static void write(ByteBuffer target, long t0, long dt, long[] values) {
-		writeHeader(target);
-		writeTimeInfo(target, t0, dt);
+		writeEndianessCheckValue(target);
+		writeTimebase(target, t0, dt);
 		writeValues(target, values);
 	}
 	public static void read_tL_dL(ByteBuffer source, Object[] target) {
@@ -361,8 +521,8 @@ public class BinaryTimeseries {
 	}
 
 	public static void write(ByteBuffer target, double t0, double dt, long[] values) {
-		writeHeader(target);
-		writeTimeInfo(target, t0, dt);
+		writeEndianessCheckValue(target);
+		writeTimebase(target, t0, dt);
 		writeValues(target, values);
 	}
 	public static void read_tD_dL(ByteBuffer source, Object[] target) {
@@ -387,8 +547,8 @@ public class BinaryTimeseries {
 	}
 
 	public static void write(ByteBuffer target, long t0, long dt, float[] values) {
-		writeHeader(target);
-		writeTimeInfo(target, t0, dt);
+		writeEndianessCheckValue(target);
+		writeTimebase(target, t0, dt);
 		writeValues(target, values);
 	}
 	public static void read_tL_dF(ByteBuffer source, Object[] target) {
@@ -413,8 +573,8 @@ public class BinaryTimeseries {
 	}
 
 	public static void write(ByteBuffer target, double t0, double dt, float[] values) {
-		writeHeader(target);
-		writeTimeInfo(target, t0, dt);
+		writeEndianessCheckValue(target);
+		writeTimebase(target, t0, dt);
 		writeValues(target, values);
 	}
 	public static void read_tD_dF(ByteBuffer source, Object[] target) {
@@ -439,8 +599,8 @@ public class BinaryTimeseries {
 	}
 
 	public static void write(ByteBuffer target, long t0, long dt, double[] values) {
-		writeHeader(target);
-		writeTimeInfo(target, t0, dt);
+		writeEndianessCheckValue(target);
+		writeTimebase(target, t0, dt);
 		writeValues(target, values);
 	}
 	public static void read_tL_dD(ByteBuffer source, Object[] target) {
@@ -465,8 +625,8 @@ public class BinaryTimeseries {
 	}
 
 	public static void write(ByteBuffer target, double t0, double dt, double[] values) {
-		writeHeader(target);
-		writeTimeInfo(target, t0, dt);
+		writeEndianessCheckValue(target);
+		writeTimebase(target, t0, dt);
 		writeValues(target, values);
 	}
 	public static void read_tD_dD(ByteBuffer source, Object[] target) {
@@ -496,40 +656,7 @@ public class BinaryTimeseries {
 
 
 	// writing methods
-	public static int writeHeader(ByteBuffer target) {
-		int initialPos = target.position();
-		// used to check if correct endianess is used in reading; wrong endianess would lead to reading this as 256.
-		target.putShort((short)1);
-		int finalPos = target.position(), expectedPos = initialPos+2;
-		if (finalPos != expectedPos) {
-			throw new RuntimeException("target pos should be at "+expectedPos+" but is at "+finalPos);
-		}
-		return finalPos;
-	}
-
-	public static int writeTimeInfo(ByteBuffer target, long t0, long dt) {
-		int initialPos = target.position();
-		target.put(DTYPE_LONG);
-		target.putLong(t0);
-		target.putLong(dt);
-		int finalPos = target.position(), expectedPos = initialPos+17;
-		if (finalPos != expectedPos) {
-			throw new RuntimeException("target pos should be at "+expectedPos+" but is at "+finalPos);
-		}
-		return finalPos;
-	}
-
-	public static int writeTimeInfo(ByteBuffer target, double t0, double dt) {
-		int initialPos = target.position();
-		target.put(DTYPE_DOUBLE);
-		target.putDouble(t0);
-		target.putDouble(dt);
-		int finalPos = target.position(), expectedPos = initialPos+17;
-		if (finalPos != expectedPos) {
-			throw new RuntimeException("target pos should be at "+expectedPos+" but is at "+finalPos);
-		}
-		return finalPos;
-	}
+	
 
 	public static int writeValues(ByteBuffer target, byte[] values) {
 		int initialPos = target.position();

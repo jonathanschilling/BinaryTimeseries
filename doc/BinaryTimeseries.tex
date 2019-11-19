@@ -7,6 +7,7 @@
 \usepackage{multirow}
 \usepackage{titling}
 \usepackage{amssymb}
+\usepackage{amsmath}
 \usepackage{geometry}
 \geometry{verbose,a4paper, tmargin=25mm, bmargin=25mm, lmargin=25mm, rmargin=25mm}
 
@@ -32,17 +33,20 @@ The basic assumption is that the time axis~$t_i$ of a series of $N$~measurements
 \end{equation}
 where $t_0$ is the (reference) timestamp of the first sample and $\Delta t$ is the sampling interval.
 
-The data values $y_i$ are stored as raw values $\hat{y}_i$, optionally with an offset value~$o$ and a scaling factor~$s$:
-\begin{equation}
-  y_i = o + s \cdot \hat{y}_i \quad \mathrm{for} \quad i = 0, 1, ..., (N-1) \quad .
-\end{equation}
-The number of samples is limited by the maximum value of the (signed) \texttt{int} type, which is
+The data values $y_i$ are stored as raw values $\hat{y}_i$, optionally with an offset~$o$ and a scaling factor~$s$:
+\begin{gather}
+\begin{aligned}
+  y_i & = &             \hat{y}_i & \quad \mathrm{for} \quad i = 0, 1, ..., (N-1) & \mathrm{without~scaling,} \\
+  y_i & = & o + s \cdot \hat{y}_i & \quad \mathrm{for} \quad i = 0, 1, ..., (N-1) & \mathrm{with~scaling.}
+\end{aligned}
+\end{gather}
+The number of samples is limited by the maximum value of the (signed 32-bit) \texttt{int} type, which is
 $$2\,147\,483\,647 \approx 2.1 \cdot 10^9 \quad .$$
 In case of raw \texttt{double} values, the corresponding maximum file size is $(64 + 8 \cdot 2\,147\,483\,647)\,\mathrm{bytes} \approx 16\,\mathrm{GB}$,
 where 64~bytes are reserved for the file header information.
 
 \section{Definitions}\label{sec:definitions}
-In Tab.~\ref{tab:datatypes} you find an overview of the datatypes considered in this specification.
+In Tab.~\ref{tab:datatypes} you find an overview of the types for raw data considered in this specification.
 \begin{table}[htbp]
  \centering
  \begin{tabular}{|c|c|c|c|c|}
@@ -81,67 +85,70 @@ The contents of the files are structured as shown in Tab.~\ref{tab:structure}.
  \centering
  \begin{tabular}{|c|c|c|c|c|}
     \hline
-    offset  & size             & type                             & value                  & description \\
-    \hline                                                                                        
-    0       & 2                & \texttt{short}                   & 1                      & used to verify correct endianess  \\
-    \hline                                                                                        
-    2       & 1                & \texttt{byte}                    & 3 or 5                 & data type of time: 3 (long) or 5 (double) \\
-    \hline                                                                                        
-    3       & 8                & \texttt{long} or \texttt{double} & \textit{varying}       & $t_0$: reference timestamp \\
-    \hline                                                                                        
-    11      & 8                & \texttt{long} or \texttt{double} & \textit{varying}       & $\Delta t$: time interval between two samples \\
-    \hline                            
-    19      & 1                & \texttt{byte}                    & (0 ... 5) +            & dtype of raw data: 0 (byte) to 5 (double) \\
-     ~      & ~                &      ~                           & (0 or -128)            & highest bit indicates scaling for data values \\
-    \hline                                                               
-    [20]    & 1                & \texttt{byte}                    & 0 ... 5                & data type of scaling for data values \\
-    \hline                            
-    [21]    & 8                & \textit{varying}                 & \textit{varying}       & offset $o$ of data values \\
-    \hline                                                                                        
-    [29]    & 8                & \textit{varying}                 & \textit{varying}       & scaling factor $s$ for data values \\
-    \hline                                                                                        
-    [37]    & 4                & \texttt{int}                     & \textit{varying}       & number $N$ of data values; has to be $>0$ \\
+    offset & size             & type                             & allowed values    & description \\
+    \hline                                                                                 
+    0      & 2                & \texttt{short}                   & 1                 & used to verify correct endianess  \\
+    \hline                                                                                 
+    2      & 1                & \texttt{byte}                    & 3 or 5            & data type of time: 3 (long) or 5 (double) \\
+    \hline                                                                                 
+    3      & 8                & \texttt{long} or \texttt{double} & \textit{any}      & $t_0$: reference timestamp \\
+    \hline                                                                                 
+    11     & 8                & \texttt{long} or \texttt{double} & \textit{any}      & $\Delta t$: time interval between two samples \\
+    \hline                           
+    19     & 1                & \texttt{byte}                    & 0 ... 5           & data type of scaling for data values \\
+     ~     & ~                &      ~                           & or -128           & highest bit set indicates scaling is disabled \\
+    \hline                           
+    [20]   & 8                & \textit{varying}                 & \textit{any}      & offset $o$ of data values \\
+    \hline                                                                                 
+    [28]   & 8                & \textit{varying}                 & \textit{any}      & scaling factor $s$ for data values \\
+    \hline                                                                                 
+    36     & 23               & \textit{reserved}                & \textit{reserved} & reserved for future use, e.g. units \\
+    \hline                                                                                 
+    59     & 1                & \texttt{byte}                    & 0 ... 5           & dtype of raw data: 0 (byte) to 5 (double) \\
+    \hline                                                              
+    60     & 4                & \texttt{int}                     & $> 0$             & number $N$ of data values \\
     \hline
-    41      & 23               & \textit{reserved}                & \textit{varying}       & reserved for future use, e.g. units \\
-    \hline                                                                                        
-    64      & \textit{varying} & \textit{varying}                 &\textit{varying}        & data values $\hat{y}_i$ of type given by dtype \\
+    64     & \textit{varying} & \textit{varying}                 & \textit{any}      & data values $\hat{y}_i$ of type given by dtype \\
     \hline
  \end{tabular}
- \caption{Structure of the binary timeseries files. If no scaling for the data values is provided, the values in [ ] are not valid and should contains zeros in the file.}
+ \caption{Structure of the binary timeseries files.
+ The values in the columns ``offset'' and ``size'' are in bytes.
+ The rows where the offset is in [ ] are not valid and should contains zeros in the file if no scaling for the data values is used.}
  \label{tab:structure}
 \end{table}
 
 The first field at offset 0 in the file is a \texttt{short}, which is always 1.
 It should be read using a readShort() or similar function, which implicitly assumes the system's endianess.
-Then it should be checked if the returned value is $1$ or $-128$. In the latter case,
-the endianess of the reading method is wrong and needs to be flipped in order to proceed.
+Then it should be checked if the returned value is $1$ or $-128$.
+In the latter case, the endianess of the reading method is wrong and needs to be flipped in order to proceed.
 
 The next field at offset 2 defines the datatype of the time axis definition values $t_0$ and $\Delta t$.
 If it is equal to 3, the time definition is given as \texttt{long}.
 If it is equal to 5, the time definition is given as \texttt{double}.
-No assumption should be made on the unit of these values, altough it is recommended to reserve \texttt{double} for seconds and
+No assumption should be made on the unit of these values, although it is recommended to reserve \texttt{double} for seconds and
 \texttt{long} for nanoseconds.
 
-The next field at offset 3 defines the reference timestamp $t_0$ and has to be read as a \texttt{long} or \texttt{double}
+The next field at offset 3 defines the reference timestamp $t_0$ and has to be read as a \texttt{long} or \texttt{double},
 depending on the value read at offset 2.
-The next field at offset 11 defines the sampling interval $\Delta t$ and has to be read as a \texttt{long} or \texttt{double}
+The next field at offset 11 defines the sampling interval $\Delta t$ and has to be read as a \texttt{long} or \texttt{double},
 depending on the value read at offset 2.
 The time axis definition values $t_0$ and $\Delta t$ always have to be of the same datatype and should use the same unit.
 
-The field at offset 19 defines the datatype of the raw data values to come.
-If the highest bit is zero in the datatype of the raw data, no scaling information is available.
-If the highest bit is set in the datatype of the raw data, scaling information is available.
-The next field at offset 20 defines the datatype of the scaling information.
-The datatype of the offset and the scaling factor is assumed to be equal.
-At offset 21, the constant offset $o$ of the raw data is stored. Its size can range from one byte to at most eight bytes
-and is always stored from offset 21 on; the remaining (unused bytes) in case of a type smaller than 8 bytes are unused and should be written as zeros.
-Right after the data offset value, at an offset of 29, the scaling factor $s$ is stored.
+The field at offset 19 defines the datatype of the scaling values to come.
+If the highest bit is set in the datatype of the scaling values, no scaling is used.
+If the highest bit is zero in the datatype of the scaling values, scaling is used.
+The scaling values $o$ and $s$ always have to be of the same datatype and should use the same unit.
+At offset 20, the constant offset $o$ of the raw data is stored. Its size can range from one byte to at most eight bytes
+and it is always stored from offset 20 on; the remaining (unused) bytes in case of a type smaller than 8 bytes are ignored and should be written as zeros.
+Right after the data offset value, at an offset of 28, the scaling factor $s$ is stored.
 Its size can range from one byte to at most eight bytes
-and is always stored from offset 29 on; the remaining (unused bytes) in case of a type smaller than 8 bytes are unused and should be written as zeros.
-Right after the data scaling value, at an offset of 37, the number of data values $N$ to come is stored.
-The bytes at offsets 41 to 63 are reserved for future use.
-From offset 64 on, the raw data values $\hat{y}_i$ are stored, which have to be read as the type defined by the datatype
-identified by the value at offset 19 where the highest bit (which indicates if a scaling is available or not) is ignored.
+and it is always stored from offset 28 on; the remaining (unused) bytes in case of a type smaller than 8 bytes are ignored and should be written as zeros.
+
+The bytes at offsets 36 to 58 are reserved for future use.
+
+The next field at offset 59 defines the datatype of the raw data.
+Right after the raw data type, at an offset of 60, the number of data values $N$ to come is stored.
+From offset 64 on, the raw data values $\hat{y}_i$ are stored, which have to be read as the data type defined by the value at offset 59.
 
 \section{Subset Reading}\label{sec:subset_reading}
 The main goal of this file format is to allow easy and fast reading of subsets of the whole time series data.
@@ -149,7 +156,7 @@ Having an equally spaced time axis allows to compute the data indices inside a g
 the offsets in the file can be computed for seeking to the computed position in the file and reading only from there on.
 
 Suppose you have read $t_0$ and $\Delta t$ from the binary timeseries file header and now want to read all available samples
-inside the interval $[t_l, t_u]$ where $t_l < t_u$ and the subscripts $l$ ($u$) stand for \textit{lower} (\textit{upper}).
+inside the interval $[t_l, t_u]$ where $t_l < t_u$ and the subscript $l$ ($u$) stand for \textit{lower} (\textit{upper}).
 This situation is illustrated in Fig.~\ref{fig:timeAxis}
 (\textattachfile[description={SVG version of Fig.~\ref{fig:timeAxis}}]{timeAxis.svg}{SVG},~\textattachfile[
                  description={EPS version of Fig.~\ref{fig:timeAxis}}]{timeAxis.eps}{EPS}).
@@ -157,7 +164,7 @@ This situation is illustrated in Fig.~\ref{fig:timeAxis}
   \centering
   \includegraphics[width=0.6\textwidth]{timeAxis.eps}
   \caption{Time axis of a time series, where all data between $t_l$ and $t_u$ should be read.
-  The resulting interval to be read is indicated by the grey rectangle.}
+  The resulting interval to be read includes indices from $i$ to $j$ and is indicated by the grey rectangle.}
   \label{fig:timeAxis}
 \end{figure}
 
