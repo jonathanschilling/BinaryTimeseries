@@ -174,17 +174,17 @@ public class BinaryTimeseries {
 	/**
 	 * Write a 1 as {@code short} to the {@code target} file.
 	 * This is used to check if correct endianess is used in reading; wrong endianess would lead to reading this as -128.
-	 * @param target
+	 * @param target buffer into which to write the time series data
 	 */
 	public static void writeEndianessCheckValue(ByteBuffer target) {
 		target.putShort((short)1);
 	}
 
 	/**
-	 * Write the 
-	 * @param target
-	 * @param t0
-	 * @param dt
+	 * Write the timebase parameters t0 and dt to the {@code target} buffer.
+	 * @param target buffer into which to write the time series data
+	 * @param t0 reference timestamp
+	 * @param dt time interval between two consecutive samples
 	 */
 	public static void writeTimebase(ByteBuffer target, final long t0, final long dt) {
 		target.put(DTYPE_LONG);
@@ -193,10 +193,10 @@ public class BinaryTimeseries {
 	}
 
 	/**
-	 * 
-	 * @param target
-	 * @param t0
-	 * @param dt
+	 * Write the timebase parameters t0 and dt to the {@code target} buffer.
+	 * @param target buffer into which to write the time series data
+	 * @param t0 reference timestamp
+	 * @param dt time interval between two consecutive samples
 	 */
 	public static void writeTimebase(ByteBuffer target, final double t0, final double dt) {
 		target.put(DTYPE_DOUBLE);
@@ -209,8 +209,8 @@ public class BinaryTimeseries {
 	
 	
 	/**
-	 * 
-	 * @param target
+	 * Write the identifier value into the {@code target} buffer that tells the reader that no scaling is available.
+	 * @param target buffer into which to write the time series data
 	 */
 	public static void writeScalingDisabled(ByteBuffer target) {
 		target.put(DTYPE_NONE);
@@ -218,10 +218,10 @@ public class BinaryTimeseries {
 	}
 	
 	/**
-	 * 
-	 * @param target
-	 * @param o
-	 * @param s
+	 * Write the scaling parameters o and s into the {@code target} buffer.
+	 * @param target buffer into which to write the time series data
+	 * @param o offset of the raw data values
+	 * @param s scaling factor of the raw data values
 	 */
 	public static void writeScaling(ByteBuffer target, final byte o, final byte s) {
 		target.put(DTYPE_BYTE);
@@ -230,10 +230,10 @@ public class BinaryTimeseries {
 	}
 	
 	/**
-	 * 
-	 * @param target
-	 * @param o
-	 * @param s
+	 * Write the scaling parameters o and s into the {@code target} buffer.
+	 * @param target buffer into which to write the time series data
+	 * @param o offset of the raw data values
+	 * @param s scaling factor of the raw data values
 	 */
 	public static void writeScaling(ByteBuffer target, final short o, final short s) {
 		target.put(DTYPE_SHORT);
@@ -242,10 +242,10 @@ public class BinaryTimeseries {
 	}
 	
 	/**
-	 * 
-	 * @param target
-	 * @param o
-	 * @param s
+	 * Write the scaling parameters o and s into the {@code target} buffer.
+	 * @param target buffer into which to write the time series data
+	 * @param o offset of the raw data values
+	 * @param s scaling factor of the raw data values
 	 */
 	public static void writeScaling(ByteBuffer target, final int o, final int s) {
 		target.put(DTYPE_INT);
@@ -254,10 +254,10 @@ public class BinaryTimeseries {
 	}
 	
 	/**
-	 * 
-	 * @param target
-	 * @param o
-	 * @param s
+	 * Write the scaling parameters o and s into the {@code target} buffer.
+	 * @param target buffer into which to write the time series data
+	 * @param o offset of the raw data values
+	 * @param s scaling factor of the raw data values
 	 */
 	public static void writeScaling(ByteBuffer target, final long o, final long s) {
 		target.put(DTYPE_LONG);
@@ -266,10 +266,10 @@ public class BinaryTimeseries {
 	}
 	
 	/**
-	 * 
-	 * @param target
-	 * @param o
-	 * @param s
+	 * Write the scaling parameters o and s into the {@code target} buffer.
+	 * @param target buffer into which to write the time series data
+	 * @param o offset of the raw data values
+	 * @param s scaling factor of the raw data values
 	 */
 	public static void writeScaling(ByteBuffer target, final float o, final float s) {
 		target.put(DTYPE_FLOAT);
@@ -278,10 +278,10 @@ public class BinaryTimeseries {
 	}
 	
 	/**
-	 * 
-	 * @param target
-	 * @param o
-	 * @param s
+	 * Write the scaling parameters o and s into the {@code target} buffer.
+	 * @param target buffer into which to write the time series data
+	 * @param o offset of the raw data values
+	 * @param s scaling factor of the raw data values
 	 */
 	public static void writeScaling(ByteBuffer target, final double o, final double s) {
 		target.put(DTYPE_DOUBLE);
@@ -294,8 +294,8 @@ public class BinaryTimeseries {
 	
 	
 	/**
-	 * 
-	 * @param target
+	 * Write zeros for the reserved area in the header.
+	 * @param target buffer into which to write the time series data
 	 */
 	public static void writeReservedDummy(ByteBuffer target) {
 		target.put(new byte[23]);
@@ -305,9 +305,9 @@ public class BinaryTimeseries {
 	
 	
 	/**
-	 * 
-	 * @param target
-	 * @param values
+	 * Write the raw data values into the {@code target} buffer.
+	 * @param target buffer into which to write the time series data
+	 * @param values raw data values; all of them will be dumped into the target buffer
 	 */
 	public static void writeData(ByteBuffer target, final byte[] values) {
 		target.put(DTYPE_BYTE);
@@ -316,9 +316,9 @@ public class BinaryTimeseries {
 	}
 	
 	/**
-	 * 
-	 * @param target
-	 * @param values
+	 * Write the raw data values into the {@code target} buffer.
+	 * @param target buffer into which to write the time series data
+	 * @param values raw data values; all of them will be dumped into the target buffer
 	 */
 	public static void writeData(ByteBuffer target, final short[] values) {
 		target.put(DTYPE_SHORT);
@@ -327,9 +327,9 @@ public class BinaryTimeseries {
 	}
 	
 	/**
-	 * 
-	 * @param target
-	 * @param values
+	 * Write the raw data values into the {@code target} buffer.
+	 * @param target buffer into which to write the time series data
+	 * @param values raw data values; all of them will be dumped into the target buffer
 	 */
 	public static void writeData(ByteBuffer target, final int[] values) {
 		target.put(DTYPE_INT);
@@ -338,9 +338,9 @@ public class BinaryTimeseries {
 	}
 	
 	/**
-	 * 
-	 * @param target
-	 * @param values
+	 * Write the raw data values into the {@code target} buffer.
+	 * @param target buffer into which to write the time series data
+	 * @param values raw data values; all of them will be dumped into the target buffer
 	 */
 	public static void writeData(ByteBuffer target, final long[] values) {
 		target.put(DTYPE_LONG);
@@ -349,9 +349,9 @@ public class BinaryTimeseries {
 	}
 	
 	/**
-	 * 
-	 * @param target
-	 * @param values
+	 * Write the raw data values into the {@code target} buffer.
+	 * @param target buffer into which to write the time series data
+	 * @param values raw data values; all of them will be dumped into the target buffer
 	 */
 	public static void writeData(ByteBuffer target, final float[] values) {
 		target.put(DTYPE_FLOAT);
@@ -360,9 +360,9 @@ public class BinaryTimeseries {
 	}
 	
 	/**
-	 * 
-	 * @param target
-	 * @param values
+	 * Write the raw data values into the {@code target} buffer.
+	 * @param target buffer into which to write the time series data
+	 * @param values raw data values; all of them will be dumped into the target buffer
 	 */
 	public static void writeData(ByteBuffer target, final double[] values) {
 		target.put(DTYPE_DOUBLE);
