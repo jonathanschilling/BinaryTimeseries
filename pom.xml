@@ -8,7 +8,7 @@
 	<version>1.0.0</version>
 
 	<name>BinaryTimeseries</name>
-	<description>binary timeseries storage format with time axis given via an expression</description>
+	<description>A binary timeseries storage format, where the time axis is given via an expression.</description>
 
 	<packaging>jar</packaging>
 	<url>https://github.com/jonathanschilling/BinaryTimeseries</url>

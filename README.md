@@ -1,2 +1,2 @@
 # BinaryTimeseries
-binary timeseries storage format with time axis given via an expression
+A binary timeseries storage format, where the time axis is given via an expression.
