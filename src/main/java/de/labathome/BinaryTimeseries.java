@@ -1130,6 +1130,19 @@ public class BinaryTimeseries {
 	 * @return an array containing the (scaled) data from the {@code source} buffer
 	 */
 	public static final byte[] readData_byte(final ByteBuffer source) {
+		final int firstDataIndex = 0, lastDataIndex = -1;
+		return readData_byte(source, firstDataIndex, lastDataIndex);
+	}
+	
+	/**
+	 * Read the scaling parameters, the reserved (dummy) area, the raw data type and number of samples and the raw data;
+	 * scale the raw data according to the (possibly present) scaling parameters and put the resulting samples into a {@code byte[]} array.
+	 * @param source buffer from which to read
+	 * @param firstDataIndex the index of the first sample to read from the given {@code buffer}
+	 * @param lastDataIndex the index of the last sample to read from the given {@code buffer}; -1 means read all available samples
+	 * @return an array containing the (scaled) data from the {@code source} buffer in the range {@code firstDataIndex} up to and including {@code lastDataIndex}
+	 */
+	public static final byte[] readData_byte(final ByteBuffer source, final int firstDataIndex, final int lastDataIndex) {
 
 		final byte scaling_dtype = readScalingType(source);
 		if (hasScaling(scaling_dtype)) {
@@ -1386,6 +1399,19 @@ public class BinaryTimeseries {
 	 * @return an array containing the (scaled) data from the {@code source} buffer
 	 */
 	public static final short[] readData_short(final ByteBuffer source) {
+		final int firstDataIndex = 0, lastDataIndex = -1;
+		return readData_short(source, firstDataIndex, lastDataIndex);
+	}
+	
+	/**
+	 * Read the scaling parameters, the reserved (dummy) area, the raw data type and number of samples and the raw data;
+	 * scale the raw data according to the (possibly present) scaling parameters and put the resulting samples into a {@code short[]} array.
+	 * @param source buffer from which to read
+	 * @param firstDataIndex the index of the first sample to read from the given {@code buffer}
+	 * @param lastDataIndex the index of the last sample to read from the given {@code buffer}; -1 means read all available samples
+	 * @return an array containing the (scaled) data from the {@code source} buffer in the range {@code firstDataIndex} up to and including {@code lastDataIndex}
+	 */
+	public static final short[] readData_short(final ByteBuffer source, final int firstDataIndex, final int lastDataIndex) {
 
 		final byte scaling_dtype = readScalingType(source);
 		if (hasScaling(scaling_dtype)) {
@@ -1642,6 +1668,19 @@ public class BinaryTimeseries {
 	 * @return an array containing the (scaled) data from the {@code source} buffer
 	 */
 	public static final int[] readData_int(final ByteBuffer source) {
+		final int firstDataIndex = 0, lastDataIndex = -1;
+		return readData_int(source, firstDataIndex, lastDataIndex);
+	}
+	
+	/**
+	 * Read the scaling parameters, the reserved (dummy) area, the raw data type and number of samples and the raw data;
+	 * scale the raw data according to the (possibly present) scaling parameters and put the resulting samples into a {@code int[]} array.
+	 * @param source buffer from which to read
+	 * @param firstDataIndex the index of the first sample to read from the given {@code buffer}
+	 * @param lastDataIndex the index of the last sample to read from the given {@code buffer}; -1 means read all available samples
+	 * @return an array containing the (scaled) data from the {@code source} buffer in the range {@code firstDataIndex} up to and including {@code lastDataIndex}
+	 */
+	public static final int[] readData_int(final ByteBuffer source, final int firstDataIndex, final int lastDataIndex) {
 
 		final byte scaling_dtype = readScalingType(source);
 		if (hasScaling(scaling_dtype)) {
@@ -1898,6 +1937,19 @@ public class BinaryTimeseries {
 	 * @return an array containing the (scaled) data from the {@code source} buffer
 	 */
 	public static final long[] readData_long(final ByteBuffer source) {
+		final int firstDataIndex = 0, lastDataIndex = -1;
+		return readData_long(source, firstDataIndex, lastDataIndex);
+	}
+	
+	/**
+	 * Read the scaling parameters, the reserved (dummy) area, the raw data type and number of samples and the raw data;
+	 * scale the raw data according to the (possibly present) scaling parameters and put the resulting samples into a {@code long[]} array.
+	 * @param source buffer from which to read
+	 * @param firstDataIndex the index of the first sample to read from the given {@code buffer}
+	 * @param lastDataIndex the index of the last sample to read from the given {@code buffer}; -1 means read all available samples
+	 * @return an array containing the (scaled) data from the {@code source} buffer in the range {@code firstDataIndex} up to and including {@code lastDataIndex}
+	 */
+	public static final long[] readData_long(final ByteBuffer source, final int firstDataIndex, final int lastDataIndex) {
 
 		final byte scaling_dtype = readScalingType(source);
 		if (hasScaling(scaling_dtype)) {
@@ -2154,6 +2206,19 @@ public class BinaryTimeseries {
 	 * @return an array containing the (scaled) data from the {@code source} buffer
 	 */
 	public static final float[] readData_float(final ByteBuffer source) {
+		final int firstDataIndex = 0, lastDataIndex = -1;
+		return readData_float(source, firstDataIndex, lastDataIndex);
+	}
+	
+	/**
+	 * Read the scaling parameters, the reserved (dummy) area, the raw data type and number of samples and the raw data;
+	 * scale the raw data according to the (possibly present) scaling parameters and put the resulting samples into a {@code float[]} array.
+	 * @param source buffer from which to read
+	 * @param firstDataIndex the index of the first sample to read from the given {@code buffer}
+	 * @param lastDataIndex the index of the last sample to read from the given {@code buffer}; -1 means read all available samples
+	 * @return an array containing the (scaled) data from the {@code source} buffer in the range {@code firstDataIndex} up to and including {@code lastDataIndex}
+	 */
+	public static final float[] readData_float(final ByteBuffer source, final int firstDataIndex, final int lastDataIndex) {
 
 		final byte scaling_dtype = readScalingType(source);
 		if (hasScaling(scaling_dtype)) {
@@ -2410,6 +2475,19 @@ public class BinaryTimeseries {
 	 * @return an array containing the (scaled) data from the {@code source} buffer
 	 */
 	public static final double[] readData_double(final ByteBuffer source) {
+		final int firstDataIndex = 0, lastDataIndex = -1;
+		return readData_double(source, firstDataIndex, lastDataIndex);
+	}
+	
+	/**
+	 * Read the scaling parameters, the reserved (dummy) area, the raw data type and number of samples and the raw data;
+	 * scale the raw data according to the (possibly present) scaling parameters and put the resulting samples into a {@code double[]} array.
+	 * @param source buffer from which to read
+	 * @param firstDataIndex the index of the first sample to read from the given {@code buffer}
+	 * @param lastDataIndex the index of the last sample to read from the given {@code buffer}; -1 means read all available samples
+	 * @return an array containing the (scaled) data from the {@code source} buffer in the range {@code firstDataIndex} up to and including {@code lastDataIndex}
+	 */
+	public static final double[] readData_double(final ByteBuffer source, final int firstDataIndex, final int lastDataIndex) {
 
 		final byte scaling_dtype = readScalingType(source);
 		if (hasScaling(scaling_dtype)) {
