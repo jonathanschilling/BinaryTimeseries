@@ -463,30 +463,6 @@ public class BinaryTimeseries {
 			headerExplanation += String.format(" => invalid number of samples (would be interpreted as %d)", numSamples);
 		}
 
-		// Maybe print first recognized data value? At least one sample should be there, since numSamples>0 was already checked.
-		// Currently, this is not possible because only the header is read and the length of the given byte array is checked to be 64.
-		
-		//		previousPosition = source.position();
-		//		if (data_dtype == DTYPE_BYTE) {
-		//			final byte firstSample = source.get();
-		//			headerExplanation += String.format(" %2d  %2d reads 0x%01X => first sample = %d", previousPosition, source.position()-previousPosition, firstSample, firstSample);
-		//		} else if (data_dtype == DTYPE_SHORT) {
-		//			final short firstSample = source.getShort();
-		//			headerExplanation += String.format(" %2d  %2d reads 0x%02X => first sample = %d", previousPosition, source.position()-previousPosition, firstSample, firstSample);
-		//		} else if (data_dtype == DTYPE_INT) {
-		//			final int firstSample = source.getInt();
-		//			headerExplanation += String.format(" %2d  %2d reads 0x%04X => first sample = %d", previousPosition, source.position()-previousPosition, firstSample, firstSample);
-		//		} else if (data_dtype == DTYPE_LONG) {
-		//			final long firstSample = source.getLong();
-		//			headerExplanation += String.format(" %2d  %2d reads 0x%01X => first sample = %d", previousPosition, source.position()-previousPosition, firstSample, firstSample);
-		//		} else if (data_dtype == DTYPE_FLOAT) {
-		//			final float firstSample = source.getFloat();
-		//			headerExplanation += String.format(" %2d  %2d reads 0x%01X => first sample = %g", previousPosition, source.position()-previousPosition, firstSample, firstSample);
-		//		} else if (data_dtype == DTYPE_DOUBLE) {
-		//			final double firstSample = source.getDouble();
-		//			headerExplanation += String.format(" %2d  %2d reads 0x%01X => first sample = %g", previousPosition, source.position()-previousPosition, firstSample, firstSample);
-		//		}
-
 		return headerExplanation;
 	}
 
@@ -1171,41 +1147,9 @@ public class BinaryTimeseries {
 				}
 				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
-			} else {
-				// silently ignore unknown scaling values
-				readScalingDisabled(source);
-				readReservedDummy(source);
-				final byte data_dtype = readDataType(source);
-				final int numSamples = readNumSamples(source);
-				final byte[] target = new byte[numSamples];
-				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = source.get();
-					}
-				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (byte) source.getShort();
-					}
-				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (byte) source.getInt();
-					}
-				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (byte) source.getLong();
-					}
-				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (byte) source.getFloat();
-					}
-				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (byte) source.getDouble();
-					}
-				}
-				// silently ignore unknown data dtype and return an array filled with zeros
-				return target;
 			}
+			// Invalid scaling has to be penalized!
+			return null;
 		} else {
 			// no scaling provided, so read raw data
 			readScalingDisabled(source);
@@ -1453,42 +1397,9 @@ public class BinaryTimeseries {
 				}
 				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
-			} else {
-				// silently ignore unknown scaling values
-				readScalingDisabled(source);
-
-				readReservedDummy(source);
-				final byte data_dtype = readDataType(source);
-				final int numSamples = readNumSamples(source);
-				final short[] target = new short[numSamples];
-				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = source.get();
-					}
-				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (short) source.getShort();
-					}
-				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (short) source.getInt();
-					}
-				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (short) source.getLong();
-					}
-				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (short) source.getFloat();
-					}
-				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (short) source.getDouble();
-					}
-				}
-				// silently ignore unknown data dtype and return an array filled with zeros
-				return target;
 			}
+			// Invalid scaling has to be penalized!
+			return null;
 		} else {
 			// no scaling provided, so read raw data
 			readScalingDisabled(source);
@@ -1736,41 +1647,9 @@ public class BinaryTimeseries {
 				}
 				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
-			} else {
-				// silently ignore unknown scaling values
-				readScalingDisabled(source);
-				readReservedDummy(source);
-				final byte data_dtype = readDataType(source);
-				final int numSamples = readNumSamples(source);
-				final int[] target = new int[numSamples];
-				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = source.get();
-					}
-				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (int) source.getShort();
-					}
-				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (int) source.getInt();
-					}
-				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (int) source.getLong();
-					}
-				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (int) source.getFloat();
-					}
-				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (int) source.getDouble();
-					}
-				}
-				// silently ignore unknown data dtype and return an array filled with zeros
-				return target;
 			}
+			// Invalid scaling has to be penalized!
+			return null;
 		} else {
 			// no scaling provided, so read raw data
 			readScalingDisabled(source);
@@ -2020,41 +1899,9 @@ public class BinaryTimeseries {
 				}
 				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
-			} else {
-				// silently ignore unknown scaling values
-				readScalingDisabled(source);
-				readReservedDummy(source);
-				final byte data_dtype = readDataType(source);
-				final int numSamples = readNumSamples(source);
-				final long[] target = new long[numSamples];
-				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = source.get();
-					}
-				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (long) source.getShort();
-					}
-				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (long) source.getInt();
-					}
-				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (long) source.getLong();
-					}
-				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (long) source.getFloat();
-					}
-				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (long) source.getDouble();
-					}
-				}
-				// silently ignore unknown data dtype and return an array filled with zeros
-				return target;
 			}
+			// Invalid scaling has to be penalized!
+			return null;
 		} else {
 			// no scaling provided, so read raw data
 			readScalingDisabled(source);
@@ -2303,41 +2150,9 @@ public class BinaryTimeseries {
 				}
 				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
-			} else {
-				// silently ignore unknown scaling values
-				readScalingDisabled(source);
-				readReservedDummy(source);
-				final byte data_dtype = readDataType(source);
-				final int numSamples = readNumSamples(source);
-				final float[] target = new float[numSamples];
-				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = source.get();
-					}
-				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (float) source.getShort();
-					}
-				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (float) source.getInt();
-					}
-				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (float) source.getLong();
-					}
-				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (float) source.getFloat();
-					}
-				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (float) source.getDouble();
-					}
-				}
-				// silently ignore unknown data dtype and return an array filled with zeros
-				return target;
 			}
+			// Invalid scaling has to be penalized!
+			return null;
 		} else {
 			// no scaling provided, so read raw data
 			readScalingDisabled(source);
@@ -2585,41 +2400,9 @@ public class BinaryTimeseries {
 				}
 				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
-			} else {
-				// silently ignore unknown scaling values
-				readScalingDisabled(source);
-				readReservedDummy(source);
-				final byte data_dtype = readDataType(source);
-				final int numSamples = readNumSamples(source);
-				final double[] target = new double[numSamples];
-				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = source.get();
-					}
-				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (double) source.getShort();
-					}
-				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (double) source.getInt();
-					}
-				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (double) source.getLong();
-					}
-				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (double) source.getFloat();
-					}
-				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
-						target[i] = (double) source.getDouble();
-					}
-				}
-				// silently ignore unknown data dtype and return an array filled with zeros
-				return target;
 			}
+			// Invalid scaling has to be penalized!
+			return null;
 		} else {
 			// no scaling provided, so read raw data
 			readScalingDisabled(source);
