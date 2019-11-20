@@ -210,10 +210,10 @@ public class BinaryTimeseries {
 		if (firstShort == 1) {
 			headerExplanation += " => correct endianess\n";
 		} else if (firstShort == -128) {
-			headerExplanation += " => incorrect endianess\n";
+			headerExplanation += " => incorrect endianess";
 			return headerExplanation;
 		} else {
-			headerExplanation += " => invalid endianess check value: "+firstShort+"\n";
+			headerExplanation += " => invalid endianess check value: "+firstShort;
 			return headerExplanation;
 		}
 
@@ -223,10 +223,10 @@ public class BinaryTimeseries {
 		if (time_dtype == DTYPE_LONG) {
 			headerExplanation += " => timestamps as long\n";
 		} else if (time_dtype == DTYPE_DOUBLE) {
-			headerExplanation += " => timestamps as double\n";
+			headerExplanation += " => timestamps as double";
 			return headerExplanation;
 		} else {
-			headerExplanation += " => invalid timestamps data type: "+time_dtype+"\n";
+			headerExplanation += " => invalid timestamps data type: "+time_dtype;
 			return headerExplanation;
 		}
 
@@ -264,7 +264,7 @@ public class BinaryTimeseries {
 		} else if (scaling_dtype == DTYPE_DOUBLE) {
 			headerExplanation += " => scaling as double\n";
 		} else {
-			headerExplanation += " => invalid scaling type: "+scaling_dtype+"\n";
+			headerExplanation += " => invalid scaling type: "+scaling_dtype;
 			return headerExplanation;
 		}
 
@@ -450,7 +450,7 @@ public class BinaryTimeseries {
 		} else if (data_dtype == DTYPE_DOUBLE) {
 			headerExplanation += " => raw data as double\n";
 		} else {
-			headerExplanation += " => invalid raw data type: "+data_dtype+"\n";
+			headerExplanation += " => invalid raw data type: "+data_dtype;
 			return headerExplanation;
 		}
 

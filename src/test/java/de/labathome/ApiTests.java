@@ -212,11 +212,8 @@ public class ApiTests {
 					
 					// code for testing the API write and read methods
 					String writeTestCode = "	@Test\n"+
-							"	public void testWriting_"+testId+"() {\n";
+							"	public void testReadWrite_"+testId+"() {\n";
 					
-					
-					String readTestCode = "	@Test\n"+
-							"	public void testReading_"+testId+"() {\n";
 					
 					
 					
@@ -322,9 +319,7 @@ public class ApiTests {
 					writeTestCode += "		final int numSamples = "+numSamplesStr+";\n";
 					
 					// actual data
-					Object samples = null;
 					if (data_dtype == BinaryTimeseries.DTYPE_BYTE) {
-						samples = new byte[numSamples];
 						byte sample = 0;
 						for (int i=0; i<numSamples; ++i) {
 							if (scaling_dtype == BinaryTimeseries.DTYPE_NONE) {
@@ -343,10 +338,8 @@ public class ApiTests {
 								sample = (byte) (scalingOffset_D + i*scalingFactor_D);
 							}
 							referenceTarget.put(sample);
-							((byte[])samples)[i] = sample;
 						}
 					} else if (data_dtype == BinaryTimeseries.DTYPE_SHORT) {
-						samples = new short[numSamples];
 						short sample = 0;
 						for (int i=0; i<numSamples; ++i) {
 							if (scaling_dtype == BinaryTimeseries.DTYPE_NONE) {
@@ -365,10 +358,8 @@ public class ApiTests {
 								sample = (short) (scalingOffset_D + i*scalingFactor_D);
 							}
 							referenceTarget.putShort(sample);
-							((short[])samples)[i] = sample;
 						}
 					} else if (data_dtype == BinaryTimeseries.DTYPE_INT) {
-						samples = new int[numSamples];
 						int sample = 0;
 						for (int i=0; i<numSamples; ++i) {
 							if (scaling_dtype == BinaryTimeseries.DTYPE_NONE) {
@@ -387,10 +378,8 @@ public class ApiTests {
 								sample = (int) (scalingOffset_D + i*scalingFactor_D);
 							}
 							referenceTarget.putInt(sample);
-							((int[])samples)[i] = sample;
 						}
 					} else if (data_dtype == BinaryTimeseries.DTYPE_LONG) {
-						samples = new long[numSamples];
 						long sample = 0;
 						for (int i=0; i<numSamples; ++i) {
 							if (scaling_dtype == BinaryTimeseries.DTYPE_NONE) {
@@ -409,10 +398,8 @@ public class ApiTests {
 								sample = (long) (scalingOffset_D + i*scalingFactor_D);
 							}
 							referenceTarget.putLong(sample);
-							((long[])samples)[i] = sample;
 						}
 					} else if (data_dtype == BinaryTimeseries.DTYPE_FLOAT) {
-						samples = new float[numSamples];
 						float sample = (float) 0.0;
 						for (int i=0; i<numSamples; ++i) {
 							if (scaling_dtype == BinaryTimeseries.DTYPE_NONE) {
@@ -431,10 +418,8 @@ public class ApiTests {
 								sample = (float) (scalingOffset_D + i*scalingFactor_D);
 							}
 							referenceTarget.putFloat(sample);
-							((float[])samples)[i] = sample;
 						}
 					} else if (data_dtype == BinaryTimeseries.DTYPE_DOUBLE) {
-						samples = new double[numSamples];
 						double sample = 0.0;
 						for (int i=0; i<numSamples; ++i) {
 							if (scaling_dtype == BinaryTimeseries.DTYPE_NONE) {
@@ -453,7 +438,6 @@ public class ApiTests {
 								sample = (double) (scalingOffset_D + i*scalingFactor_D);
 							}
 							referenceTarget.putDouble(sample);
-							((double[])samples)[i] = sample;
 						}
 					}
 					//assertEquals(filesize, referenceTarget.position());
@@ -498,7 +482,6 @@ public class ApiTests {
 					// finally actually check the array contents
 					writeTestCode += "		assertArrayEquals(referenceBTS_"+testId+", targetArr);\n";
 
-					
 					if (scaling_dtype == BinaryTimeseries.DTYPE_NONE) {
 						// rewind and re-check using write() without scaling
 						writeTestCode += "		target.position(0);\n" +
@@ -513,8 +496,18 @@ public class ApiTests {
 					
 					
 					
+					// now that the writing routines are verified, check the reading routines
 					
-					// check reading routines
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
 					
 					
 					
@@ -523,14 +516,50 @@ public class ApiTests {
 					
 					
 					writeTestCode += "	}\n";
-					readTestCode  += "	}\n";
-					
 					System.out.println(writeTestCode);
-					System.out.println(readTestCode);
 				}
 			}
 			
 		}
+	}
+	
+	/**
+	 * Test that the dtypeStr() method works as expected.
+	 */
+	@Test
+	public void testDtypeToString() {
+		assertEquals("N", BinaryTimeseries.dtypeStr(BinaryTimeseries.DTYPE_NONE));
+		assertEquals("B", BinaryTimeseries.dtypeStr(BinaryTimeseries.DTYPE_BYTE));
+		assertEquals("S", BinaryTimeseries.dtypeStr(BinaryTimeseries.DTYPE_SHORT));
+		assertEquals("I", BinaryTimeseries.dtypeStr(BinaryTimeseries.DTYPE_INT));
+		assertEquals("L", BinaryTimeseries.dtypeStr(BinaryTimeseries.DTYPE_LONG));
+		assertEquals("F", BinaryTimeseries.dtypeStr(BinaryTimeseries.DTYPE_FLOAT));
+		assertEquals("D", BinaryTimeseries.dtypeStr(BinaryTimeseries.DTYPE_DOUBLE));
+		assertEquals("?", BinaryTimeseries.dtypeStr((byte) -1));
+	}
+	
+	/**
+	 * Test the header data explanation method.
+	 */
+	@Test
+	public void testExplainHeader() {
+		String explanation = "";
+		
+		byte[] header = null;
+		explanation = BinaryTimeseries.explainHeader(header);
+		assertEquals("header should not be null and have a length of 64 bytes", explanation);
+		
+		header = new byte[1];
+		explanation = BinaryTimeseries.explainHeader(header);
+		assertEquals("header should not be null and have a length of 64 bytes", explanation);
+		
+		header = new byte[64];
+		explanation = BinaryTimeseries.explainHeader(header);
+		assertEquals("  0   2 reads 0x00 => invalid endianess check value: 0", explanation);
+		
+		final ByteBuffer buf = ByteBuffer.wrap(header);
+		
+		
 	}
 	
 	/**
