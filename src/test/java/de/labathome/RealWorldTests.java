@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
  * Some tests resembling real-world use cases of BinaryTimeseries.
  * 
  * @author Jonathan Schilling (jonathan.schilling@mail.de)
+ * @version 1.0.0 first published version
  */
 public class RealWorldTests {
 

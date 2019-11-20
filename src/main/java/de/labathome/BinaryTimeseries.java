@@ -10,6 +10,7 @@ import java.nio.ByteBuffer;
  * Examples of how to use this class can be found in Examples.java.
  * 
  * @author Jonathan Schilling (jonathan.schilling@mail.de)
+ * @version 1.0.0 first published version
  */
 public class BinaryTimeseries {
 
