@@ -45,7 +45,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<junit.jupiter.version>5.5.1</junit.jupiter.version>
 	</properties>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
@@ -66,7 +66,7 @@
 	<build>
 		<resources>
 			<resource>
-			<!-- Include the LaTeX documentation as a resource: doc/BinaryTimeseries.{tex,pdf} -->
+				<!-- Include the LaTeX documentation as a resource: doc/BinaryTimeseries.{tex,pdf} -->
 				<directory>${project.basedir}/doc</directory>
 				<includes>
 					<include>BinaryTimeseries.tex</include>
@@ -74,7 +74,7 @@
 				</includes>
 			</resource>
 		</resources>
-	
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
