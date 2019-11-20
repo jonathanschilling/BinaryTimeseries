@@ -1128,6 +1128,7 @@ public class BinaryTimeseries {
 	 * scale the raw data according to the (possibly present) scaling parameters and put the resulting samples into a {@code byte[]} array.
 	 * @param source buffer from which to read
 	 * @return an array containing the (scaled) data from the {@code source} buffer
+	 * @throws RuntimeException if an unknown scaling type or data type was encountered
 	 */
 	public static final byte[] readData_byte(final ByteBuffer source) {
 		final int firstDataIndex = 0, lastDataIndex = -1;
@@ -1141,6 +1142,7 @@ public class BinaryTimeseries {
 	 * @param firstDataIndex the index of the first sample to read from the given {@code buffer}
 	 * @param lastDataIndex the index of the last sample to read from the given {@code buffer}; -1 means read all available samples
 	 * @return an array containing the (scaled) data from the {@code source} buffer in the range {@code firstDataIndex} up to and including {@code lastDataIndex}
+	 * @throws RuntimeException if an unknown scaling type or data type was encountered
 	 */
 	public static final byte[] readData_byte(final ByteBuffer source, final int firstDataIndex, final int lastDataIndex) {
 
@@ -1178,8 +1180,9 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (byte) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 
 			} else if (scaling_dtype == DTYPE_SHORT) {
@@ -1213,8 +1216,9 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (byte) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 			} else if (scaling_dtype == DTYPE_INT) {
 				final int scalingOffset = readScalingOffset_int(source);
@@ -1247,8 +1251,9 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (byte) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 			} else if (scaling_dtype == DTYPE_LONG) {
 				final long scalingOffset = readScalingOffset_long(source);
@@ -1281,8 +1286,9 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (byte) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 			} else if (scaling_dtype == DTYPE_FLOAT) {
 				final float scalingOffset = readScalingOffset_float(source);
@@ -1315,8 +1321,9 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (byte) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 			} else if (scaling_dtype == DTYPE_DOUBLE) {
 				final double scalingOffset = readScalingOffset_double(source);
@@ -1349,12 +1356,13 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (byte) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
+			} else {
+				throw new RuntimeException("unknown scaling dtype");
 			}
-			// Invalid scaling has to be penalized!
-			return null;
 		} else {
 			// no scaling provided, so read raw data
 			readScalingDisabled(source);
@@ -1386,8 +1394,9 @@ public class BinaryTimeseries {
 				for (int i=0; i<numSamples; ++i) {
 					target[i] = (byte) source.getDouble();
 				}
+			} else {
+				throw new RuntimeException("unknown data dtype");
 			}
-			// silently ignore unknown data dtype and return an array filled with zeros
 			return target;
 		}
 	}
@@ -1397,6 +1406,7 @@ public class BinaryTimeseries {
 	 * scale the raw data according to the (possibly present) scaling parameters and put the resulting samples into a {@code short[]} array.
 	 * @param source buffer from which to read
 	 * @return an array containing the (scaled) data from the {@code source} buffer
+	 * @throws RuntimeException if an unknown scaling type or data type was encountered
 	 */
 	public static final short[] readData_short(final ByteBuffer source) {
 		final int firstDataIndex = 0, lastDataIndex = -1;
@@ -1410,6 +1420,7 @@ public class BinaryTimeseries {
 	 * @param firstDataIndex the index of the first sample to read from the given {@code buffer}
 	 * @param lastDataIndex the index of the last sample to read from the given {@code buffer}; -1 means read all available samples
 	 * @return an array containing the (scaled) data from the {@code source} buffer in the range {@code firstDataIndex} up to and including {@code lastDataIndex}
+	 * @throws RuntimeException if an unknown scaling type or data type was encountered
 	 */
 	public static final short[] readData_short(final ByteBuffer source, final int firstDataIndex, final int lastDataIndex) {
 
@@ -1447,8 +1458,9 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 
 			} else if (scaling_dtype == DTYPE_SHORT) {
@@ -1482,8 +1494,9 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 			} else if (scaling_dtype == DTYPE_INT) {
 				final int scalingOffset = readScalingOffset_int(source);
@@ -1516,8 +1529,9 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 			} else if (scaling_dtype == DTYPE_LONG) {
 				final long scalingOffset = readScalingOffset_long(source);
@@ -1550,8 +1564,9 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 			} else if (scaling_dtype == DTYPE_FLOAT) {
 				final float scalingOffset = readScalingOffset_float(source);
@@ -1584,8 +1599,9 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 			} else if (scaling_dtype == DTYPE_DOUBLE) {
 				final double scalingOffset = readScalingOffset_double(source);
@@ -1618,12 +1634,13 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
+			} else {
+				throw new RuntimeException("unknown scaling dtype");
 			}
-			// Invalid scaling has to be penalized!
-			return null;
 		} else {
 			// no scaling provided, so read raw data
 			readScalingDisabled(source);
@@ -1655,8 +1672,9 @@ public class BinaryTimeseries {
 				for (int i=0; i<numSamples; ++i) {
 					target[i] = (short) source.getDouble();
 				}
+			} else {
+				throw new RuntimeException("unknown data dtype");
 			}
-			// silently ignore unknown data dtype and return an array filled with zeros
 			return target;
 		}
 	}
@@ -1666,6 +1684,7 @@ public class BinaryTimeseries {
 	 * scale the raw data according to the (possibly present) scaling parameters and put the resulting samples into a {@code int[]} array.
 	 * @param source buffer from which to read
 	 * @return an array containing the (scaled) data from the {@code source} buffer
+	 * @throws RuntimeException if an unknown scaling type or data type was encountered
 	 */
 	public static final int[] readData_int(final ByteBuffer source) {
 		final int firstDataIndex = 0, lastDataIndex = -1;
@@ -1679,6 +1698,7 @@ public class BinaryTimeseries {
 	 * @param firstDataIndex the index of the first sample to read from the given {@code buffer}
 	 * @param lastDataIndex the index of the last sample to read from the given {@code buffer}; -1 means read all available samples
 	 * @return an array containing the (scaled) data from the {@code source} buffer in the range {@code firstDataIndex} up to and including {@code lastDataIndex}
+	 * @throws RuntimeException if an unknown scaling type or data type was encountered
 	 */
 	public static final int[] readData_int(final ByteBuffer source, final int firstDataIndex, final int lastDataIndex) {
 
@@ -1716,8 +1736,9 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 
 			} else if (scaling_dtype == DTYPE_SHORT) {
@@ -1751,8 +1772,9 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 			} else if (scaling_dtype == DTYPE_INT) {
 				final int scalingOffset = readScalingOffset_int(source);
@@ -1785,8 +1807,9 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 			} else if (scaling_dtype == DTYPE_LONG) {
 				final long scalingOffset = readScalingOffset_long(source);
@@ -1819,8 +1842,9 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 			} else if (scaling_dtype == DTYPE_FLOAT) {
 				final float scalingOffset = readScalingOffset_float(source);
@@ -1853,8 +1877,9 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 			} else if (scaling_dtype == DTYPE_DOUBLE) {
 				final double scalingOffset = readScalingOffset_double(source);
@@ -1887,12 +1912,13 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
+			} else {
+				throw new RuntimeException("unknown scaling dtype");
 			}
-			// Invalid scaling has to be penalized!
-			return null;
 		} else {
 			// no scaling provided, so read raw data
 			readScalingDisabled(source);
@@ -1924,8 +1950,9 @@ public class BinaryTimeseries {
 				for (int i=0; i<numSamples; ++i) {
 					target[i] = (int) source.getDouble();
 				}
+			} else {
+				throw new RuntimeException("unknown data dtype");
 			}
-			// silently ignore unknown data dtype and return an array filled with zeros
 			return target;
 		}
 	}
@@ -1935,6 +1962,7 @@ public class BinaryTimeseries {
 	 * scale the raw data according to the (possibly present) scaling parameters and put the resulting samples into a {@code long[]} array.
 	 * @param source buffer from which to read
 	 * @return an array containing the (scaled) data from the {@code source} buffer
+	 * @throws RuntimeException if an unknown scaling type or data type was encountered
 	 */
 	public static final long[] readData_long(final ByteBuffer source) {
 		final int firstDataIndex = 0, lastDataIndex = -1;
@@ -1948,6 +1976,7 @@ public class BinaryTimeseries {
 	 * @param firstDataIndex the index of the first sample to read from the given {@code buffer}
 	 * @param lastDataIndex the index of the last sample to read from the given {@code buffer}; -1 means read all available samples
 	 * @return an array containing the (scaled) data from the {@code source} buffer in the range {@code firstDataIndex} up to and including {@code lastDataIndex}
+	 * @throws RuntimeException if an unknown scaling type or data type was encountered
 	 */
 	public static final long[] readData_long(final ByteBuffer source, final int firstDataIndex, final int lastDataIndex) {
 
@@ -1985,8 +2014,9 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 
 			} else if (scaling_dtype == DTYPE_SHORT) {
@@ -2020,8 +2050,9 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 			} else if (scaling_dtype == DTYPE_INT) {
 				final int scalingOffset = readScalingOffset_int(source);
@@ -2054,8 +2085,9 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 			} else if (scaling_dtype == DTYPE_LONG) {
 				final long scalingOffset = readScalingOffset_long(source);
@@ -2088,8 +2120,9 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 			} else if (scaling_dtype == DTYPE_FLOAT) {
 				final float scalingOffset = readScalingOffset_float(source);
@@ -2122,8 +2155,9 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 			} else if (scaling_dtype == DTYPE_DOUBLE) {
 				final double scalingOffset = readScalingOffset_double(source);
@@ -2156,12 +2190,13 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
+			} else {
+				throw new RuntimeException("unknown scaling dtype");
 			}
-			// Invalid scaling has to be penalized!
-			return null;
 		} else {
 			// no scaling provided, so read raw data
 			readScalingDisabled(source);
@@ -2193,8 +2228,9 @@ public class BinaryTimeseries {
 				for (int i=0; i<numSamples; ++i) {
 					target[i] = (long) source.getDouble();
 				}
+			} else {
+				throw new RuntimeException("unknown data dtype");
 			}
-			// silently ignore unknown data dtype and return an array filled with zeros
 			return target;
 		}
 	}
@@ -2204,6 +2240,7 @@ public class BinaryTimeseries {
 	 * scale the raw data according to the (possibly present) scaling parameters and put the resulting samples into a {@code float[]} array.
 	 * @param source buffer from which to read
 	 * @return an array containing the (scaled) data from the {@code source} buffer
+	 * @throws RuntimeException if an unknown scaling type or data type was encountered
 	 */
 	public static final float[] readData_float(final ByteBuffer source) {
 		final int firstDataIndex = 0, lastDataIndex = -1;
@@ -2217,6 +2254,7 @@ public class BinaryTimeseries {
 	 * @param firstDataIndex the index of the first sample to read from the given {@code buffer}
 	 * @param lastDataIndex the index of the last sample to read from the given {@code buffer}; -1 means read all available samples
 	 * @return an array containing the (scaled) data from the {@code source} buffer in the range {@code firstDataIndex} up to and including {@code lastDataIndex}
+	 * @throws RuntimeException if an unknown scaling type or data type was encountered
 	 */
 	public static final float[] readData_float(final ByteBuffer source, final int firstDataIndex, final int lastDataIndex) {
 
@@ -2254,8 +2292,9 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 
 			} else if (scaling_dtype == DTYPE_SHORT) {
@@ -2289,8 +2328,9 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 			} else if (scaling_dtype == DTYPE_INT) {
 				final int scalingOffset = readScalingOffset_int(source);
@@ -2323,8 +2363,9 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 			} else if (scaling_dtype == DTYPE_LONG) {
 				final long scalingOffset = readScalingOffset_long(source);
@@ -2357,8 +2398,9 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 			} else if (scaling_dtype == DTYPE_FLOAT) {
 				final float scalingOffset = readScalingOffset_float(source);
@@ -2391,8 +2433,9 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 			} else if (scaling_dtype == DTYPE_DOUBLE) {
 				final double scalingOffset = readScalingOffset_double(source);
@@ -2425,12 +2468,13 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
+			} else {
+				throw new RuntimeException("unknown scaling dtype");
 			}
-			// Invalid scaling has to be penalized!
-			return null;
 		} else {
 			// no scaling provided, so read raw data
 			readScalingDisabled(source);
@@ -2462,8 +2506,9 @@ public class BinaryTimeseries {
 				for (int i=0; i<numSamples; ++i) {
 					target[i] = (float) source.getDouble();
 				}
+			} else {
+				throw new RuntimeException("unknown data dtype");
 			}
-			// silently ignore unknown data dtype and return an array filled with zeros
 			return target;
 		}
 	}
@@ -2473,6 +2518,7 @@ public class BinaryTimeseries {
 	 * scale the raw data according to the (possibly present) scaling parameters and put the resulting samples into a {@code double[]} array.
 	 * @param source buffer from which to read
 	 * @return an array containing the (scaled) data from the {@code source} buffer
+	 * @throws RuntimeException if an unknown scaling type or data type was encountered
 	 */
 	public static final double[] readData_double(final ByteBuffer source) {
 		final int firstDataIndex = 0, lastDataIndex = -1;
@@ -2486,6 +2532,7 @@ public class BinaryTimeseries {
 	 * @param firstDataIndex the index of the first sample to read from the given {@code buffer}
 	 * @param lastDataIndex the index of the last sample to read from the given {@code buffer}; -1 means read all available samples
 	 * @return an array containing the (scaled) data from the {@code source} buffer in the range {@code firstDataIndex} up to and including {@code lastDataIndex}
+	 * @throws RuntimeException if an unknown scaling type or data type was encountered
 	 */
 	public static final double[] readData_double(final ByteBuffer source, final int firstDataIndex, final int lastDataIndex) {
 
@@ -2498,33 +2545,48 @@ public class BinaryTimeseries {
 				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
-				final double[] target = new double[numSamples];
+				
+				final int numToRead;
+				if (lastDataIndex == -1) {
+					numToRead = numSamples - firstDataIndex;
+				} else {
+					numToRead = lastDataIndex - firstDataIndex + 1;
+				}
+				
+				if (firstDataIndex != 0) {
+					final int currentPosition = source.position();
+					final int bytesToSkip = Byte.BYTES * firstDataIndex;
+					source.position(currentPosition + bytesToSkip);
+				}
+				
+				final double[] target = new double[numToRead];
 				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (double) (scalingOffset + scalingFactor * source.get());
 					}
 				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (double) (scalingOffset + scalingFactor * source.getShort());
 					}
 				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (double) (scalingOffset + scalingFactor * source.getInt());
 					}
 				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (double) (scalingOffset + scalingFactor * source.getLong());
 					}
 				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (double) (scalingOffset + scalingFactor * source.getFloat());
 					}
 				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (double) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 
 			} else if (scaling_dtype == DTYPE_SHORT) {
@@ -2558,8 +2620,9 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (double) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 			} else if (scaling_dtype == DTYPE_INT) {
 				final int scalingOffset = readScalingOffset_int(source);
@@ -2592,8 +2655,9 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (double) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 			} else if (scaling_dtype == DTYPE_LONG) {
 				final long scalingOffset = readScalingOffset_long(source);
@@ -2626,8 +2690,9 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (double) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 			} else if (scaling_dtype == DTYPE_FLOAT) {
 				final float scalingOffset = readScalingOffset_float(source);
@@ -2660,8 +2725,9 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (double) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 			} else if (scaling_dtype == DTYPE_DOUBLE) {
 				final double scalingOffset = readScalingOffset_double(source);
@@ -2694,12 +2760,13 @@ public class BinaryTimeseries {
 					for (int i=0; i<numSamples; ++i) {
 						target[i] = (double) (scalingOffset + scalingFactor * source.getDouble());
 					}
+				} else {
+					throw new RuntimeException("unknown data dtype");
 				}
-				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
+			} else {
+				throw new RuntimeException("unknown scaling dtype");
 			}
-			// Invalid scaling has to be penalized!
-			return null;
 		} else {
 			// no scaling provided, so read raw data
 			readScalingDisabled(source);
@@ -2731,8 +2798,9 @@ public class BinaryTimeseries {
 				for (int i=0; i<numSamples; ++i) {
 					target[i] = (double) source.getDouble();
 				}
+			} else {
+				throw new RuntimeException("unknown data dtype");
 			}
-			// silently ignore unknown data dtype and return an array filled with zeros
 			return target;
 		}
 	}
