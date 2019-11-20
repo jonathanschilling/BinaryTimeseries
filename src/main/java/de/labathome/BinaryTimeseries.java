@@ -12,42 +12,42 @@ import java.nio.ByteBuffer;
  * @author Jonathan Schilling (jonathan.schilling@mail.de)
  */
 public class BinaryTimeseries {
-	
+
 	/**
 	 * Identifier value used to indicate that no raw data scaling is used.
 	 */
 	public static final byte DTYPE_NONE = 0;
-	
+
 	/**
 	 * Identifier value for {@code byte} datatype. <br/> Length: 1 Byte <br/> Range: -128 ... 127
 	 */
 	public static final byte DTYPE_BYTE = 1;
-	
+
 	/**
 	 * Identifier value for {@code short} datatype. <br/> Length: 2 Bytes <br/> Range: -32768 ... 32767
 	 */
 	public static final byte DTYPE_SHORT = 2;
-	
+
 	/**
 	 * Identifier value for {@code int} datatype. <br/> Length: 4 Bytes <br/> Range: -2147483648 ... 2147483647
 	 */
 	public static final byte DTYPE_INT = 3;
-	
+
 	/**
 	 * Identifier value for {@code long} datatype. <br/> Length: 8 Bytes <br/> Range: -9223372036854775808 ... 9223372036854775807
 	 */
 	public static final byte DTYPE_LONG = 4;
-	
+
 	/**
 	 * Identifier value for {@code float} datatype. <br/> Length: 4 Bytes <br/> 7 decimal digits
 	 */
 	public static final byte DTYPE_FLOAT = 5;
-	
+
 	/**
 	 * Identifier value for {@code double} datatype. <br/> Length: 8 Bytes <br/> 16 decimal digits
 	 */
 	public static final byte DTYPE_DOUBLE = 6;
-	
+
 	/**
 	 * Compute the timebase values for a given t_0 and Delta_t.
 	 * The number of values is given by the length of the {@code target} array, into which the values are put.
@@ -59,7 +59,7 @@ public class BinaryTimeseries {
 		final int sourceOffset = 0, targetOffset = 0;
 		buildTimebase(sourceOffset, target, targetOffset, target.length, t0, dt);
 	}
-	
+
 	/**
 	 * Compute the timebase values for a given t_0 and Delta_t.
 	 * All entries in {@code target} from {@code sourceOffset} up to and including {@code sourceOffset+numSamples-1} are filled with appropriate values of the timebase.
@@ -87,7 +87,7 @@ public class BinaryTimeseries {
 		final int sourceOffset = 0, targetOffset = 0;
 		buildTimebase(sourceOffset, target, targetOffset, target.length, t0, dt);
 	}
-	
+
 	/**
 	 * Compute the timebase values for a given t_0 and Delta_t.
 	 * All entries in {@code target} from {@code sourceOffset} up to and including {@code sourceOffset+numSamples-1} are filled with appropriate values of the timebase.
@@ -115,7 +115,7 @@ public class BinaryTimeseries {
 	public static final int firstIndexInside(final double t0, final double dt, final double t_l) {
 		return (int) Math.ceil ((t_l-t0)/dt);
 	}
-	
+
 	/**
 	 * Given a timebase (t0, dt), compute the first index of timestamps inside the given time interval [{@code t_l}, {@code t_u}].
 	 * @param t0 reference timestamp from the file
@@ -127,7 +127,7 @@ public class BinaryTimeseries {
 	public static final int lastIndexInside(final double t0, final double dt, final double t_u) {
 		return (int) Math.floor((t_u-t0)/dt);
 	}
-	
+
 	/**
 	 * Given a timebase (t0, dt), compute the first index of timestamps inside the given time interval [{@code t_l}, {@code t_u}].
 	 * @param t0 reference timestamp from the file
@@ -140,7 +140,7 @@ public class BinaryTimeseries {
 	public static final int firstIndexInside(final long t0, final long dt, final long t_l) {
 		return (int) ((t_l-t0 + dt - 1) / dt);
 	}
-	
+
 	/**
 	 * Given a timebase (t0, dt), compute the first index of timestamps inside the given time interval [{@code t_l}, {@code t_u}].
 	 * @param t0 reference timestamp from the file
@@ -152,7 +152,7 @@ public class BinaryTimeseries {
 	public static final int lastIndexInside(final long t0, final long dt, final long t_u) {
 		return (int) ((t_u-t0         ) / dt);
 	}
-	
+
 	/**
 	 * Compute the file offset (and buffer size when reading the file) in bytes given the size of the contained raw data type and the number of samples/index.
 	 * These values can be obtained from first just reading the header and then continuing with reading the whole file.
@@ -163,17 +163,17 @@ public class BinaryTimeseries {
 	public static final int fileOffset(final int dataSize, final int index) {
 		return 64+dataSize*index;
 	}
-	
-	
+
+
 	public static final String explainHeader(byte[] header) {
 		if (header == null || header.length != 64) {
 			return "header should not be null and have a length of 64 bytes";
 		}
-		
+
 		int previousPosition = 0;
 		String headerExplanation = "";
 		final ByteBuffer source = ByteBuffer.wrap(header);
-		
+
 		previousPosition = source.position();
 		final short firstShort = source.getShort();
 		headerExplanation += String.format(" %2d  %2d reads 0x%02X", previousPosition, source.position()-previousPosition, firstShort);
@@ -186,7 +186,7 @@ public class BinaryTimeseries {
 			headerExplanation += " => invalid endianess check value: "+firstShort+"\n";
 			return headerExplanation;
 		}
-		
+
 		previousPosition = source.position();
 		final byte time_dtype = source.get();
 		headerExplanation += String.format(" %2d  %2d reads 0x%01X", previousPosition, source.position()-previousPosition, time_dtype);
@@ -199,7 +199,7 @@ public class BinaryTimeseries {
 			headerExplanation += " => invalid timestamps data type: "+time_dtype+"\n";
 			return headerExplanation;
 		}
-		
+
 		if (time_dtype == DTYPE_LONG) {
 			previousPosition = source.position();
 			long t0 = source.getLong();
@@ -215,7 +215,7 @@ public class BinaryTimeseries {
 			double dt = source.getDouble();
 			headerExplanation += String.format(" %2d  %2d reads 0x%016X => dt = %g\n", previousPosition, source.position()-previousPosition, dt, dt);
 		}
-		
+
 		previousPosition = source.position();
 		final byte scaling_dtype = source.get();
 		headerExplanation += String.format(" %2d  %2d reads 0x%01X", previousPosition, source.position()-previousPosition, scaling_dtype);
@@ -237,10 +237,10 @@ public class BinaryTimeseries {
 			headerExplanation += " => invalid scaling type: "+scaling_dtype+"\n";
 			return headerExplanation;
 		}
-		
+
 		if (scaling_dtype == DTYPE_NONE) {
 			final byte[] dummy = new byte[8];
-			
+
 			previousPosition = source.position();
 			source.get(dummy);
 			String contents = "";
@@ -249,7 +249,7 @@ public class BinaryTimeseries {
 			}
 			contents += String.format("0x%02X", dummy[dummy.length-1]);
 			headerExplanation += String.format("[%2d] %2d reads %s\n", previousPosition, source.position()-previousPosition, contents);
-			
+
 			previousPosition = source.position();
 			source.get(dummy);
 			contents = "";
@@ -258,14 +258,14 @@ public class BinaryTimeseries {
 			}
 			contents += String.format("0x%02X", dummy[dummy.length-1]);
 			headerExplanation += String.format("[%2d] %2d reads %s\n", previousPosition, source.position()-previousPosition, contents);
-			
+
 		} else if (scaling_dtype == DTYPE_BYTE) {
 			final byte[] dummy = new byte[8 - Byte.BYTES];
-			
+
 			previousPosition = source.position();
 			byte scalingOffset = source.get();
 			headerExplanation += String.format(" %2d  %2d reads 0x%01X => scalingOffset = %d\n", previousPosition, source.position()-previousPosition, scalingOffset, scalingOffset);
-			
+
 			previousPosition = source.position();
 			source.get(dummy);
 			String contents = "";
@@ -274,7 +274,7 @@ public class BinaryTimeseries {
 			}
 			contents += String.format("0x%02X", dummy[dummy.length-1]);
 			headerExplanation += String.format(" %2d  %2d reads %s\n", previousPosition, source.position()-previousPosition, contents);
-			
+
 			previousPosition = source.position();
 			byte scalingFactor = source.get();
 			headerExplanation += String.format(" %2d  %2d reads 0x%01X => scalingFactor = %d\n", previousPosition, source.position()-previousPosition, scalingFactor, scalingFactor);
@@ -287,14 +287,14 @@ public class BinaryTimeseries {
 			}
 			contents += String.format("0x%02X", dummy[dummy.length-1]);
 			headerExplanation += String.format(" %2d  %2d reads %s\n", previousPosition, source.position()-previousPosition, contents);
-			
+
 		} else if (scaling_dtype == DTYPE_SHORT) {
 			final byte[] dummy = new byte[8 - Short.BYTES];
-			
+
 			previousPosition = source.position();
 			short scalingOffset = source.getShort();
 			headerExplanation += String.format(" %2d  %2d reads 0x%02X => scalingOffset = %d\n", previousPosition, source.position()-previousPosition, scalingOffset, scalingOffset);
-			
+
 			previousPosition = source.position();
 			source.get(dummy);
 			String contents = "";
@@ -303,11 +303,11 @@ public class BinaryTimeseries {
 			}
 			contents += String.format("0x%02X", dummy[dummy.length-1]);
 			headerExplanation += String.format(" %2d  %2d reads %s\n", previousPosition, source.position()-previousPosition, contents);
-			
+
 			previousPosition = source.position();
 			short scalingFactor = source.getShort();
 			headerExplanation += String.format(" %2d  %2d reads 0x%02X => scalingFactor = %d\n", previousPosition, source.position()-previousPosition, scalingFactor, scalingFactor);
-			
+
 			previousPosition = source.position();
 			source.get(dummy);
 			contents = "";
@@ -316,14 +316,14 @@ public class BinaryTimeseries {
 			}
 			contents += String.format("0x%02X", dummy[dummy.length-1]);
 			headerExplanation += String.format(" %2d  %2d reads %s\n", previousPosition, source.position()-previousPosition, contents);
-			
+
 		} else if (scaling_dtype == DTYPE_INT) {
 			final byte[] dummy = new byte[8 - Integer.BYTES];
-			
+
 			previousPosition = source.position();
 			int scalingOffset = source.getInt();
 			headerExplanation += String.format(" %2d  %2d reads 0x%04X => scalingOffset = %d\n", previousPosition, source.position()-previousPosition, scalingOffset, scalingOffset);
-			
+
 			previousPosition = source.position();
 			source.get(dummy);
 			String contents = "";
@@ -332,11 +332,11 @@ public class BinaryTimeseries {
 			}
 			contents += String.format("0x%02X", dummy[dummy.length-1]);
 			headerExplanation += String.format(" %2d  %2d reads %s\n", previousPosition, source.position()-previousPosition, contents);
-			
+
 			previousPosition = source.position();
 			int scalingFactor = source.getInt();
 			headerExplanation += String.format(" %2d  %2d reads 0x%04X => scalingFactor = %d\n", previousPosition, source.position()-previousPosition, scalingFactor, scalingFactor);
-			
+
 			previousPosition = source.position();
 			source.get(dummy);
 			contents = "";
@@ -345,23 +345,23 @@ public class BinaryTimeseries {
 			}
 			contents += String.format("0x%02X", dummy[dummy.length-1]);
 			headerExplanation += String.format(" %2d  %2d reads %s\n", previousPosition, source.position()-previousPosition, contents);
-			
+
 		} else if (scaling_dtype == DTYPE_LONG) {
 			previousPosition = source.position();
 			long scalingOffset = source.getLong();
 			headerExplanation += String.format(" %2d  %2d reads 0x%016X => scalingOffset = %d\n", previousPosition, source.position()-previousPosition, scalingOffset, scalingOffset);
-			
+
 			previousPosition = source.position();
 			long scalingFactor = source.getLong();
 			headerExplanation += String.format(" %2d  %2d reads 0x%016X => scalingFactor = %d\n", previousPosition, source.position()-previousPosition, scalingFactor, scalingFactor);
-		
+
 		} else if (scaling_dtype == DTYPE_FLOAT) {
 			final byte[] dummy = new byte[8 - Float.BYTES];
-		
+
 			previousPosition = source.position();
 			float scalingOffset = source.getFloat();
 			headerExplanation += String.format(" %2d  %2d reads 0x%04X => scalingOffset = %g\n", previousPosition, source.position()-previousPosition, scalingOffset, scalingOffset);
-			
+
 			previousPosition = source.position();
 			source.get(dummy);
 			String contents = "";
@@ -370,11 +370,11 @@ public class BinaryTimeseries {
 			}
 			contents += String.format("0x%02X", dummy[dummy.length-1]);
 			headerExplanation += String.format(" %2d  %2d reads %s\n", previousPosition, source.position()-previousPosition, contents);
-			
+
 			previousPosition = source.position();
 			float scalingFactor = source.getFloat();
 			headerExplanation += String.format(" %2d  %2d reads 0x%04X => scalingFactor = %g\n", previousPosition, source.position()-previousPosition, scalingFactor, scalingFactor);
-			
+
 			previousPosition = source.position();
 			source.get(dummy);
 			contents = "";
@@ -383,17 +383,17 @@ public class BinaryTimeseries {
 			}
 			contents += String.format("0x%02X", dummy[dummy.length-1]);
 			headerExplanation += String.format(" %2d  %2d reads %s\n", previousPosition, source.position()-previousPosition, contents);
-			
+
 		} else if (scaling_dtype == DTYPE_DOUBLE) {
 			previousPosition = source.position();
 			double scalingOffset = source.getDouble();
 			headerExplanation += String.format(" %2d  %2d reads 0x%08X => scalingOffset = %g\n", previousPosition, source.position()-previousPosition, scalingOffset, scalingOffset);
-			
+
 			previousPosition = source.position();
 			double scalingFactor = source.getDouble();
 			headerExplanation += String.format(" %2d  %2d reads 0x%08X => scalingFactor = %g\n", previousPosition, source.position()-previousPosition, scalingFactor, scalingFactor);
 		}
-		
+
 		previousPosition = source.position();
 		final byte[] reservedDummy = new byte[23];
 		source.get(reservedDummy);
@@ -403,7 +403,7 @@ public class BinaryTimeseries {
 		}
 		contents += String.format("0x%02X", reservedDummy[reservedDummy.length-1]);
 		headerExplanation += String.format(" %2d  %2d reads %s\n", previousPosition, source.position()-previousPosition, contents);
-		
+
 		previousPosition = source.position();
 		final byte data_dtype = source.get();
 		headerExplanation += String.format(" %2d  %2d reads 0x%01X", previousPosition, source.position()-previousPosition, data_dtype);
@@ -423,28 +423,50 @@ public class BinaryTimeseries {
 			headerExplanation += " => invalid raw data type: "+data_dtype+"\n";
 			return headerExplanation;
 		}
-		
+
 		previousPosition = source.position();
 		final int numSamples = source.getInt();
 		headerExplanation += String.format(" %2d  %2d reads 0x%04X", previousPosition, source.position()-previousPosition, numSamples);
 		if (numSamples > 0) {
-			headerExplanation += String.format(" => number of samples = %d\n", numSamples);
+			headerExplanation += String.format(" => number of samples = %d", numSamples);
 		} else {
-			headerExplanation += String.format(" => invalid number of samples (would be interpreted as %d)\n", numSamples);
+			headerExplanation += String.format(" => invalid number of samples (would be interpreted as %d)", numSamples);
 		}
+
+		// Maybe print first recognized data value? At least one sample should be there, since numSamples>0 was already checked.
+		// Currently, this is not possible because only the header is read and the length of the given byte array is checked to be 64.
 		
-		// Maybe print first recognized data value? At least one sample should be there, since numSamples>0 was already checked...
-		
+		//		previousPosition = source.position();
+		//		if (data_dtype == DTYPE_BYTE) {
+		//			final byte firstSample = source.get();
+		//			headerExplanation += String.format(" %2d  %2d reads 0x%01X => first sample = %d", previousPosition, source.position()-previousPosition, firstSample, firstSample);
+		//		} else if (data_dtype == DTYPE_SHORT) {
+		//			final short firstSample = source.getShort();
+		//			headerExplanation += String.format(" %2d  %2d reads 0x%02X => first sample = %d", previousPosition, source.position()-previousPosition, firstSample, firstSample);
+		//		} else if (data_dtype == DTYPE_INT) {
+		//			final int firstSample = source.getInt();
+		//			headerExplanation += String.format(" %2d  %2d reads 0x%04X => first sample = %d", previousPosition, source.position()-previousPosition, firstSample, firstSample);
+		//		} else if (data_dtype == DTYPE_LONG) {
+		//			final long firstSample = source.getLong();
+		//			headerExplanation += String.format(" %2d  %2d reads 0x%01X => first sample = %d", previousPosition, source.position()-previousPosition, firstSample, firstSample);
+		//		} else if (data_dtype == DTYPE_FLOAT) {
+		//			final float firstSample = source.getFloat();
+		//			headerExplanation += String.format(" %2d  %2d reads 0x%01X => first sample = %g", previousPosition, source.position()-previousPosition, firstSample, firstSample);
+		//		} else if (data_dtype == DTYPE_DOUBLE) {
+		//			final double firstSample = source.getDouble();
+		//			headerExplanation += String.format(" %2d  %2d reads 0x%01X => first sample = %g", previousPosition, source.position()-previousPosition, firstSample, firstSample);
+		//		}
+
 		return headerExplanation;
 	}
-	
-	
+
+
 	/***********************
 	 *                     *
 	 *   WRITING METHODS   *
 	 *                     *
 	 ***********************/
-	
+
 	/**
 	 * Write a 1 as {@code short} to the {@code target} file.
 	 * This is used to check if correct endianess is used in reading; wrong endianess would lead to reading this as -128.
@@ -477,11 +499,11 @@ public class BinaryTimeseries {
 		target.putDouble(t0);
 		target.putDouble(dt);
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	/**
 	 * Write the identifier value into the {@code target} buffer that tells the reader that no scaling is available.
 	 * @param target buffer into which to write the time series data
@@ -490,7 +512,7 @@ public class BinaryTimeseries {
 		target.put(DTYPE_NONE);
 		target.put(new byte[8+8]);
 	}
-	
+
 	/**
 	 * Write the scaling parameters o and s into the {@code target} buffer.
 	 * @param target buffer into which to write the time series data
@@ -502,7 +524,7 @@ public class BinaryTimeseries {
 		target.put(o); target.put(new byte[8 - Byte.BYTES]);
 		target.put(s); target.put(new byte[8 - Byte.BYTES]);
 	}
-	
+
 	/**
 	 * Write the scaling parameters o and s into the {@code target} buffer.
 	 * @param target buffer into which to write the time series data
@@ -514,7 +536,7 @@ public class BinaryTimeseries {
 		target.putShort(o); target.put(new byte[8 - Short.BYTES]);
 		target.putShort(s); target.put(new byte[8 - Short.BYTES]);
 	}
-	
+
 	/**
 	 * Write the scaling parameters o and s into the {@code target} buffer.
 	 * @param target buffer into which to write the time series data
@@ -526,7 +548,7 @@ public class BinaryTimeseries {
 		target.putInt(o); target.put(new byte[8 - Integer.BYTES]);
 		target.putInt(s); target.put(new byte[8 - Integer.BYTES]);
 	}
-	
+
 	/**
 	 * Write the scaling parameters o and s into the {@code target} buffer.
 	 * @param target buffer into which to write the time series data
@@ -538,7 +560,7 @@ public class BinaryTimeseries {
 		target.putLong(o); // assumes Long.BYTES == 8
 		target.putLong(s); // assumes Long.BYTES == 8
 	}
-	
+
 	/**
 	 * Write the scaling parameters o and s into the {@code target} buffer.
 	 * @param target buffer into which to write the time series data
@@ -550,7 +572,7 @@ public class BinaryTimeseries {
 		target.putFloat(o); target.put(new byte[8 - Float.BYTES]);
 		target.putFloat(s); target.put(new byte[8 - Float.BYTES]);
 	}
-	
+
 	/**
 	 * Write the scaling parameters o and s into the {@code target} buffer.
 	 * @param target buffer into which to write the time series data
@@ -562,11 +584,11 @@ public class BinaryTimeseries {
 		target.putDouble(o); // assumes Double.BYTES == 8
 		target.putDouble(s); // assumes Double.BYTES == 8
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	/**
 	 * Write zeros for the reserved area in the header.
 	 * @param target buffer into which to write the time series data
@@ -574,10 +596,10 @@ public class BinaryTimeseries {
 	public static final void writeReservedDummy(final ByteBuffer target) {
 		target.put(new byte[23]);
 	}
-	
-	
-	
-	
+
+
+
+
 	/**
 	 * Write the raw data values into the {@code target} buffer.
 	 * @param target buffer into which to write the time series data
@@ -588,7 +610,7 @@ public class BinaryTimeseries {
 		target.putInt(values.length);
 		for (byte b: values) { target.put(b); }
 	}
-	
+
 	/**
 	 * Write the raw data values into the {@code target} buffer.
 	 * @param target buffer into which to write the time series data
@@ -599,7 +621,7 @@ public class BinaryTimeseries {
 		target.putInt(values.length);
 		for (short s: values) { target.putShort(s); }
 	}
-	
+
 	/**
 	 * Write the raw data values into the {@code target} buffer.
 	 * @param target buffer into which to write the time series data
@@ -610,7 +632,7 @@ public class BinaryTimeseries {
 		target.putInt(values.length);
 		for (int i: values) { target.putInt(i); }
 	}
-	
+
 	/**
 	 * Write the raw data values into the {@code target} buffer.
 	 * @param target buffer into which to write the time series data
@@ -621,7 +643,7 @@ public class BinaryTimeseries {
 		target.putInt(values.length);
 		for (long l: values) { target.putLong(l); }
 	}
-	
+
 	/**
 	 * Write the raw data values into the {@code target} buffer.
 	 * @param target buffer into which to write the time series data
@@ -632,7 +654,7 @@ public class BinaryTimeseries {
 		target.putInt(values.length);
 		for (float f: values) { target.putFloat(f); }
 	}
-	
+
 	/**
 	 * Write the raw data values into the {@code target} buffer.
 	 * @param target buffer into which to write the time series data
@@ -643,14 +665,14 @@ public class BinaryTimeseries {
 		target.putInt(values.length);
 		for (double d: values) { target.putDouble(d); }
 	}
-	
-	
-	
-	
+
+
+
+
 	public static final void write(final ByteBuffer target, Object t0, Object dt, Object rawData) {
 		write(target, t0, dt, rawData, null, null);
 	}
-	
+
 	public static final void write(final ByteBuffer target, Object t0, Object dt, Object rawData, Object scalingFactor, Object scalingOffset) {
 		BinaryTimeseries.writeEndianessCheckValue(target);
 		if (t0 == null) { throw new RuntimeException("t0 cannot be null"); }
@@ -705,24 +727,24 @@ public class BinaryTimeseries {
 			throw new RuntimeException("rawData must be an array");
 		}
 	}
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 	/***********************
 	 *                     *
 	 *   READING METHODS   *
 	 *                     *
 	 ***********************/
-	
+
 	public static final byte[] readHeader(final ByteBuffer source) {
 		final byte[] header = new byte[64];
 		source.get(header);
 		return header;
 	}
-	
+
 	public static final boolean readEndianessOk(final ByteBuffer source) {
 		final short firstShort = source.getShort();
 		if (firstShort == 1) {
@@ -733,35 +755,35 @@ public class BinaryTimeseries {
 			throw new RuntimeException("first short read from source was neither 1 nor -128 but "+firstShort);
 		}
 	}
-	
-	
+
+
 	public static final byte readTimeType(final ByteBuffer source) {
 		final byte time_dtype = source.get();
 		return time_dtype;
 	}
-	
+
 	public static final long readTimeT0_long(final ByteBuffer source) {
 		final long t0 = source.getLong();
 		return t0;
 	}
-	
+
 	public static final long readTimeDt_long(final ByteBuffer source) {
 		final long dt = source.getLong();
 		return dt;
 	}
-	
+
 	public static final double readTimeT0_double(final ByteBuffer source) {
 		final double t0 = source.getDouble();
 		return t0;
 	}
-	
+
 	public static final double readTimeDt_double(final ByteBuffer source) {
 		final double dt = source.getDouble();
 		return dt;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Check the given dtype byte to see if the given file has a value scaling or not.
 	 * @param scaling_dtype dtype byte as read from input buffer
@@ -770,146 +792,146 @@ public class BinaryTimeseries {
 	public static final boolean hasScaling(final byte scaling_dtype) {
 		return (scaling_dtype != 0);
 	}
-	
+
 	public static final byte readScalingType(final ByteBuffer source) {
 		final byte scaling_dtype = source.get();
 		return scaling_dtype;
 	}
-	
+
 	public static final void readScalingDisabled(final ByteBuffer source) {
 		final byte[] dummy = new byte[8+8];
 		source.get(dummy);
 	}
-	
+
 	public static final byte readScalingOffset_byte(final ByteBuffer source) {
 		final byte scalingOffset = source.get();
 		return scalingOffset;
 	}
-	
+
 	public static final byte readScalingFactor_byte(final ByteBuffer source) {
 		final byte scalingFactor = source.get();
 		return scalingFactor;
 	}
-	
+
 	public static final short readScalingOffset_short(final ByteBuffer source) {
 		final short scalingOffset = source.getShort();
 		return scalingOffset;
 	}
-	
+
 	public static final short readScalingFactor_short(final ByteBuffer source) {
 		final short scalingFactor = source.getShort();
 		return scalingFactor;
 	}
-	
+
 	public static final int readScalingOffset_int(final ByteBuffer source) {
 		final int scalingOffset = source.getInt();
 		return scalingOffset;
 	}
-	
+
 	public static final int readScalingFactor_int(final ByteBuffer source) {
 		final int scalingFactor = source.getInt();
 		return scalingFactor;
 	}
-	
+
 	public static final long readScalingOffset_long(final ByteBuffer source) {
 		final long scalingOffset = source.getLong();
 		return scalingOffset;
 	}
-	
+
 	public static final long readScalingFactor_long(final ByteBuffer source) {
 		final long scalingFactor = source.getLong();
 		return scalingFactor;
 	}
-	
+
 	public static final float readScalingOffset_float(final ByteBuffer source) {
 		final float scalingOffset = source.getFloat();
 		return scalingOffset;
 	}
-	
+
 	public static final float readScalingFactor_float(final ByteBuffer source) {
 		final float scalingFactor = source.getFloat();
 		return scalingFactor;
 	}
-	
+
 	public static final double readScalingOffset_double(final ByteBuffer source) {
 		final double scalingOffset = source.getDouble();
 		return scalingOffset;
 	}
-	
+
 	public static final double readScalingFactor_double(final ByteBuffer source) {
 		final double scalingFactor = source.getDouble();
 		return scalingFactor;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
+
+
+
 	public static final void readReservedDummy(final ByteBuffer source) {
 		final byte[] dummy = new byte[23];
 		source.get(dummy);
 	}
-	
-	
-	
+
+
+
 	public static final byte readDataType(final ByteBuffer source) {
 		final byte data_dtype = source.get();
 		return data_dtype;
 	}
-	
+
 	public static final int readNumSamples(final ByteBuffer source) {
 		final int numSamples = source.getInt();
 		return numSamples;
 	}
-	
+
 	public static final void readRawData(final ByteBuffer source, final byte[] target, final int targetOffset, final int numSamples) {
 		for (int i=0; i<numSamples; ++i) {
 			target[targetOffset+i] = source.get();
 		}
 	}
-	
+
 	public static final void readRawData(final ByteBuffer source, final short[] target, final int targetOffset, final int numSamples) {
 		for (int i=0; i<numSamples; ++i) {
 			target[targetOffset+i] = source.getShort();
 		}
 	}
-	
+
 	public static final void readRawData(final ByteBuffer source, final int[] target, final int targetOffset, final int numSamples) {
 		for (int i=0; i<numSamples; ++i) {
 			target[targetOffset+i] = source.getInt();
 		}
 	}
-	
+
 	public static final void readRawData(final ByteBuffer source, final long[] target, final int targetOffset, final int numSamples) {
 		for (int i=0; i<numSamples; ++i) {
 			target[targetOffset+i] = source.getLong();
 		}
 	}
-	
+
 	public static final void readRawData(final ByteBuffer source, final float[] target, final int targetOffset, final int numSamples) {
 		for (int i=0; i<numSamples; ++i) {
 			target[targetOffset+i] = source.getFloat();
 		}
 	}
-	
+
 	public static final void readRawData(final ByteBuffer source, final double[] target, final int targetOffset, final int numSamples) {
 		for (int i=0; i<numSamples; ++i) {
 			target[targetOffset+i] = source.getDouble();
 		}
 	}
-	
+
 	public static final byte[] readDataIntoByte(final ByteBuffer source) {
-		
+
 		final byte scaling_dtype = readScalingType(source);
 		if (hasScaling(scaling_dtype)) {
-			
+
 			if (scaling_dtype == DTYPE_BYTE) {
 				final byte scalingOffset = readScalingOffset_byte(source);
 				final byte scalingFactor = readScalingFactor_byte(source);
@@ -944,7 +966,7 @@ public class BinaryTimeseries {
 				}
 				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
-			
+
 			} else if (scaling_dtype == DTYPE_BYTE) {
 				final short scalingOffset = readScalingOffset_short(source);
 				final short scalingFactor = readScalingFactor_short(source);
@@ -1186,12 +1208,12 @@ public class BinaryTimeseries {
 			return target;
 		}
 	}
-	
+
 	public static final short[] readDataIntoShort(final ByteBuffer source) {
-		
+
 		final byte scaling_dtype = readScalingType(source);
 		if (hasScaling(scaling_dtype)) {
-			
+
 			if (scaling_dtype == DTYPE_BYTE) {
 				final byte scalingOffset = readScalingOffset_byte(source);
 				final byte scalingFactor = readScalingFactor_byte(source);
@@ -1226,7 +1248,7 @@ public class BinaryTimeseries {
 				}
 				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
-			
+
 			} else if (scaling_dtype == DTYPE_BYTE) {
 				final short scalingOffset = readScalingOffset_short(source);
 				final short scalingFactor = readScalingFactor_short(source);
@@ -1400,7 +1422,7 @@ public class BinaryTimeseries {
 			} else {
 				// silently ignore unknown scaling values
 				readScalingDisabled(source);
-				
+
 				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
@@ -1469,12 +1491,12 @@ public class BinaryTimeseries {
 			return target;
 		}
 	}
-	
+
 	public static final int[] readDataIntoInt(final ByteBuffer source) {
-		
+
 		final byte scaling_dtype = readScalingType(source);
 		if (hasScaling(scaling_dtype)) {
-			
+
 			if (scaling_dtype == DTYPE_BYTE) {
 				final byte scalingOffset = readScalingOffset_byte(source);
 				final byte scalingFactor = readScalingFactor_byte(source);
@@ -1509,7 +1531,7 @@ public class BinaryTimeseries {
 				}
 				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
-			
+
 			} else if (scaling_dtype == DTYPE_BYTE) {
 				final short scalingOffset = readScalingOffset_short(source);
 				final short scalingFactor = readScalingFactor_short(source);
@@ -1683,7 +1705,7 @@ public class BinaryTimeseries {
 			} else {
 				// silently ignore unknown scaling values
 				readScalingDisabled(source);
-				
+
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final int[] target = new int[numSamples];
@@ -1751,14 +1773,14 @@ public class BinaryTimeseries {
 			return target;
 		}
 	}
-	
-	
-	
+
+
+
 	public static final long[] readDataIntoLong(final ByteBuffer source) {
-		
+
 		final byte scaling_dtype = readScalingType(source);
 		if (hasScaling(scaling_dtype)) {
-			
+
 			if (scaling_dtype == DTYPE_BYTE) {
 				final byte scalingOffset = readScalingOffset_byte(source);
 				final byte scalingFactor = readScalingFactor_byte(source);
@@ -1793,7 +1815,7 @@ public class BinaryTimeseries {
 				}
 				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
-			
+
 			} else if (scaling_dtype == DTYPE_BYTE) {
 				final short scalingOffset = readScalingOffset_short(source);
 				final short scalingFactor = readScalingFactor_short(source);
@@ -1967,7 +1989,7 @@ public class BinaryTimeseries {
 			} else {
 				// silently ignore unknown scaling values
 				readScalingDisabled(source);
-				
+
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final long[] target = new long[numSamples];
@@ -2035,13 +2057,13 @@ public class BinaryTimeseries {
 			return target;
 		}
 	}
-	
-	
+
+
 	public static final float[] readDataIntoFloat(final ByteBuffer source) {
-		
+
 		final byte scaling_dtype = readScalingType(source);
 		if (hasScaling(scaling_dtype)) {
-			
+
 			if (scaling_dtype == DTYPE_BYTE) {
 				final byte scalingOffset = readScalingOffset_byte(source);
 				final byte scalingFactor = readScalingFactor_byte(source);
@@ -2076,7 +2098,7 @@ public class BinaryTimeseries {
 				}
 				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
-			
+
 			} else if (scaling_dtype == DTYPE_BYTE) {
 				final short scalingOffset = readScalingOffset_short(source);
 				final short scalingFactor = readScalingFactor_short(source);
@@ -2250,7 +2272,7 @@ public class BinaryTimeseries {
 			} else {
 				// silently ignore unknown scaling values
 				readScalingDisabled(source);
-				
+
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final float[] target = new float[numSamples];
@@ -2318,12 +2340,12 @@ public class BinaryTimeseries {
 			return target;
 		}
 	}
-	
+
 	public static final double[] readDataIntoDouble(final ByteBuffer source) {
-		
+
 		final byte scaling_dtype = readScalingType(source);
 		if (hasScaling(scaling_dtype)) {
-			
+
 			if (scaling_dtype == DTYPE_BYTE) {
 				final byte scalingOffset = readScalingOffset_byte(source);
 				final byte scalingFactor = readScalingFactor_byte(source);
@@ -2358,7 +2380,7 @@ public class BinaryTimeseries {
 				}
 				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
-			
+
 			} else if (scaling_dtype == DTYPE_BYTE) {
 				final short scalingOffset = readScalingOffset_short(source);
 				final short scalingFactor = readScalingFactor_short(source);
@@ -2532,7 +2554,7 @@ public class BinaryTimeseries {
 			} else {
 				// silently ignore unknown scaling values
 				readScalingDisabled(source);
-				
+
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final double[] target = new double[numSamples];
