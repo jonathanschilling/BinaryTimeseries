@@ -64,6 +64,17 @@
 	</distributionManagement>
 
 	<build>
+		<resources>
+			<resource>
+			<!-- Include the LaTeX documentation as a resource: doc/BinaryTimeseries.{tex,pdf} -->
+				<directory>${project.basedir}/doc</directory>
+				<includes>
+					<include>BinaryTimeseries.tex</include>
+					<include>BinaryTimeseries.pdf</include>
+				</includes>
+			</resource>
+		</resources>
+	
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
