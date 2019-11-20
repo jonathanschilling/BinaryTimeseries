@@ -3,6 +3,8 @@ package de.labathome;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.nio.ByteBuffer;
+
 import org.junit.jupiter.api.Test;
 
 /**
@@ -77,17 +79,32 @@ public class ApiTests {
 					final   long dt_L = 37;
 					final double dt_D = 37.0;
 					
-					// time base:
-					// 0 13
-					// 1 50
-					// 2 87
-					// 3 124
-					// 4 161
-					// 5 198
-					// 6 235
-					// 7 272
-					// 8 309
-					// 9 346
+					final   byte scalingOffset_B = (byte)  1.2;
+					final  short scalingOffset_S = (short) 1.2;
+					final    int scalingOffset_I = (int)   1.2;
+					final   long scalingOffset_L = (long)  1.2;
+					final  float scalingOffset_F = (float) 1.2;
+					final double scalingOffset_D = (double)1.2;
+					
+					final   byte scalingFactor_B = (byte)  24.3;
+					final  short scalingFactor_S = (short) 24.3;
+					final    int scalingFactor_I = (int)   24.3;
+					final   long scalingFactor_L = (long)  24.3;
+					final  float scalingFactor_F = (float) 24.3;
+					final double scalingFactor_D = (double)24.3;
+					
+					// time series:
+					// idx | time  | value
+					//   0 |  13.0 |   1.2
+					//   1 |  50.0 |  25.5
+					//   2 |  87.0 |  49.8
+					//   3 | 124.0 |  74.1
+					//   4 | 161.0 |  98.4
+					//   5 | 198.0 | 122.7
+					//   6 | 235.0 | 147.0
+					//   7 | 272.0 | 171.3
+					//   8 | 309.0 | 195.6
+					//   9 | 346.0 | 219.9
 					
 					final int numSamplesSubset = 5;
 					final int sourceOffset = 2;
@@ -101,6 +118,8 @@ public class ApiTests {
 					
 					// compute file size from reserved number of header bytes, sample size and number of samples
 					final int filesize = 64 + data_size*numSamples;
+					
+					final byte[] binaryTimeseries = new byte[filesize];
 					
 					// check static routines
 					if (scaling_dtype_idx == 0 && data_dtype_idx == 0) {
@@ -225,9 +244,37 @@ public class ApiTests {
 					
 					
 					
-					
-					
-					
+					// 'manually' build a BinaryTimeseries
+					final ByteBuffer target = ByteBuffer.wrap(binaryTimeseries);
+					assertEquals(0, target.position());
+					// endianess check short
+					target.putShort((short)1);
+					assertEquals(2, target.position());
+					// dtype of time
+					target.put(time_dtype);
+					assertEquals(3, target.position());
+					// t0
+					if (time_dtype == BinaryTimeseries.DTYPE_LONG) {
+						target.putLong(t0_L);
+					} else if (time_dtype == BinaryTimeseries.DTYPE_DOUBLE) {
+						target.putDouble(t0_D);
+					}
+					assertEquals(11, target.position());
+					// dt
+					if (time_dtype == BinaryTimeseries.DTYPE_LONG) {
+						target.putLong(dt_L);
+					} else if (time_dtype == BinaryTimeseries.DTYPE_DOUBLE) {
+						target.putDouble(dt_D);
+					}
+					assertEquals(19, target.position());
+					// scaling dtype
+					target.put(scaling_dtype);
+					assertEquals(20, target.position());
+					if (scaling_dtype == BinaryTimeseries.DTYPE_NONE) {
+						
+					} else if (scaling_dtype == BinaryTimeseries.DTYPE_BYTE) {
+						
+					}
 					
 					// check writing routines
 					
