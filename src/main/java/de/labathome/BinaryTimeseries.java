@@ -49,6 +49,31 @@ public class BinaryTimeseries {
 	public static final byte DTYPE_DOUBLE = 6;
 
 	/**
+	 * Get a human-readable identification string for a given data type.
+	 * @param dtype one of [DTYPE_NONE, DTYPE_BYTE, DTYPE_SHORT, DTYPE_INT, DTYPE_LONG, DTYPE_FLOAT, DTYPE_DOUBLE]
+	 * @return one of ["N", "B", "S", "I", "L", "F", "D"] or "?" if it could not be identified
+	 */
+	public static final String dtypeStr(final byte dtype) {
+		if (dtype == BinaryTimeseries.DTYPE_NONE) {
+			return "N";
+		} else if (dtype == BinaryTimeseries.DTYPE_BYTE) {
+			return "B";
+		} else if (dtype == BinaryTimeseries.DTYPE_SHORT) {
+			return "S";
+		} else if (dtype == BinaryTimeseries.DTYPE_INT) {
+			return "I";
+		} else if (dtype == BinaryTimeseries.DTYPE_LONG) {
+			return "L";
+		} else if (dtype == BinaryTimeseries.DTYPE_FLOAT) {
+			return "F";
+		} else if (dtype == BinaryTimeseries.DTYPE_DOUBLE) {
+			return "D";
+		} else {
+			return "?";
+		}
+	}
+	
+	/**
 	 * Compute the timebase values for a given t_0 and Delta_t.
 	 * The number of values is given by the length of the {@code target} array, into which the values are put.
 	 * @param target [N] array into which to put the timebase values t_i.
@@ -164,7 +189,12 @@ public class BinaryTimeseries {
 		return 64+dataSize*index;
 	}
 
-
+	/**
+	 * Given 64 header bytes, generate a human-readable explanation similar to Tab. 2 of the documentation which lists the header contents.
+	 * This routine stops explaning at the first occurrence of an invalid entry.
+	 * @param header [64] binary header bytes
+	 * @return a multi-line text (\n as line separator) which tells the user about the contents of the given header info
+	 */
 	public static final String explainHeader(byte[] header) {
 		if (header == null || header.length != 64) {
 			return "header should not be null and have a length of 64 bytes";
