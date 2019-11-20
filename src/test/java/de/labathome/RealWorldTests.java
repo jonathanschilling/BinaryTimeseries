@@ -64,6 +64,12 @@ public class RealWorldTests {
 
 			long[] _t0_dt = new long[2];
 			
+			// test that explanation of header values works
+			byte[] header = new byte[64];
+			mappedByteBuffer.get(header);
+			System.out.println(BinaryTimeseries.explainHeader(header));
+			mappedByteBuffer.position(0);
+			
 			long start = -System.nanoTime();
 			assertEquals(0, mappedByteBuffer.position());
 			assertEquals(true, BinaryTimeseries.readEndianessOk(mappedByteBuffer));
@@ -146,7 +152,7 @@ public class RealWorldTests {
 		try (RandomAccessFile memoryFile = new RandomAccessFile(tmpFile.toFile(), "r")) {
 			MappedByteBuffer mappedByteBuffer = memoryFile.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, filesize);
 			
-			
+			// test that explanation of header values works
 			byte[] header = new byte[64];
 			mappedByteBuffer.get(header);
 			System.out.println(BinaryTimeseries.explainHeader(header));
