@@ -164,6 +164,281 @@ public class BinaryTimeseries {
 		return 64+dataSize*index;
 	}
 	
+	
+	public static final String explainHeader(byte[] header) {
+		if (header == null || header.length != 64) {
+			return "header should not be null and have a length of 64 bytes";
+		}
+		
+		int previousPosition = 0;
+		String headerExplanation = "";
+		final ByteBuffer source = ByteBuffer.wrap(header);
+		
+		previousPosition = source.position();
+		final short firstShort = source.getShort();
+		headerExplanation += String.format(" %2d  %2d reads 0x%02X", previousPosition, source.position()-previousPosition, firstShort);
+		if (firstShort == 1) {
+			headerExplanation += " => correct endianess\n";
+		} else if (firstShort == -128) {
+			headerExplanation += " => incorrect endianess\n";
+			return headerExplanation;
+		} else {
+			headerExplanation += " => invalid endianess check value: "+firstShort+"\n";
+			return headerExplanation;
+		}
+		
+		previousPosition = source.position();
+		final byte time_dtype = source.get();
+		headerExplanation += String.format(" %2d  %2d reads 0x%01X", previousPosition, source.position()-previousPosition, time_dtype);
+		if (time_dtype == DTYPE_LONG) {
+			headerExplanation += " => timestamps as long\n";
+		} else if (time_dtype == DTYPE_DOUBLE) {
+			headerExplanation += " => timestamps as double\n";
+			return headerExplanation;
+		} else {
+			headerExplanation += " => invalid timestamps data type: "+time_dtype+"\n";
+			return headerExplanation;
+		}
+		
+		if (time_dtype == DTYPE_LONG) {
+			previousPosition = source.position();
+			long t0 = source.getLong();
+			headerExplanation += String.format(" %2d  %2d reads 0x%016X => t0 = %d\n", previousPosition, source.position()-previousPosition, t0, t0);
+			previousPosition = source.position();
+			long dt = source.getLong();
+			headerExplanation += String.format(" %2d  %2d reads 0x%016X => dt = %d\n", previousPosition, source.position()-previousPosition, dt, dt);
+		} else if (time_dtype == DTYPE_LONG) {
+			previousPosition = source.position();
+			double t0 = source.getDouble();
+			headerExplanation += String.format(" %2d  %2d reads 0x%016X => t0 = %g\n", previousPosition, source.position()-previousPosition, t0, t0);
+			previousPosition = source.position();
+			double dt = source.getDouble();
+			headerExplanation += String.format(" %2d  %2d reads 0x%016X => dt = %g\n", previousPosition, source.position()-previousPosition, dt, dt);
+		}
+		
+		previousPosition = source.position();
+		final byte scaling_dtype = source.get();
+		headerExplanation += String.format(" %2d  %2d reads 0x%01X", previousPosition, source.position()-previousPosition, scaling_dtype);
+		if (scaling_dtype == DTYPE_NONE) {
+			headerExplanation += " => no scaling\n";
+		} else if (scaling_dtype == DTYPE_BYTE) {
+			headerExplanation += " => scaling as byte\n";
+		} else if (scaling_dtype == DTYPE_SHORT) {
+			headerExplanation += " => scaling as short\n";
+		} else if (scaling_dtype == DTYPE_INT) {
+			headerExplanation += " => scaling as int\n";
+		} else if (scaling_dtype == DTYPE_LONG) {
+			headerExplanation += " => scaling as long\n";
+		} else if (scaling_dtype == DTYPE_FLOAT) {
+			headerExplanation += " => scaling as float\n";
+		} else if (scaling_dtype == DTYPE_DOUBLE) {
+			headerExplanation += " => scaling as double\n";
+		} else {
+			headerExplanation += " => invalid scaling type: "+scaling_dtype+"\n";
+			return headerExplanation;
+		}
+		
+		if (scaling_dtype == DTYPE_NONE) {
+			final byte[] dummy = new byte[8];
+			
+			previousPosition = source.position();
+			source.get(dummy);
+			String contents = "";
+			for (int i=0; i<dummy.length-1; ++i) {
+				contents += String.format("0x%02X ", dummy[i]);
+			}
+			contents += String.format("0x%02X", dummy[dummy.length-1]);
+			headerExplanation += String.format("[%2d] %2d reads %s\n", previousPosition, source.position()-previousPosition, contents);
+			
+			previousPosition = source.position();
+			source.get(dummy);
+			contents = "";
+			for (int i=0; i<dummy.length-1; ++i) {
+				contents += String.format("0x%02X ", dummy[i]);
+			}
+			contents += String.format("0x%02X", dummy[dummy.length-1]);
+			headerExplanation += String.format("[%2d] %2d reads %s\n", previousPosition, source.position()-previousPosition, contents);
+			
+		} else if (scaling_dtype == DTYPE_BYTE) {
+			final byte[] dummy = new byte[8 - Byte.BYTES];
+			
+			previousPosition = source.position();
+			byte scalingOffset = source.get();
+			headerExplanation += String.format(" %2d  %2d reads 0x%01X => scalingOffset = %d\n", previousPosition, source.position()-previousPosition, scalingOffset, scalingOffset);
+			
+			previousPosition = source.position();
+			source.get(dummy);
+			String contents = "";
+			for (int i=0; i<dummy.length-1; ++i) {
+				contents += String.format("0x%02X ", dummy[i]);
+			}
+			contents += String.format("0x%02X", dummy[dummy.length-1]);
+			headerExplanation += String.format(" %2d  %2d reads %s\n", previousPosition, source.position()-previousPosition, contents);
+			
+			previousPosition = source.position();
+			byte scalingFactor = source.get();
+			headerExplanation += String.format(" %2d  %2d reads 0x%01X => scalingFactor = %d\n", previousPosition, source.position()-previousPosition, scalingFactor, scalingFactor);
+
+			previousPosition = source.position();
+			source.get(dummy);
+			contents = "";
+			for (int i=0; i<dummy.length-1; ++i) {
+				contents += String.format("0x%02X ", dummy[i]);
+			}
+			contents += String.format("0x%02X", dummy[dummy.length-1]);
+			headerExplanation += String.format(" %2d  %2d reads %s\n", previousPosition, source.position()-previousPosition, contents);
+			
+		} else if (scaling_dtype == DTYPE_SHORT) {
+			final byte[] dummy = new byte[8 - Short.BYTES];
+			
+			previousPosition = source.position();
+			short scalingOffset = source.getShort();
+			headerExplanation += String.format(" %2d  %2d reads 0x%02X => scalingOffset = %d\n", previousPosition, source.position()-previousPosition, scalingOffset, scalingOffset);
+			
+			previousPosition = source.position();
+			source.get(dummy);
+			String contents = "";
+			for (int i=0; i<dummy.length-1; ++i) {
+				contents += String.format("0x%02X ", dummy[i]);
+			}
+			contents += String.format("0x%02X", dummy[dummy.length-1]);
+			headerExplanation += String.format(" %2d  %2d reads %s\n", previousPosition, source.position()-previousPosition, contents);
+			
+			previousPosition = source.position();
+			short scalingFactor = source.getShort();
+			headerExplanation += String.format(" %2d  %2d reads 0x%02X => scalingFactor = %d\n", previousPosition, source.position()-previousPosition, scalingFactor, scalingFactor);
+			
+			previousPosition = source.position();
+			source.get(dummy);
+			contents = "";
+			for (int i=0; i<dummy.length-1; ++i) {
+				contents += String.format("0x%02X ", dummy[i]);
+			}
+			contents += String.format("0x%02X", dummy[dummy.length-1]);
+			headerExplanation += String.format(" %2d  %2d reads %s\n", previousPosition, source.position()-previousPosition, contents);
+			
+		} else if (scaling_dtype == DTYPE_INT) {
+			final byte[] dummy = new byte[8 - Integer.BYTES];
+			
+			previousPosition = source.position();
+			int scalingOffset = source.getInt();
+			headerExplanation += String.format(" %2d  %2d reads 0x%04X => scalingOffset = %d\n", previousPosition, source.position()-previousPosition, scalingOffset, scalingOffset);
+			
+			previousPosition = source.position();
+			source.get(dummy);
+			String contents = "";
+			for (int i=0; i<dummy.length-1; ++i) {
+				contents += String.format("0x%02X ", dummy[i]);
+			}
+			contents += String.format("0x%02X", dummy[dummy.length-1]);
+			headerExplanation += String.format(" %2d  %2d reads %s\n", previousPosition, source.position()-previousPosition, contents);
+			
+			previousPosition = source.position();
+			int scalingFactor = source.getInt();
+			headerExplanation += String.format(" %2d  %2d reads 0x%04X => scalingFactor = %d\n", previousPosition, source.position()-previousPosition, scalingFactor, scalingFactor);
+			
+			previousPosition = source.position();
+			source.get(dummy);
+			contents = "";
+			for (int i=0; i<dummy.length-1; ++i) {
+				contents += String.format("0x%02X ", dummy[i]);
+			}
+			contents += String.format("0x%02X", dummy[dummy.length-1]);
+			headerExplanation += String.format(" %2d  %2d reads %s\n", previousPosition, source.position()-previousPosition, contents);
+			
+		} else if (scaling_dtype == DTYPE_LONG) {
+			previousPosition = source.position();
+			long scalingOffset = source.getLong();
+			headerExplanation += String.format(" %2d  %2d reads 0x%016X => scalingOffset = %d\n", previousPosition, source.position()-previousPosition, scalingOffset, scalingOffset);
+			
+			previousPosition = source.position();
+			long scalingFactor = source.getLong();
+			headerExplanation += String.format(" %2d  %2d reads 0x%016X => scalingFactor = %d\n", previousPosition, source.position()-previousPosition, scalingFactor, scalingFactor);
+		
+		} else if (scaling_dtype == DTYPE_FLOAT) {
+			final byte[] dummy = new byte[8 - Float.BYTES];
+		
+			previousPosition = source.position();
+			float scalingOffset = source.getFloat();
+			headerExplanation += String.format(" %2d  %2d reads 0x%04X => scalingOffset = %g\n", previousPosition, source.position()-previousPosition, scalingOffset, scalingOffset);
+			
+			previousPosition = source.position();
+			source.get(dummy);
+			String contents = "";
+			for (int i=0; i<dummy.length-1; ++i) {
+				contents += String.format("0x%02X ", dummy[i]);
+			}
+			contents += String.format("0x%02X", dummy[dummy.length-1]);
+			headerExplanation += String.format(" %2d  %2d reads %s\n", previousPosition, source.position()-previousPosition, contents);
+			
+			previousPosition = source.position();
+			float scalingFactor = source.getFloat();
+			headerExplanation += String.format(" %2d  %2d reads 0x%04X => scalingFactor = %g\n", previousPosition, source.position()-previousPosition, scalingFactor, scalingFactor);
+			
+			previousPosition = source.position();
+			source.get(dummy);
+			contents = "";
+			for (int i=0; i<dummy.length-1; ++i) {
+				contents += String.format("0x%02X ", dummy[i]);
+			}
+			contents += String.format("0x%02X", dummy[dummy.length-1]);
+			headerExplanation += String.format(" %2d  %2d reads %s\n", previousPosition, source.position()-previousPosition, contents);
+			
+		} else if (scaling_dtype == DTYPE_DOUBLE) {
+			previousPosition = source.position();
+			double scalingOffset = source.getDouble();
+			headerExplanation += String.format(" %2d  %2d reads 0x%08X => scalingOffset = %g\n", previousPosition, source.position()-previousPosition, scalingOffset, scalingOffset);
+			
+			previousPosition = source.position();
+			double scalingFactor = source.getDouble();
+			headerExplanation += String.format(" %2d  %2d reads 0x%08X => scalingFactor = %g\n", previousPosition, source.position()-previousPosition, scalingFactor, scalingFactor);
+		}
+		
+		previousPosition = source.position();
+		final byte[] reservedDummy = new byte[23];
+		source.get(reservedDummy);
+		String contents = "";
+		for (int i=0; i<reservedDummy.length-1; ++i) {
+			contents += String.format("0x%02X ", reservedDummy[i]);
+		}
+		contents += String.format("0x%02X", reservedDummy[reservedDummy.length-1]);
+		headerExplanation += String.format(" %2d  %2d reads %s\n", previousPosition, source.position()-previousPosition, contents);
+		
+		previousPosition = source.position();
+		final byte data_dtype = source.get();
+		headerExplanation += String.format(" %2d  %2d reads 0x%01X", previousPosition, source.position()-previousPosition, data_dtype);
+		if (data_dtype == DTYPE_BYTE) {
+			headerExplanation += " => raw data as byte\n";
+		} else if (data_dtype == DTYPE_SHORT) {
+			headerExplanation += " => raw data as short\n";
+		} else if (data_dtype == DTYPE_INT) {
+			headerExplanation += " => raw data as int\n";
+		} else if (data_dtype == DTYPE_LONG) {
+			headerExplanation += " => raw data as long\n";
+		} else if (data_dtype == DTYPE_FLOAT) {
+			headerExplanation += " => raw data as float\n";
+		} else if (data_dtype == DTYPE_DOUBLE) {
+			headerExplanation += " => raw data as double\n";
+		} else {
+			headerExplanation += " => invalid raw data type: "+data_dtype+"\n";
+			return headerExplanation;
+		}
+		
+		previousPosition = source.position();
+		final int numSamples = source.getInt();
+		headerExplanation += String.format(" %2d  %2d reads 0x%04X", previousPosition, source.position()-previousPosition, numSamples);
+		if (numSamples > 0) {
+			headerExplanation += String.format(" => number of samples = %d\n", numSamples);
+		} else {
+			headerExplanation += String.format(" => invalid number of samples (would be interpreted as %d)\n", numSamples);
+		}
+		
+		// Maybe print first recognized data value? At least one sample should be there, since numSamples>0 was already checked...
+		
+		return headerExplanation;
+	}
+	
+	
 	/***********************
 	 *                     *
 	 *   WRITING METHODS   *
@@ -441,6 +716,12 @@ public class BinaryTimeseries {
 	 *   READING METHODS   *
 	 *                     *
 	 ***********************/
+	
+	public static final byte[] readHeader(final ByteBuffer source) {
+		final byte[] header = new byte[64];
+		source.get(header);
+		return header;
+	}
 	
 	public static final boolean readEndianessOk(final ByteBuffer source) {
 		final short firstShort = source.getShort();
