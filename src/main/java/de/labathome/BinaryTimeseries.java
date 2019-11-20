@@ -19,32 +19,32 @@ public class BinaryTimeseries {
 	public static final byte DTYPE_NONE = 0;
 
 	/**
-	 * Identifier value for {@code byte} datatype. <br/> Length: 1 Byte <br/> Range: -128 ... 127
+	 * Identifier value for {@code byte} datatype. <br> Length: 1 Byte <br> Range: -128 ... 127
 	 */
 	public static final byte DTYPE_BYTE = 1;
 
 	/**
-	 * Identifier value for {@code short} datatype. <br/> Length: 2 Bytes <br/> Range: -32768 ... 32767
+	 * Identifier value for {@code short} datatype. <br> Length: 2 Bytes <br> Range: -32768 ... 32767
 	 */
 	public static final byte DTYPE_SHORT = 2;
 
 	/**
-	 * Identifier value for {@code int} datatype. <br/> Length: 4 Bytes <br/> Range: -2147483648 ... 2147483647
+	 * Identifier value for {@code int} datatype. <br> Length: 4 Bytes <br> Range: -2147483648 ... 2147483647
 	 */
 	public static final byte DTYPE_INT = 3;
 
 	/**
-	 * Identifier value for {@code long} datatype. <br/> Length: 8 Bytes <br/> Range: -9223372036854775808 ... 9223372036854775807
+	 * Identifier value for {@code long} datatype. <br> Length: 8 Bytes <br> Range: -9223372036854775808 ... 9223372036854775807
 	 */
 	public static final byte DTYPE_LONG = 4;
 
 	/**
-	 * Identifier value for {@code float} datatype. <br/> Length: 4 Bytes <br/> 7 decimal digits
+	 * Identifier value for {@code float} datatype. <br> Length: 4 Bytes <br> 7 decimal digits
 	 */
 	public static final byte DTYPE_FLOAT = 5;
 
 	/**
-	 * Identifier value for {@code double} datatype. <br/> Length: 8 Bytes <br/> 16 decimal digits
+	 * Identifier value for {@code double} datatype. <br> Length: 8 Bytes <br> 16 decimal digits
 	 */
 	public static final byte DTYPE_DOUBLE = 6;
 
@@ -72,7 +72,7 @@ public class BinaryTimeseries {
 			return "?";
 		}
 	}
-	
+
 	/**
 	 * Compute the timebase values for a given t_0 and Delta_t.
 	 * The number of values is given by the length of the {@code target} array, into which the values are put.
@@ -100,7 +100,7 @@ public class BinaryTimeseries {
 			target[targetOffset+i] = t0+(sourceOffset+i)*dt;
 		}
 	}
-	
+
 	/**
 	 * Compute the timebase values for a given t_0 and Delta_t.
 	 * The number of values is given by the length of the {@code target} array, into which the values are put.
@@ -131,12 +131,12 @@ public class BinaryTimeseries {
 
 	/**
 	 * Given a timebase (t0, dt), compute the first index of timestamps inside the given time interval [{@code t_l}, {@code t_u}].
+	 * See also Eqn. (7) in the documentation.
 	 * @param t0 reference timestamp from the file
 	 * @param dt time interval between two consecutive samples from the file
 	 * @param t_l lower boundary of the time interval to read data from
 	 * @return first index inside the time interval [{@code t_l}, {@code t_u}]
 	 * @see <a href="https://stackoverflow.com/questions/7139382/java-rounding-up-to-an-int-using-math-ceil">https://stackoverflow.com/questions/7139382/java-rounding-up-to-an-int-using-math-ceil</a>
-	 * @see Eqn. (7) in the documentation
 	 */
 	public static final int firstIndexInside(final long t0, final long dt, final long t_l) {
 		return (int) ((t_l-t0 + dt - 1) / dt);
@@ -144,11 +144,11 @@ public class BinaryTimeseries {
 
 	/**
 	 * Given a timebase (t0, dt), compute the first index of timestamps inside the given time interval [{@code t_l}, {@code t_u}].
+	 * See also Eqn. (8) in the documentation.
 	 * @param t0 reference timestamp from the file
 	 * @param dt time interval between two consecutive samples from the file
 	 * @param t_u upper boundary of the time interval to read data from
 	 * @return last index inside the time interval [{@code t_l}, {@code t_u}]
-	 * @see Eqn. (8) in the documentation
 	 */
 	public static final int lastIndexInside(final long t0, final long dt, final long t_u) {
 		return (int) ((t_u-t0         ) / dt);
@@ -156,11 +156,11 @@ public class BinaryTimeseries {
 
 	/**
 	 * Given a timebase (t0, dt), compute the first index of timestamps inside the given time interval [{@code t_l}, {@code t_u}].
+	 * See also Eqn. (5) in the documentation.
 	 * @param t0 reference timestamp from the file
 	 * @param dt time interval between two consecutive samples from the file
 	 * @param t_l lower boundary of the time interval to read data from
 	 * @return first index inside the time interval [{@code t_l}, {@code t_u}]
-	 * @see Eqn. (5) in the documentation
 	 */
 	public static final int firstIndexInside(final double t0, final double dt, final double t_l) {
 		return (int) Math.ceil ((t_l-t0)/dt);
@@ -168,16 +168,16 @@ public class BinaryTimeseries {
 
 	/**
 	 * Given a timebase (t0, dt), compute the first index of timestamps inside the given time interval [{@code t_l}, {@code t_u}].
+	 * See also Eqn. (6) in the documentation.
 	 * @param t0 reference timestamp from the file
 	 * @param dt time interval between two consecutive samples from the file
 	 * @param t_u upper boundary of the time interval to read data from
 	 * @return last index inside the time interval [{@code t_l}, {@code t_u}]
-	 * @see Eqn. (6) in the documentation
 	 */
 	public static final int lastIndexInside(final double t0, final double dt, final double t_u) {
 		return (int) Math.floor((t_u-t0)/dt);
 	}
-	
+
 	/**
 	 * Compute the file offset (and buffer size when reading the file) in bytes given the size of the contained raw data type and the number of samples/index.
 	 * These values can be obtained from first just reading the header and then continuing with reading the whole file.
@@ -674,11 +674,29 @@ public class BinaryTimeseries {
 
 
 
-
+	/**
+	 * Create a BinaryTimeseries with the timebase parameters {@code t0} and {@code dt} and the unscaled {@code rawData}. 
+	 * @param target buffer into which to write the time series data
+	 * @param t0 reference timestamp; can be {@code double} or {@code long}
+	 * @param dt reference timestamp; can be {@code double} or {@code long}
+	 * @param rawData raw data array; can be {@code byte[]}, {@code short[]}, {@code int[]}, {@code long[]}, {@code float[]} or {@code double[]}
+	 */
 	public static final void write(final ByteBuffer target, Object t0, Object dt, Object rawData) {
 		write(target, t0, dt, rawData, null, null);
 	}
 
+	/**
+	 * Create a BinaryTimeseries with the timebase parameters {@code t0} and {@code dt} and the unscaled {@code rawData}
+	 * and the scaling parameters {@code scalingOffset} and {@code scalingFactor}. 
+	 * @param target buffer into which to write the time series data
+	 * @param t0 reference timestamp; can be {@code double} or {@code long}
+	 * @param dt reference timestamp; can be {@code double} or {@code long}
+	 * @param rawData raw data array; can be {@code byte[]}, {@code short[]}, {@code int[]}, {@code long[]}, {@code float[]} or {@code double[]}
+	 * @param scalingOffset scaling offset of the raw data to be saved into the file;
+	 *                      can be {@code null}, {@code byte}, {@code short}, {@code int}, {@code long}, {@code float} or {@code double}
+	 * @param scalingFactor scaling factor of the raw data to be saved into the file;
+	 *                      can be {@code null}, {@code byte}, {@code short}, {@code int}, {@code long}, {@code float} or {@code double}
+	 */
 	public static final void write(final ByteBuffer target, Object t0, Object dt, Object rawData, Object scalingOffset, Object scalingFactor) {
 		BinaryTimeseries.writeEndianessCheckValue(target);
 		if (t0 == null) { throw new RuntimeException("t0 cannot be null"); }
@@ -742,12 +760,23 @@ public class BinaryTimeseries {
 	 *                     *
 	 ***********************/
 
+	/**
+	 * Read the 64 byte header from the given source buffer.
+	 * @param source buffer from which to read the first 64 bytes
+	 * @return the first 64 bytes as read from {@code source}
+	 */
 	public static final byte[] readHeader(final ByteBuffer source) {
 		final byte[] header = new byte[64];
 		source.get(header);
 		return header;
 	}
 
+	/**
+	 * Read the first {@code short} value from the {@code source} buffer and check if it was correctly read as 1. 
+	 * @param source buffer from which to read
+	 * @return true if the read value was 1, false if if was -128 (indicating wrong endianess of {@code source}
+	 * @throws RuntimeException in any case something else than 1 or -128 was read
+	 */
 	public static final boolean readEndianessOk(final ByteBuffer source) {
 		final short firstShort = source.getShort();
 		if (firstShort == 1) {
@@ -759,27 +788,51 @@ public class BinaryTimeseries {
 		}
 	}
 
-
+	/**
+	 * Read the timestamp data type from the {@code source} buffer.
+	 * @param source buffer from which to read
+	 * @return timestamp dtype; should either be {@code DTYPE_LONG} or {@code DTYPE_DOUBLE}
+	 */
 	public static final byte readTimeType(final ByteBuffer source) {
 		final byte time_dtype = source.get();
 		return time_dtype;
 	}
 
+	/**
+	 * Read the reference timestamp t_0 from the given {@code source} buffer.
+	 * @param source buffer from which to read
+	 * @return reference timestamp read as {@code long}
+	 */
 	public static final long readTimeT0_long(final ByteBuffer source) {
 		final long t0 = source.getLong();
 		return t0;
 	}
 
+	/**
+	 * Read the time interval between two consecutive samples Delta_t from the given {@code source} buffer.
+	 * @param source buffer from which to read
+	 * @return time interval between two consecutive samples Delta_t read as {@code long}
+	 */
 	public static final long readTimeDt_long(final ByteBuffer source) {
 		final long dt = source.getLong();
 		return dt;
 	}
 
+	/**
+	 * Read the reference timestamp t_0 from the given {@code source} buffer.
+	 * @param source buffer from which to read
+	 * @return reference timestamp read as {@code double}
+	 */
 	public static final double readTimeT0_double(final ByteBuffer source) {
 		final double t0 = source.getDouble();
 		return t0;
 	}
 
+	/**
+	 * Read the time interval between two consecutive samples Delta_t from the given {@code source} buffer.
+	 * @param source buffer from which to read
+	 * @return time interval between two consecutive samples Delta_t read as {@code double}
+	 */
 	public static final double readTimeDt_double(final ByteBuffer source) {
 		final double dt = source.getDouble();
 		return dt;
@@ -796,79 +849,156 @@ public class BinaryTimeseries {
 		return (scaling_dtype != 0);
 	}
 
+	/**
+	 * Read the scaling data type from the given {@code source} buffer.
+	 * @param source buffer from which to read
+	 * @return one of {@code DTYPE_NONE}, {@code DTYPE_BYTE}, {@code DTYPE_SHORT}, {@code DTYPE_INT}, {@code DTYPE_LONG}, {@code DTYPE_FLOAT} or {@code DTYPE_DOUBLE}
+	 */
 	public static final byte readScalingType(final ByteBuffer source) {
 		final byte scaling_dtype = source.get();
 		return scaling_dtype;
 	}
 
+	/**
+	 * Proceed with reading from the given {@code source} buffer over the bytes reserved in the header for optional scaling parameters.
+	 * Currently, this simply reads 16 bytes from the buffer.
+	 * @param source buffer from which to read
+	 */
 	public static final void readScalingDisabled(final ByteBuffer source) {
-		final byte[] dummy = new byte[8+8];
-		source.get(dummy);
+		source.get(new byte[8+8]);
 	}
 
+	/**
+	 * Read the scaling offset from the given {@code source} buffer as {@code byte} and proceed reading until a total of 8 bytes has been read
+	 * to stay aligned with the defined file structure.
+	 * @param source buffer from which to read
+	 * @return scaling offset read as {@code byte}
+	 */
 	public static final byte readScalingOffset_byte(final ByteBuffer source) {
 		final byte scalingOffset = source.get();
 		source.get(new byte[8-Byte.BYTES]);
 		return scalingOffset;
 	}
 
+	/**
+	 * Read the scaling factor from the given {@code source} buffer as {@code byte} and proceed reading until a total of 8 bytes has been read
+	 * to stay aligned with the defined file structure.
+	 * @param source buffer from which to read
+	 * @return scaling factor read as {@code byte}
+	 */
 	public static final byte readScalingFactor_byte(final ByteBuffer source) {
 		final byte scalingFactor = source.get();
 		source.get(new byte[8-Byte.BYTES]);
 		return scalingFactor;
 	}
 
+	/**
+	 * Read the scaling offset from the given {@code source} buffer as {@code short} and proceed reading until a total of 8 bytes has been read
+	 * to stay aligned with the defined file structure.
+	 * @param source buffer from which to read
+	 * @return scaling offset read as {@code short}
+	 */
 	public static final short readScalingOffset_short(final ByteBuffer source) {
 		final short scalingOffset = source.getShort();
 		source.get(new byte[8-Short.BYTES]);
 		return scalingOffset;
 	}
 
+	/**
+	 * Read the scaling factor from the given {@code source} buffer as {@code short} and proceed reading until a total of 8 bytes has been read
+	 * to stay aligned with the defined file structure.
+	 * @param source buffer from which to read
+	 * @return scaling factor read as {@code short}
+	 */
 	public static final short readScalingFactor_short(final ByteBuffer source) {
 		final short scalingFactor = source.getShort();
 		source.get(new byte[8-Short.BYTES]);
 		return scalingFactor;
 	}
 
+	/**
+	 * Read the scaling offset from the given {@code source} buffer as {@code int} and proceed reading until a total of 8 bytes has been read
+	 * to stay aligned with the defined file structure.
+	 * @param source buffer from which to read
+	 * @return scaling offset read as {@code int}
+	 */
 	public static final int readScalingOffset_int(final ByteBuffer source) {
 		final int scalingOffset = source.getInt();
 		source.get(new byte[8-Integer.BYTES]);
 		return scalingOffset;
 	}
 
+	/**
+	 * Read the scaling factor from the given {@code source} buffer as {@code int} and proceed reading until a total of 8 bytes has been read
+	 * to stay aligned with the defined file structure.
+	 * @param source buffer from which to read
+	 * @return scaling factor read as {@code int}
+	 */
 	public static final int readScalingFactor_int(final ByteBuffer source) {
 		final int scalingFactor = source.getInt();
 		source.get(new byte[8-Integer.BYTES]);
 		return scalingFactor;
 	}
 
+	/**
+	 * Read the scaling offset from the given {@code source} buffer as {@code long}.
+	 * @param source buffer from which to read
+	 * @return scaling offset read as {@code long}
+	 */
 	public static final long readScalingOffset_long(final ByteBuffer source) {
 		final long scalingOffset = source.getLong();
 		return scalingOffset;
 	}
 
+	/**
+	 * Read the scaling factor from the given {@code source} buffer as {@code long}.
+	 * @param source buffer from which to read
+	 * @return scaling factor read as {@code long}
+	 */
 	public static final long readScalingFactor_long(final ByteBuffer source) {
 		final long scalingFactor = source.getLong();
 		return scalingFactor;
 	}
 
+	/**
+	 * Read the scaling offset from the given {@code source} buffer as {@code float} and proceed reading until a total of 8 bytes has been read
+	 * to stay aligned with the defined file structure.
+	 * @param source buffer from which to read
+	 * @return scaling offset read as {@code float}
+	 */
 	public static final float readScalingOffset_float(final ByteBuffer source) {
 		final float scalingOffset = source.getFloat();
 		source.get(new byte[8-Float.BYTES]);
 		return scalingOffset;
 	}
 
+	/**
+	 * Read the scaling factor from the given {@code source} buffer as {@code float} and proceed reading until a total of 8 bytes has been read
+	 * to stay aligned with the defined file structure.
+	 * @param source buffer from which to read
+	 * @return scaling factor read as {@code float}
+	 */
 	public static final float readScalingFactor_float(final ByteBuffer source) {
 		final float scalingFactor = source.getFloat();
 		source.get(new byte[8-Float.BYTES]);
 		return scalingFactor;
 	}
 
+	/**
+	 * Read the scaling offset from the given {@code source} buffer as {@code double}.
+	 * @param source buffer from which to read
+	 * @return scaling offset read as {@code double}
+	 */
 	public static final double readScalingOffset_double(final ByteBuffer source) {
 		final double scalingOffset = source.getDouble();
 		return scalingOffset;
 	}
 
+	/**
+	 * Read the scaling factor from the given {@code source} buffer as {@code double}.
+	 * @param source buffer from which to read
+	 * @return scaling factor read as {@code double}
+	 */
 	public static final double readScalingFactor_double(final ByteBuffer source) {
 		final double scalingFactor = source.getDouble();
 		return scalingFactor;
@@ -884,59 +1014,120 @@ public class BinaryTimeseries {
 
 
 
-
+	/**
+	 * Proceed with reading from the given {@code source} buffer over the bytes reserved in the header.
+	 * Currently, this simply reads 23 bytes from the buffer.
+	 * @param source buffer from which to read
+	 */
 	public static final void readReservedDummy(final ByteBuffer source) {
 		source.get(new byte[23]);
 	}
 
 
-
+	/**
+	 * Read the raw data type from the given {@code source} buffer.
+	 * @param source buffer from which to read
+	 * @return one of {@code DTYPE_BYTE}, {@code DTYPE_SHORT}, {@code DTYPE_INT}, {@code DTYPE_LONG}, {@code DTYPE_FLOAT} or {@code DTYPE_DOUBLE}
+	 */
 	public static final byte readDataType(final ByteBuffer source) {
 		final byte data_dtype = source.get();
 		return data_dtype;
 	}
 
+	/**
+	 * Read the number of samples from the given {@code source} buffer.
+	 * @param source buffer from which to read
+	 * @return number of samples; should be > 0
+	 */
 	public static final int readNumSamples(final ByteBuffer source) {
 		final int numSamples = source.getInt();
 		return numSamples;
 	}
 
+	/**
+	 * Read the raw data from the given {@code source} buffer and put them into a given {@code target} array at an offset specified by {@code targetOffset}.
+	 * @param source buffer from which to read
+	 * @param target array into which to read the given samples
+	 * @param targetOffset offset in {@code target} at which to put the first sample read from the {@code source} buffer
+	 * @param numSamples number of samples to be read from the {@code source} buffer
+	 */
 	public static final void readRawData(final ByteBuffer source, final byte[] target, final int targetOffset, final int numSamples) {
 		for (int i=0; i<numSamples; ++i) {
 			target[targetOffset+i] = source.get();
 		}
 	}
 
+	/**
+	 * Read the raw data from the given {@code source} buffer and put them into a given {@code target} array at an offset specified by {@code targetOffset}.
+	 * @param source buffer from which to read
+	 * @param target array into which to read the given samples
+	 * @param targetOffset offset in {@code target} at which to put the first sample read from the {@code source} buffer
+	 * @param numSamples number of samples to be read from the {@code source} buffer
+	 */
 	public static final void readRawData(final ByteBuffer source, final short[] target, final int targetOffset, final int numSamples) {
 		for (int i=0; i<numSamples; ++i) {
 			target[targetOffset+i] = source.getShort();
 		}
 	}
 
+	/**
+	 * Read the raw data from the given {@code source} buffer and put them into a given {@code target} array at an offset specified by {@code targetOffset}.
+	 * @param source buffer from which to read
+	 * @param target array into which to read the given samples
+	 * @param targetOffset offset in {@code target} at which to put the first sample read from the {@code source} buffer
+	 * @param numSamples number of samples to be read from the {@code source} buffer
+	 */
 	public static final void readRawData(final ByteBuffer source, final int[] target, final int targetOffset, final int numSamples) {
 		for (int i=0; i<numSamples; ++i) {
 			target[targetOffset+i] = source.getInt();
 		}
 	}
 
+	/**
+	 * Read the raw data from the given {@code source} buffer and put them into a given {@code target} array at an offset specified by {@code targetOffset}.
+	 * @param source buffer from which to read
+	 * @param target array into which to read the given samples
+	 * @param targetOffset offset in {@code target} at which to put the first sample read from the {@code source} buffer
+	 * @param numSamples number of samples to be read from the {@code source} buffer
+	 */
 	public static final void readRawData(final ByteBuffer source, final long[] target, final int targetOffset, final int numSamples) {
 		for (int i=0; i<numSamples; ++i) {
 			target[targetOffset+i] = source.getLong();
 		}
 	}
 
+	/**
+	 * Read the raw data from the given {@code source} buffer and put them into a given {@code target} array at an offset specified by {@code targetOffset}.
+	 * @param source buffer from which to read
+	 * @param target array into which to read the given samples
+	 * @param targetOffset offset in {@code target} at which to put the first sample read from the {@code source} buffer
+	 * @param numSamples number of samples to be read from the {@code source} buffer
+	 */
 	public static final void readRawData(final ByteBuffer source, final float[] target, final int targetOffset, final int numSamples) {
 		for (int i=0; i<numSamples; ++i) {
 			target[targetOffset+i] = source.getFloat();
 		}
 	}
 
+	/**
+	 * Read the raw data from the given {@code source} buffer and put them into a given {@code target} array at an offset specified by {@code targetOffset}.
+	 * @param source buffer from which to read
+	 * @param target array into which to read the given samples
+	 * @param targetOffset offset in {@code target} at which to put the first sample read from the {@code source} buffer
+	 * @param numSamples number of samples to be read from the {@code source} buffer
+	 */
 	public static final void readRawData(final ByteBuffer source, final double[] target, final int targetOffset, final int numSamples) {
 		for (int i=0; i<numSamples; ++i) {
 			target[targetOffset+i] = source.getDouble();
 		}
 	}
 
+	/**
+	 * Read the scaling parameters, the reserved (dummy) area, the raw data type and number of samples and the raw data;
+	 * scale the raw data according to the (possibly present) scaling parameters and put the resulting samples into a {@code byte[]} array.
+	 * @param source buffer from which to read
+	 * @return an array containing the (scaled) data from the {@code source} buffer
+	 */
 	public static final byte[] readData_byte(final ByteBuffer source) {
 
 		final byte scaling_dtype = readScalingType(source);
@@ -1187,6 +1378,12 @@ public class BinaryTimeseries {
 		}
 	}
 
+	/**
+	 * Read the scaling parameters, the reserved (dummy) area, the raw data type and number of samples and the raw data;
+	 * scale the raw data according to the (possibly present) scaling parameters and put the resulting samples into a {@code short[]} array.
+	 * @param source buffer from which to read
+	 * @return an array containing the (scaled) data from the {@code source} buffer
+	 */
 	public static final short[] readData_short(final ByteBuffer source) {
 
 		final byte scaling_dtype = readScalingType(source);
@@ -1437,6 +1634,12 @@ public class BinaryTimeseries {
 		}
 	}
 
+	/**
+	 * Read the scaling parameters, the reserved (dummy) area, the raw data type and number of samples and the raw data;
+	 * scale the raw data according to the (possibly present) scaling parameters and put the resulting samples into a {@code int[]} array.
+	 * @param source buffer from which to read
+	 * @return an array containing the (scaled) data from the {@code source} buffer
+	 */
 	public static final int[] readData_int(final ByteBuffer source) {
 
 		final byte scaling_dtype = readScalingType(source);
@@ -1687,8 +1890,12 @@ public class BinaryTimeseries {
 		}
 	}
 
-
-
+	/**
+	 * Read the scaling parameters, the reserved (dummy) area, the raw data type and number of samples and the raw data;
+	 * scale the raw data according to the (possibly present) scaling parameters and put the resulting samples into a {@code long[]} array.
+	 * @param source buffer from which to read
+	 * @return an array containing the (scaled) data from the {@code source} buffer
+	 */
 	public static final long[] readData_long(final ByteBuffer source) {
 
 		final byte scaling_dtype = readScalingType(source);
@@ -1939,7 +2146,12 @@ public class BinaryTimeseries {
 		}
 	}
 
-
+	/**
+	 * Read the scaling parameters, the reserved (dummy) area, the raw data type and number of samples and the raw data;
+	 * scale the raw data according to the (possibly present) scaling parameters and put the resulting samples into a {@code float[]} array.
+	 * @param source buffer from which to read
+	 * @return an array containing the (scaled) data from the {@code source} buffer
+	 */
 	public static final float[] readData_float(final ByteBuffer source) {
 
 		final byte scaling_dtype = readScalingType(source);
@@ -2190,6 +2402,12 @@ public class BinaryTimeseries {
 		}
 	}
 
+	/**
+	 * Read the scaling parameters, the reserved (dummy) area, the raw data type and number of samples and the raw data;
+	 * scale the raw data according to the (possibly present) scaling parameters and put the resulting samples into a {@code double[]} array.
+	 * @param source buffer from which to read
+	 * @return an array containing the (scaled) data from the {@code source} buffer
+	 */
 	public static final double[] readData_double(final ByteBuffer source) {
 
 		final byte scaling_dtype = readScalingType(source);
