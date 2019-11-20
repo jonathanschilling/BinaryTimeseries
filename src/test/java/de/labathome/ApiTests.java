@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
@@ -54,23 +56,36 @@ public class ApiTests {
 				Double.BYTES
 		};
 		
+		final Map<Byte, String> javaName = new HashMap<>();
+		javaName.put(BinaryTimeseries.DTYPE_NONE,     "null");
+		javaName.put(BinaryTimeseries.DTYPE_BYTE,     "byte");
+		javaName.put(BinaryTimeseries.DTYPE_SHORT,   "short");
+		javaName.put(BinaryTimeseries.DTYPE_INT,       "int");
+		javaName.put(BinaryTimeseries.DTYPE_LONG,     "long");
+		javaName.put(BinaryTimeseries.DTYPE_FLOAT,   "float");
+		javaName.put(BinaryTimeseries.DTYPE_DOUBLE, "double");
+		
 		for (int time_dtype_idx=0; time_dtype_idx<time_dtypes.length; ++time_dtype_idx) {
 			final byte time_dtype = time_dtypes[time_dtype_idx];
-			final String strTime = BinaryTimeseries.dtypeStr(time_dtype);
-			
+			final String tT = BinaryTimeseries.dtypeStr(time_dtype);
+			String jtT = javaName.get(time_dtype);
+
 			for (int scaling_dtype_idx=0; scaling_dtype_idx<scaling_dtypes.length; ++scaling_dtype_idx) {
 				final byte scaling_dtype = scaling_dtypes[scaling_dtype_idx];
-				final String strScaling = BinaryTimeseries.dtypeStr(scaling_dtype);
+				final String tS = BinaryTimeseries.dtypeStr(scaling_dtype);
+				String jtS = javaName.get(scaling_dtype);
 				
 				for (int data_dtype_idx=0; data_dtype_idx<data_dtypes.length; ++data_dtype_idx) {
 					final byte data_dtype = data_dtypes[data_dtype_idx];
-					final String strData = BinaryTimeseries.dtypeStr(data_dtype);
+					final String tD = BinaryTimeseries.dtypeStr(data_dtype);
+					String jtD = javaName.get(data_dtype);
 					final int data_size = data_sizes[data_dtype_idx];
 					
-					final String testId = strTime+"_"+strScaling+"_"+strData;
+					final String testId = tT+"_"+tS+"_"+tD;
 					System.out.println("	// "+testId);
 					
-					final int numSamples = 10;
+					final String numSamplesStr = "10";
+					final int numSamples = Integer.parseInt(numSamplesStr);
 					
 					final String t0Str = "13.0";
 					final double t0 = Double.parseDouble(t0Str);
@@ -118,7 +133,7 @@ public class ApiTests {
 					final int targetOffset = 0;
 					
 					final String t_lStr =  "80.0"; // => firstIndexInside = 2
-					final String t_uStr = "300.0"; // => lastIndexInside = 7
+					final String t_uStr = "300.0"; // =>  lastIndexInside = 7
 					
 					// compute file size from reserved number of header bytes, sample size and number of samples
 					final int filesize = 64 + data_size*numSamples;
@@ -130,110 +145,56 @@ public class ApiTests {
 						// these need to be executed only once per time type
 						
 						// buildTimebase
-						if (time_dtype == BinaryTimeseries.DTYPE_LONG) {
-							
-							// testBuiltTimebase_L
-							System.out.println("	@Test\n"+
-									"	public void testBuiltTimebase_L() {\n"+
-									"		final int numSamples = "+numSamples+";\n"+
-									"		final long t0_L = (long) "+t0Str+";\n"+
-									"		final long dt_L = (long) "+dtStr+";\n"+
-									"		final int numSamplesSubset = "+numSamplesSubset+";\n"+
-									"		final int sourceOffset = "+sourceOffset+";\n"+
-									"		final int targetOffset = "+targetOffset+";\n"+
-									"		\n"+
-									"		// 'manually' build reference time stamps\n"+ 
-									"		final long[] timebase = new long[numSamples];\n"+
-									"		for (int i=0; i<numSamples; ++i) {\n"+
-									"			timebase[i] = t0_L + i*dt_L;\n"+
-									"		}\n"+
-									"		final long[] timebase_subset = new long[numSamplesSubset];\n"+
-									"		System.arraycopy(timebase, sourceOffset, timebase_subset, targetOffset, numSamplesSubset);\n"+
-									"		\n"+
-									"		// no sourceOffset and targetOffset given\n"+
-									"		final long[] targetTimebase = new long[numSamples];\n"+
-									"		BinaryTimeseries.buildTimebase(targetTimebase, t0_L, dt_L);\n"+
-									"		assertArrayEquals(timebase, targetTimebase);\n"+
-									"		\n"+
-									"		// sourceOffset and targetOffset are given\n"+
-									"		final long[] targetTimebase_subset = new long[numSamplesSubset];\n"+
-									"		BinaryTimeseries.buildTimebase(sourceOffset, targetTimebase_subset, targetOffset, numSamplesSubset, t0_L, dt_L);\n"+
-									"		assertArrayEquals(timebase_subset, targetTimebase_subset);\n"+
-									"	}\n");
-							
-							// testFirstIndexInside_L
-							System.out.println("	@Test\n"+
-									"	public void testFirstIndexInside_L() {\n"+
-									"		final long t0_L  = (long) "+t0Str+";\n"+
-									"		final long dt_L  = (long) "+dtStr+";\n"+
-									"		final long t_l_L = (long) "+t_lStr+";\n"+
-									"		assertEquals(2, BinaryTimeseries.firstIndexInside(t0_L, dt_L, t_l_L));\n"+
-									"	}\n");
-							
-							// testLastIndexInside_L
-							System.out.println("	@Test\n"+
-									"	public void testLastIndexInside_L() {\n"+
-									"		final long t0_L  = (long) "+t0Str+";\n"+
-									"		final long dt_L  = (long) "+dtStr+";\n"+
-									"		final long t_u_L = (long) "+t_uStr+";\n"+
-									"		assertEquals(7, BinaryTimeseries.lastIndexInside(t0_L, dt_L, t_u_L));\n"+
-									"	}\n");
-							                                                                                                                                          
-						} else if (time_dtype == BinaryTimeseries.DTYPE_DOUBLE) {
-							System.out.println("	@Test\n"+
-									"	public void testBuiltTimebase_D() {\n"+
-									"		final int numSamples = "+numSamples+";\n"+
-									"		final double t0_D = (double) "+t0Str+";\n"+
-									"		final double dt_D = (double) "+dtStr+";\n"+
-									"		final int numSamplesSubset = "+numSamplesSubset+";\n"+
-									"		final int sourceOffset = "+sourceOffset+";\n"+
-									"		final int targetOffset = "+targetOffset+";\n"+
-									"		\n"+
-									"		// 'manually' build reference time stamps\n"+ 
-									"		final double[] timebase = new double[numSamples];\n"+
-									"		for (int i=0; i<numSamples; ++i) {\n"+
-									"			timebase[i] = t0_D + i*dt_D;\n"+
-									"		}\n"+
-									"		final double[] timebase_subset = new double[numSamplesSubset];\n"+
-									"		System.arraycopy(timebase, sourceOffset, timebase_subset, targetOffset, numSamplesSubset);\n"+
-									"		\n"+
-									"		// no sourceOffset and targetOffset given\n"+
-									"		final double[] targetTimebase = new double[numSamples];\n"+
-									"		BinaryTimeseries.buildTimebase(targetTimebase, t0_D, dt_D);\n"+
-									"		assertArrayEquals(timebase, targetTimebase);\n"+
-									"		\n"+
-									"		// sourceOffset and targetOffset are given\n"+
-									"		final double[] targetTimebase_subset = new double[numSamplesSubset];\n"+
-									"		BinaryTimeseries.buildTimebase(sourceOffset, targetTimebase_subset, targetOffset, numSamplesSubset, t0_D, dt_D);\n"+
-									"		assertArrayEquals(timebase_subset, targetTimebase_subset);\n"+
-									"	}\n");
-							
-							// testFirstIndexInside_D
-							System.out.println("	@Test\n"+
-									"	public void testFirstIndexInside_D() {\n"+
-									"		final double t0_D  = (double) "+t0Str+";\n"+
-									"		final double dt_D  = (double) "+dtStr+";\n"+
-									"		final double t_l_D = (double) "+t_lStr+";\n"+
-									"		assertEquals(2, BinaryTimeseries.firstIndexInside(t0_D, dt_D, t_l_D));\n"+
-									"	}\n");
-							
-							// testLastIndexInside_D
-							System.out.println("	@Test\n"+
-									"	public void testLastIndexInside_D() {\n"+
-									"		final double t0_D  = (double) "+t0Str+";\n"+
-									"		final double dt_D  = (double) "+dtStr+";\n"+
-									"		final double t_u_D = (double) "+t_uStr+";\n"+
-									"		assertEquals(7, BinaryTimeseries.lastIndexInside(t0_D, dt_D, t_u_D));\n"+
-									"	}\n");
-						}
+						System.out.println("	@Test\n"+
+								"	public void testBuiltTimebase_"+tT+"() {\n"+
+								"		final int numSamples = "+numSamplesStr+";\n"+
+								"		final "+jtT+" t0_"+tT+" = ("+jtT+") "+t0Str+";\n"+
+								"		final "+jtT+" dt_"+tT+" = ("+jtT+") "+dtStr+";\n"+
+								"		final int numSamplesSubset = "+numSamplesSubset+";\n"+
+								"		final int sourceOffset = "+sourceOffset+";\n"+
+								"		final int targetOffset = "+targetOffset+";\n"+
+								"		\n"+
+								"		// 'manually' build reference time stamps\n"+ 
+								"		final "+jtT+"[] timebase = new "+jtT+"[numSamples];\n"+
+								"		for (int i=0; i<numSamples; ++i) {\n"+
+								"			timebase[i] = t0_"+tT+" + i*dt_"+tT+";\n"+
+								"		}\n"+
+								"		final "+jtT+"[] timebase_subset = new "+jtT+"[numSamplesSubset];\n"+
+								"		System.arraycopy(timebase, sourceOffset, timebase_subset, targetOffset, numSamplesSubset);\n"+
+								"		\n"+
+								"		// no sourceOffset and targetOffset given\n"+
+								"		final "+jtT+"[] targetTimebase = new "+jtT+"[numSamples];\n"+
+								"		BinaryTimeseries.buildTimebase(targetTimebase, t0_"+tT+", dt_"+tT+");\n"+
+								"		assertArrayEquals(timebase, targetTimebase);\n"+
+								"		\n"+
+								"		// sourceOffset and targetOffset are given\n"+
+								"		final "+jtT+"[] targetTimebase_subset = new "+jtT+"[numSamplesSubset];\n"+
+								"		BinaryTimeseries.buildTimebase(sourceOffset, targetTimebase_subset, targetOffset, numSamplesSubset, t0_"+tT+", dt_"+tT+");\n"+
+								"		assertArrayEquals(timebase_subset, targetTimebase_subset);\n"+
+								"	}\n");
+						
+						// testFirstIndexInside
+						System.out.println("	@Test\n"+
+								"	public void testFirstIndexInside_"+tT+"() {\n"+
+								"		final "+jtT+" t0_"+tT+"  = ("+jtT+") "+t0Str+";\n"+
+								"		final "+jtT+" dt_"+tT+"  = ("+jtT+") "+dtStr+";\n"+
+								"		final "+jtT+" t_l_"+tT+" = ("+jtT+") "+t_lStr+";\n"+
+								"		assertEquals(2, BinaryTimeseries.firstIndexInside(t0_"+tT+", dt_"+tT+", t_l_"+tT+"));\n"+
+								"	}\n");
+						
+						// testLastIndexInside
+						System.out.println("	@Test\n"+
+								"	public void testLastIndexInside_"+tT+"() {\n"+
+								"		final "+jtT+" t0_"+tT+"  = ("+jtT+") "+t0Str+";\n"+
+								"		final "+jtT+" dt_"+tT+"  = ("+jtT+") "+dtStr+";\n"+
+								"		final "+jtT+" t_u_"+tT+" = ("+jtT+") "+t_uStr+";\n"+
+								"		assertEquals(7, BinaryTimeseries.lastIndexInside(t0_"+tT+", dt_"+tT+", t_u_"+tT+"));\n"+
+								"	}\n");
 					}
 					
 					if (time_dtype_idx == 0 && data_dtype_idx == 0) {
 						// these need to be executed only once per scaling type
-						
-						
-						
-						
+
 					}
 					
 					if (time_dtype_idx == 0 && scaling_dtype_idx == 0) {
@@ -241,19 +202,26 @@ public class ApiTests {
 						
 						// fileOffset
 						System.out.println("	@Test\n"+
-								"	public void testFileOffset_"+BinaryTimeseries.dtypeStr(data_dtype)+"() {\n"+
-								"		assertEquals("+filesize+", BinaryTimeseries.fileOffset("+data_size+", 10));\n"+
+								"	public void testFileOffset_"+tD+"() {\n"+
+								"		assertEquals("+filesize+", BinaryTimeseries.fileOffset("+data_size+", "+numSamplesStr+"));\n"+
 								"	}\n");
 					}
+					
+					
+					
 					
 					// code for testing the API write and read methods
 					String writeTestCode = "	@Test\n"+
 							"	public void testWriting_"+testId+"() {\n";
+					
+					
 					String readTestCode = "	@Test\n"+
 							"	public void testReading_"+testId+"() {\n";
 					
 					
 					
+					
+				
 					
 					// 'manually' build a BinaryTimeseries
 					final ByteBuffer referenceTarget = ByteBuffer.wrap(binaryTimeseries);
@@ -264,6 +232,7 @@ public class ApiTests {
 					// dtype of time
 					referenceTarget.put(time_dtype);
 					//assertEquals(3, referenceTarget.position());
+
 					// t0
 					if (time_dtype == BinaryTimeseries.DTYPE_LONG) {
 						referenceTarget.putLong(t0_L);
@@ -271,6 +240,9 @@ public class ApiTests {
 						referenceTarget.putDouble(t0_D);
 					}
 					//assertEquals(11, referenceTarget.position());
+					
+					writeTestCode += "		final "+jtT+" t0_"+tT+" = ("+jtT+") "+t0Str+";\n";
+					
 					// dt
 					if (time_dtype == BinaryTimeseries.DTYPE_LONG) {
 						referenceTarget.putLong(dt_L);
@@ -278,60 +250,77 @@ public class ApiTests {
 						referenceTarget.putDouble(dt_D);
 					}
 					//assertEquals(19, referenceTarget.position());
+
+					writeTestCode += "		final "+jtT+" dt_"+tT+" = ("+jtT+") "+dtStr+";\n";
+					
 					// scaling dtype
 					referenceTarget.put(scaling_dtype);
 					//assertEquals(20, referenceTarget.position());
+					
 					// scaling offset
 					if (scaling_dtype == BinaryTimeseries.DTYPE_NONE) {
 						referenceTarget.put(new byte[8]);
-					} else if (scaling_dtype == BinaryTimeseries.DTYPE_BYTE) {
-						referenceTarget.put(scalingOffset_B);
-						referenceTarget.put(new byte[8-Byte.BYTES]);
-					} else if (scaling_dtype == BinaryTimeseries.DTYPE_SHORT) {
-						referenceTarget.putShort(scalingOffset_S);
-						referenceTarget.put(new byte[8-Short.BYTES]);
-					} else if (scaling_dtype == BinaryTimeseries.DTYPE_INT) {
-						referenceTarget.putInt(scalingOffset_I);
-						referenceTarget.put(new byte[8-Integer.BYTES]);
-					} else if (scaling_dtype == BinaryTimeseries.DTYPE_LONG) {
-						referenceTarget.putLong(scalingOffset_L);
-					} else if (scaling_dtype == BinaryTimeseries.DTYPE_FLOAT) {
-						referenceTarget.putFloat(scalingOffset_F);
-						referenceTarget.put(new byte[8-Float.BYTES]);
-					} else if (scaling_dtype == BinaryTimeseries.DTYPE_DOUBLE) {
-						referenceTarget.putDouble(scalingOffset_D);
+					} else {
+						if (scaling_dtype == BinaryTimeseries.DTYPE_BYTE) {
+							referenceTarget.put(scalingOffset_B);
+							referenceTarget.put(new byte[8-Byte.BYTES]);
+						} else if (scaling_dtype == BinaryTimeseries.DTYPE_SHORT) {
+							referenceTarget.putShort(scalingOffset_S);
+							referenceTarget.put(new byte[8-Short.BYTES]);
+						} else if (scaling_dtype == BinaryTimeseries.DTYPE_INT) {
+							referenceTarget.putInt(scalingOffset_I);
+							referenceTarget.put(new byte[8-Integer.BYTES]);
+						} else if (scaling_dtype == BinaryTimeseries.DTYPE_LONG) {
+							referenceTarget.putLong(scalingOffset_L);
+						} else if (scaling_dtype == BinaryTimeseries.DTYPE_FLOAT) {
+							referenceTarget.putFloat(scalingOffset_F);
+							referenceTarget.put(new byte[8-Float.BYTES]);
+						} else if (scaling_dtype == BinaryTimeseries.DTYPE_DOUBLE) {
+							referenceTarget.putDouble(scalingOffset_D);
+						}
+						writeTestCode += "		final "+jtS+" scalingOffset_"+tS+" = ("+jtS+") "+scalingOffsetStr+";\n";
 					}
 					//assertEquals(28, referenceTarget.position());
+					
 					// scaling factor
 					if (scaling_dtype == BinaryTimeseries.DTYPE_NONE) {
 						referenceTarget.put(new byte[8]);
-					} else if (scaling_dtype == BinaryTimeseries.DTYPE_BYTE) {
-						referenceTarget.put(scalingFactor_B);
-						referenceTarget.put(new byte[8-Byte.BYTES]);
-					} else if (scaling_dtype == BinaryTimeseries.DTYPE_SHORT) {
-						referenceTarget.putShort(scalingFactor_S);
-						referenceTarget.put(new byte[8-Short.BYTES]);
-					} else if (scaling_dtype == BinaryTimeseries.DTYPE_INT) {
-						referenceTarget.putInt(scalingFactor_I);
-						referenceTarget.put(new byte[8-Integer.BYTES]);
-					} else if (scaling_dtype == BinaryTimeseries.DTYPE_LONG) {
-						referenceTarget.putLong(scalingFactor_L);
-					} else if (scaling_dtype == BinaryTimeseries.DTYPE_FLOAT) {
-						referenceTarget.putFloat(scalingFactor_F);
-						referenceTarget.put(new byte[8-Float.BYTES]);
-					} else if (scaling_dtype == BinaryTimeseries.DTYPE_DOUBLE) {
-						referenceTarget.putDouble(scalingFactor_D);
+					} else {
+						if (scaling_dtype == BinaryTimeseries.DTYPE_BYTE) {
+							referenceTarget.put(scalingFactor_B);
+							referenceTarget.put(new byte[8-Byte.BYTES]);
+						} else if (scaling_dtype == BinaryTimeseries.DTYPE_SHORT) {
+							referenceTarget.putShort(scalingFactor_S);
+							referenceTarget.put(new byte[8-Short.BYTES]);
+						} else if (scaling_dtype == BinaryTimeseries.DTYPE_INT) {
+							referenceTarget.putInt(scalingFactor_I);
+							referenceTarget.put(new byte[8-Integer.BYTES]);
+						} else if (scaling_dtype == BinaryTimeseries.DTYPE_LONG) {
+							referenceTarget.putLong(scalingFactor_L);
+						} else if (scaling_dtype == BinaryTimeseries.DTYPE_FLOAT) {
+							referenceTarget.putFloat(scalingFactor_F);
+							referenceTarget.put(new byte[8-Float.BYTES]);
+						} else if (scaling_dtype == BinaryTimeseries.DTYPE_DOUBLE) {
+							referenceTarget.putDouble(scalingFactor_D);
+						}
+						writeTestCode += "		final "+jtS+" scalingFactor_"+tS+" = ("+jtS+") "+scalingFactorStr+";\n";
 					}
 					//assertEquals(36, referenceTarget.position());
+					
 					// reserved dummy space
 					referenceTarget.put(new byte[23]);
 					//assertEquals(59, referenceTarget.position());
+					
 					// type of raw data
 					referenceTarget.put(data_dtype);
 					//assertEquals(60, referenceTarget.position());
+					
 					// number of samples
 					referenceTarget.putInt(numSamples);
 					//assertEquals(64, referenceTarget.position());
+					
+					writeTestCode += "		final int numSamples = "+numSamplesStr+";\n";
+					
 					// actual data
 					Object samples = null;
 					if (data_dtype == BinaryTimeseries.DTYPE_BYTE) {
@@ -469,6 +458,28 @@ public class ApiTests {
 					}
 					//assertEquals(filesize, referenceTarget.position());
 					
+					writeTestCode += "		final "+jtD+"[] values = new "+jtD+"[numSamples];\n"+
+							"		for (int i=0; i<numSamples; ++i) {\n";
+					if (scaling_dtype == BinaryTimeseries.DTYPE_NONE) {
+						writeTestCode += "			values[i] = ("+jtD+") i;\n";
+					} else {
+						writeTestCode += "			values[i] = ("+jtD+") (scalingOffset_"+tS+" + i*scalingFactor_"+tS+");\n";
+					}
+					writeTestCode += "		}\n"+
+							"		int fileSize = BinaryTimeseries.fileOffset("+data_size+", numSamples);\n"+
+							"		final byte[] targetArr = new byte[fileSize];\n" +
+							"		final ByteBuffer target = ByteBuffer.wrap(targetArr);\n" +
+							"		BinaryTimeseries.writeEndianessCheckValue(target);\n" +
+							"		BinaryTimeseries.writeTimebase(target, t0_"+tT+", dt_"+tT+");\n";
+					
+					if (scaling_dtype == BinaryTimeseries.DTYPE_NONE) {
+						writeTestCode += "		BinaryTimeseries.writeScalingDisabled(target);\n";
+					} else {
+						writeTestCode += "		BinaryTimeseries.writeScaling(target, scalingOffset_"+tS+", scalingFactor_"+tS+");\n";
+					}
+							
+					writeTestCode += "		BinaryTimeseries.writeReservedDummy(target);\n" +
+							"		BinaryTimeseries.writeData(target, values);\n";
 					
 					// generate textual representation of byte array containing the reference BinaryTimeseries
 					String btsDef = "final byte[] referenceBTS_"+testId+" = new byte[] {\n\t";
@@ -480,72 +491,35 @@ public class ApiTests {
 						}
 					}
 					btsDef += String.format("(byte) 0x%02X };", binaryTimeseries[filesize-1]);
-					
+
+					// adjust indentation
 					writeTestCode += "		"+btsDef.replace("\t", "\t\t\t")+"\n";
 					
+					// finally actually check the array contents
+					writeTestCode += "		assertArrayEquals(referenceBTS_"+testId+", targetArr);\n";
+
 					
-					// build BinaryTimeseries using API methods
-					final int fileSize = BinaryTimeseries.fileOffset(data_size, numSamples);
-					final byte[] targetArr = new byte[fileSize];
-					final ByteBuffer target = ByteBuffer.wrap(targetArr);
-					assertEquals(0, target.position());
-					BinaryTimeseries.writeEndianessCheckValue(target);
-					assertEquals(2, target.position());
-					if (time_dtype == BinaryTimeseries.DTYPE_LONG) {
-						BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
-					} else if (time_dtype == BinaryTimeseries.DTYPE_DOUBLE) {
-						BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
-					}
-					assertEquals(19, target.position());
 					if (scaling_dtype == BinaryTimeseries.DTYPE_NONE) {
-						BinaryTimeseries.writeScalingDisabled(target);
-					} else if (scaling_dtype == BinaryTimeseries.DTYPE_BYTE) {
-						BinaryTimeseries.writeScaling(target, scalingOffset_B, scalingFactor_B);
-					} else if (scaling_dtype == BinaryTimeseries.DTYPE_SHORT) {
-						BinaryTimeseries.writeScaling(target, scalingOffset_S, scalingFactor_S);
-					} else if (scaling_dtype == BinaryTimeseries.DTYPE_INT) {
-						BinaryTimeseries.writeScaling(target, scalingOffset_I, scalingFactor_I);
-					} else if (scaling_dtype == BinaryTimeseries.DTYPE_LONG) {
-						BinaryTimeseries.writeScaling(target, scalingOffset_L, scalingFactor_L);
-					} else if (scaling_dtype == BinaryTimeseries.DTYPE_FLOAT) {
-						BinaryTimeseries.writeScaling(target, scalingOffset_F, scalingFactor_F);
-					} else if (scaling_dtype == BinaryTimeseries.DTYPE_DOUBLE) {
-						BinaryTimeseries.writeScaling(target, scalingOffset_D, scalingFactor_D);
+						// rewind and re-check using write() without scaling
+						writeTestCode += "		target.position(0);\n" +
+						"		BinaryTimeseries.write(target, t0_"+tT+", dt_"+tT+", values);\n" +
+						"		assertArrayEquals(referenceBTS_"+testId+", targetArr);\n";
+					} else {
+						// rewind and re-check using write() with scaling
+						writeTestCode += "		target.position(0);\n" +
+								"		BinaryTimeseries.write(target, t0_"+tT+", dt_"+tT+", values, scalingOffset_"+tS+", scalingFactor_"+tS+");\n" +
+								"		assertArrayEquals(referenceBTS_"+testId+", targetArr);\n";
 					}
-					assertEquals(36, target.position());
-					BinaryTimeseries.writeReservedDummy(target);
-					assertEquals(59, target.position());
-					if (data_dtype == BinaryTimeseries.DTYPE_BYTE) {
-						BinaryTimeseries.writeData(target, (byte[])samples);
-					} else if (data_dtype == BinaryTimeseries.DTYPE_SHORT) {
-						BinaryTimeseries.writeData(target, (short[])samples);
-					} else if (data_dtype == BinaryTimeseries.DTYPE_INT) {
-						BinaryTimeseries.writeData(target, (int[])samples);
-					} else if (data_dtype == BinaryTimeseries.DTYPE_LONG) {
-						BinaryTimeseries.writeData(target, (long[])samples);
-					} else if (data_dtype == BinaryTimeseries.DTYPE_FLOAT) {
-						BinaryTimeseries.writeData(target, (float[])samples);
-					} else if (data_dtype == BinaryTimeseries.DTYPE_DOUBLE) {
-						BinaryTimeseries.writeData(target, (double[])samples);
-					}
-					
-					
-					
-					//"	assertArrayEquals(referenceBTS_"+testId+", targetArr);\n"
-					
-					
-					// rewind and re-check using write() without scaling
-					
-					// rewind and re-check using write() with scaling
-					
-					
-					
-					
 					
 					
 					
 					
 					// check reading routines
+					
+					
+					
+					
+					
 					
 					
 					writeTestCode += "	}\n";
@@ -914,17 +888,14 @@ public class ApiTests {
 
 	@Test
 	public void testWriting_L_N_B() {
-		
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
 		final int numSamples = 10;
-		final   long t0_L =   (long) 13.0;
-		final   long dt_L =   (long) 37.0;
-		
 		final byte[] values = new byte[numSamples];
 		for (int i=0; i<numSamples; ++i) {
 			values[i] = (byte) i;
 		}
-		
-		int fileSize = BinaryTimeseries.fileOffset(Byte.BYTES, numSamples);
+		int fileSize = BinaryTimeseries.fileOffset(1, numSamples);
 		final byte[] targetArr = new byte[fileSize];
 		final ByteBuffer target = ByteBuffer.wrap(targetArr);
 		BinaryTimeseries.writeEndianessCheckValue(target);
@@ -932,7 +903,6 @@ public class ApiTests {
 		BinaryTimeseries.writeScalingDisabled(target);
 		BinaryTimeseries.writeReservedDummy(target);
 		BinaryTimeseries.writeData(target, values);
-		
 		final byte[] referenceBTS_L_N_B = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -944,7 +914,9 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0A,
 			(byte) 0x00, (byte) 0x01, (byte) 0x02, (byte) 0x03, (byte) 0x04, (byte) 0x05, (byte) 0x06, (byte) 0x07,
 			(byte) 0x08, (byte) 0x09 };
-		
+		assertArrayEquals(referenceBTS_L_N_B, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values);
 		assertArrayEquals(referenceBTS_L_N_B, targetArr);
 	}
 
@@ -960,6 +932,21 @@ public class ApiTests {
 
 	@Test
 	public void testWriting_L_N_S() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final int numSamples = 10;
+		final short[] values = new short[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (short) i;
+		}
+		int fileSize = BinaryTimeseries.fileOffset(2, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScalingDisabled(target);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_N_S = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -972,6 +959,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x02, (byte) 0x00, (byte) 0x03,
 			(byte) 0x00, (byte) 0x04, (byte) 0x00, (byte) 0x05, (byte) 0x00, (byte) 0x06, (byte) 0x00, (byte) 0x07,
 			(byte) 0x00, (byte) 0x08, (byte) 0x00, (byte) 0x09 };
+		assertArrayEquals(referenceBTS_L_N_S, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values);
+		assertArrayEquals(referenceBTS_L_N_S, targetArr);
 	}
 
 	@Test
@@ -986,6 +977,21 @@ public class ApiTests {
 
 	@Test
 	public void testWriting_L_N_I() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final int numSamples = 10;
+		final int[] values = new int[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (int) i;
+		}
+		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScalingDisabled(target);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_N_I = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1000,6 +1006,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x05,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x06, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x07,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x08, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x09 };
+		assertArrayEquals(referenceBTS_L_N_I, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values);
+		assertArrayEquals(referenceBTS_L_N_I, targetArr);
 	}
 
 	@Test
@@ -1014,6 +1024,21 @@ public class ApiTests {
 
 	@Test
 	public void testWriting_L_N_L() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final int numSamples = 10;
+		final long[] values = new long[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (long) i;
+		}
+		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScalingDisabled(target);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_N_L = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1033,6 +1058,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x07,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x08,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x09 };
+		assertArrayEquals(referenceBTS_L_N_L, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values);
+		assertArrayEquals(referenceBTS_L_N_L, targetArr);
 	}
 
 	@Test
@@ -1047,6 +1076,21 @@ public class ApiTests {
 
 	@Test
 	public void testWriting_L_N_F() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final int numSamples = 10;
+		final float[] values = new float[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (float) i;
+		}
+		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScalingDisabled(target);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_N_F = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1061,6 +1105,10 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x80, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0xA0, (byte) 0x00, (byte) 0x00,
 			(byte) 0x40, (byte) 0xC0, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0xE0, (byte) 0x00, (byte) 0x00,
 			(byte) 0x41, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x41, (byte) 0x10, (byte) 0x00, (byte) 0x00 };
+		assertArrayEquals(referenceBTS_L_N_F, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values);
+		assertArrayEquals(referenceBTS_L_N_F, targetArr);
 	}
 
 	@Test
@@ -1075,6 +1123,21 @@ public class ApiTests {
 
 	@Test
 	public void testWriting_L_N_D() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final int numSamples = 10;
+		final double[] values = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (double) i;
+		}
+		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScalingDisabled(target);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_N_D = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1094,6 +1157,10 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x1C, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x40, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x40, (byte) 0x22, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
+		assertArrayEquals(referenceBTS_L_N_D, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values);
+		assertArrayEquals(referenceBTS_L_N_D, targetArr);
 	}
 
 	@Test
@@ -1103,20 +1170,16 @@ public class ApiTests {
 	// L_B_B
 	@Test
 	public void testWriting_L_B_B() {
-		
-		final int numSamples = 10;
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		
 		final byte scalingOffset_B = (byte) 1.2;
 		final byte scalingFactor_B = (byte) 24.3;
-		
+		final int numSamples = 10;
 		final byte[] values = new byte[numSamples];
 		for (int i=0; i<numSamples; ++i) {
 			values[i] = (byte) (scalingOffset_B + i*scalingFactor_B);
 		}
-		
-		int fileSize = BinaryTimeseries.fileOffset(Byte.BYTES, numSamples);
+		int fileSize = BinaryTimeseries.fileOffset(1, numSamples);
 		final byte[] targetArr = new byte[fileSize];
 		final ByteBuffer target = ByteBuffer.wrap(targetArr);
 		BinaryTimeseries.writeEndianessCheckValue(target);
@@ -1124,7 +1187,6 @@ public class ApiTests {
 		BinaryTimeseries.writeScaling(target, scalingOffset_B, scalingFactor_B);
 		BinaryTimeseries.writeReservedDummy(target);
 		BinaryTimeseries.writeData(target, values);
-		
 		final byte[] referenceBTS_L_B_B = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1136,7 +1198,9 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0A,
 			(byte) 0x01, (byte) 0x19, (byte) 0x31, (byte) 0x49, (byte) 0x61, (byte) 0x79, (byte) 0x91, (byte) 0xA9,
 			(byte) 0xC1, (byte) 0xD9 };
-		
+		assertArrayEquals(referenceBTS_L_B_B, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_B, scalingFactor_B);
 		assertArrayEquals(referenceBTS_L_B_B, targetArr);
 	}
 
@@ -1147,6 +1211,23 @@ public class ApiTests {
 	// L_B_S
 	@Test
 	public void testWriting_L_B_S() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final byte scalingOffset_B = (byte) 1.2;
+		final byte scalingFactor_B = (byte) 24.3;
+		final int numSamples = 10;
+		final short[] values = new short[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (short) (scalingOffset_B + i*scalingFactor_B);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(2, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_B, scalingFactor_B);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_B_S = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1159,6 +1240,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x19, (byte) 0x00, (byte) 0x31, (byte) 0x00, (byte) 0x49,
 			(byte) 0x00, (byte) 0x61, (byte) 0x00, (byte) 0x79, (byte) 0x00, (byte) 0x91, (byte) 0x00, (byte) 0xA9,
 			(byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_L_B_S, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_B, scalingFactor_B);
+		assertArrayEquals(referenceBTS_L_B_S, targetArr);
 	}
 
 	@Test
@@ -1168,6 +1253,23 @@ public class ApiTests {
 	// L_B_I
 	@Test
 	public void testWriting_L_B_I() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final byte scalingOffset_B = (byte) 1.2;
+		final byte scalingFactor_B = (byte) 24.3;
+		final int numSamples = 10;
+		final int[] values = new int[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (int) (scalingOffset_B + i*scalingFactor_B);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_B, scalingFactor_B);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_B_I = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1182,6 +1284,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x61, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x79,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x91, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xA9,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_L_B_I, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_B, scalingFactor_B);
+		assertArrayEquals(referenceBTS_L_B_I, targetArr);
 	}
 
 	@Test
@@ -1191,6 +1297,23 @@ public class ApiTests {
 	// L_B_L
 	@Test
 	public void testWriting_L_B_L() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final byte scalingOffset_B = (byte) 1.2;
+		final byte scalingFactor_B = (byte) 24.3;
+		final int numSamples = 10;
+		final long[] values = new long[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (long) (scalingOffset_B + i*scalingFactor_B);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_B, scalingFactor_B);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_B_L = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1210,6 +1333,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xA9,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC1,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_L_B_L, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_B, scalingFactor_B);
+		assertArrayEquals(referenceBTS_L_B_L, targetArr);
 	}
 
 	@Test
@@ -1219,6 +1346,23 @@ public class ApiTests {
 	// L_B_F
 	@Test
 	public void testWriting_L_B_F() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final byte scalingOffset_B = (byte) 1.2;
+		final byte scalingFactor_B = (byte) 24.3;
+		final int numSamples = 10;
+		final float[] values = new float[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (float) (scalingOffset_B + i*scalingFactor_B);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_B, scalingFactor_B);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_B_F = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1233,6 +1377,10 @@ public class ApiTests {
 			(byte) 0x42, (byte) 0xC2, (byte) 0x00, (byte) 0x00, (byte) 0x42, (byte) 0xF2, (byte) 0x00, (byte) 0x00,
 			(byte) 0x43, (byte) 0x11, (byte) 0x00, (byte) 0x00, (byte) 0x43, (byte) 0x29, (byte) 0x00, (byte) 0x00,
 			(byte) 0x43, (byte) 0x41, (byte) 0x00, (byte) 0x00, (byte) 0x43, (byte) 0x59, (byte) 0x00, (byte) 0x00 };
+		assertArrayEquals(referenceBTS_L_B_F, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_B, scalingFactor_B);
+		assertArrayEquals(referenceBTS_L_B_F, targetArr);
 	}
 
 	@Test
@@ -1242,6 +1390,23 @@ public class ApiTests {
 	// L_B_D
 	@Test
 	public void testWriting_L_B_D() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final byte scalingOffset_B = (byte) 1.2;
+		final byte scalingFactor_B = (byte) 24.3;
+		final int numSamples = 10;
+		final double[] values = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (double) (scalingOffset_B + i*scalingFactor_B);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_B, scalingFactor_B);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_B_D = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1261,6 +1426,10 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x65, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x40, (byte) 0x68, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x40, (byte) 0x6B, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
+		assertArrayEquals(referenceBTS_L_B_D, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_B, scalingFactor_B);
+		assertArrayEquals(referenceBTS_L_B_D, targetArr);
 	}
 
 	@Test
@@ -1270,6 +1439,23 @@ public class ApiTests {
 	// L_S_B
 	@Test
 	public void testWriting_L_S_B() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final short scalingOffset_S = (short) 1.2;
+		final short scalingFactor_S = (short) 24.3;
+		final int numSamples = 10;
+		final byte[] values = new byte[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (byte) (scalingOffset_S + i*scalingFactor_S);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(1, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_S, scalingFactor_S);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_S_B = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1281,6 +1467,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0A,
 			(byte) 0x01, (byte) 0x19, (byte) 0x31, (byte) 0x49, (byte) 0x61, (byte) 0x79, (byte) 0x91, (byte) 0xA9,
 			(byte) 0xC1, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_L_S_B, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_S, scalingFactor_S);
+		assertArrayEquals(referenceBTS_L_S_B, targetArr);
 	}
 
 	@Test
@@ -1290,6 +1480,23 @@ public class ApiTests {
 	// L_S_S
 	@Test
 	public void testWriting_L_S_S() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final short scalingOffset_S = (short) 1.2;
+		final short scalingFactor_S = (short) 24.3;
+		final int numSamples = 10;
+		final short[] values = new short[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (short) (scalingOffset_S + i*scalingFactor_S);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(2, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_S, scalingFactor_S);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_S_S = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1302,6 +1509,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x19, (byte) 0x00, (byte) 0x31, (byte) 0x00, (byte) 0x49,
 			(byte) 0x00, (byte) 0x61, (byte) 0x00, (byte) 0x79, (byte) 0x00, (byte) 0x91, (byte) 0x00, (byte) 0xA9,
 			(byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_L_S_S, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_S, scalingFactor_S);
+		assertArrayEquals(referenceBTS_L_S_S, targetArr);
 	}
 
 	@Test
@@ -1311,6 +1522,23 @@ public class ApiTests {
 	// L_S_I
 	@Test
 	public void testWriting_L_S_I() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final short scalingOffset_S = (short) 1.2;
+		final short scalingFactor_S = (short) 24.3;
+		final int numSamples = 10;
+		final int[] values = new int[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (int) (scalingOffset_S + i*scalingFactor_S);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_S, scalingFactor_S);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_S_I = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1325,6 +1553,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x61, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x79,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x91, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xA9,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_L_S_I, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_S, scalingFactor_S);
+		assertArrayEquals(referenceBTS_L_S_I, targetArr);
 	}
 
 	@Test
@@ -1334,6 +1566,23 @@ public class ApiTests {
 	// L_S_L
 	@Test
 	public void testWriting_L_S_L() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final short scalingOffset_S = (short) 1.2;
+		final short scalingFactor_S = (short) 24.3;
+		final int numSamples = 10;
+		final long[] values = new long[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (long) (scalingOffset_S + i*scalingFactor_S);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_S, scalingFactor_S);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_S_L = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1353,6 +1602,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xA9,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC1,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_L_S_L, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_S, scalingFactor_S);
+		assertArrayEquals(referenceBTS_L_S_L, targetArr);
 	}
 
 	@Test
@@ -1362,6 +1615,23 @@ public class ApiTests {
 	// L_S_F
 	@Test
 	public void testWriting_L_S_F() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final short scalingOffset_S = (short) 1.2;
+		final short scalingFactor_S = (short) 24.3;
+		final int numSamples = 10;
+		final float[] values = new float[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (float) (scalingOffset_S + i*scalingFactor_S);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_S, scalingFactor_S);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_S_F = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1376,6 +1646,10 @@ public class ApiTests {
 			(byte) 0x42, (byte) 0xC2, (byte) 0x00, (byte) 0x00, (byte) 0x42, (byte) 0xF2, (byte) 0x00, (byte) 0x00,
 			(byte) 0x43, (byte) 0x11, (byte) 0x00, (byte) 0x00, (byte) 0x43, (byte) 0x29, (byte) 0x00, (byte) 0x00,
 			(byte) 0x43, (byte) 0x41, (byte) 0x00, (byte) 0x00, (byte) 0x43, (byte) 0x59, (byte) 0x00, (byte) 0x00 };
+		assertArrayEquals(referenceBTS_L_S_F, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_S, scalingFactor_S);
+		assertArrayEquals(referenceBTS_L_S_F, targetArr);
 	}
 
 	@Test
@@ -1385,6 +1659,23 @@ public class ApiTests {
 	// L_S_D
 	@Test
 	public void testWriting_L_S_D() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final short scalingOffset_S = (short) 1.2;
+		final short scalingFactor_S = (short) 24.3;
+		final int numSamples = 10;
+		final double[] values = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (double) (scalingOffset_S + i*scalingFactor_S);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_S, scalingFactor_S);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_S_D = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1404,6 +1695,10 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x65, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x40, (byte) 0x68, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x40, (byte) 0x6B, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
+		assertArrayEquals(referenceBTS_L_S_D, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_S, scalingFactor_S);
+		assertArrayEquals(referenceBTS_L_S_D, targetArr);
 	}
 
 	@Test
@@ -1413,6 +1708,23 @@ public class ApiTests {
 	// L_I_B
 	@Test
 	public void testWriting_L_I_B() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final int scalingOffset_I = (int) 1.2;
+		final int scalingFactor_I = (int) 24.3;
+		final int numSamples = 10;
+		final byte[] values = new byte[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (byte) (scalingOffset_I + i*scalingFactor_I);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(1, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_I, scalingFactor_I);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_I_B = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1424,6 +1736,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0A,
 			(byte) 0x01, (byte) 0x19, (byte) 0x31, (byte) 0x49, (byte) 0x61, (byte) 0x79, (byte) 0x91, (byte) 0xA9,
 			(byte) 0xC1, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_L_I_B, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_I, scalingFactor_I);
+		assertArrayEquals(referenceBTS_L_I_B, targetArr);
 	}
 
 	@Test
@@ -1433,6 +1749,23 @@ public class ApiTests {
 	// L_I_S
 	@Test
 	public void testWriting_L_I_S() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final int scalingOffset_I = (int) 1.2;
+		final int scalingFactor_I = (int) 24.3;
+		final int numSamples = 10;
+		final short[] values = new short[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (short) (scalingOffset_I + i*scalingFactor_I);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(2, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_I, scalingFactor_I);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_I_S = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1445,6 +1778,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x19, (byte) 0x00, (byte) 0x31, (byte) 0x00, (byte) 0x49,
 			(byte) 0x00, (byte) 0x61, (byte) 0x00, (byte) 0x79, (byte) 0x00, (byte) 0x91, (byte) 0x00, (byte) 0xA9,
 			(byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_L_I_S, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_I, scalingFactor_I);
+		assertArrayEquals(referenceBTS_L_I_S, targetArr);
 	}
 
 	@Test
@@ -1454,6 +1791,23 @@ public class ApiTests {
 	// L_I_I
 	@Test
 	public void testWriting_L_I_I() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final int scalingOffset_I = (int) 1.2;
+		final int scalingFactor_I = (int) 24.3;
+		final int numSamples = 10;
+		final int[] values = new int[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (int) (scalingOffset_I + i*scalingFactor_I);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_I, scalingFactor_I);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_I_I = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1468,6 +1822,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x61, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x79,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x91, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xA9,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_L_I_I, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_I, scalingFactor_I);
+		assertArrayEquals(referenceBTS_L_I_I, targetArr);
 	}
 
 	@Test
@@ -1477,6 +1835,23 @@ public class ApiTests {
 	// L_I_L
 	@Test
 	public void testWriting_L_I_L() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final int scalingOffset_I = (int) 1.2;
+		final int scalingFactor_I = (int) 24.3;
+		final int numSamples = 10;
+		final long[] values = new long[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (long) (scalingOffset_I + i*scalingFactor_I);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_I, scalingFactor_I);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_I_L = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1496,6 +1871,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xA9,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC1,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_L_I_L, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_I, scalingFactor_I);
+		assertArrayEquals(referenceBTS_L_I_L, targetArr);
 	}
 
 	@Test
@@ -1505,6 +1884,23 @@ public class ApiTests {
 	// L_I_F
 	@Test
 	public void testWriting_L_I_F() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final int scalingOffset_I = (int) 1.2;
+		final int scalingFactor_I = (int) 24.3;
+		final int numSamples = 10;
+		final float[] values = new float[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (float) (scalingOffset_I + i*scalingFactor_I);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_I, scalingFactor_I);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_I_F = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1519,6 +1915,10 @@ public class ApiTests {
 			(byte) 0x42, (byte) 0xC2, (byte) 0x00, (byte) 0x00, (byte) 0x42, (byte) 0xF2, (byte) 0x00, (byte) 0x00,
 			(byte) 0x43, (byte) 0x11, (byte) 0x00, (byte) 0x00, (byte) 0x43, (byte) 0x29, (byte) 0x00, (byte) 0x00,
 			(byte) 0x43, (byte) 0x41, (byte) 0x00, (byte) 0x00, (byte) 0x43, (byte) 0x59, (byte) 0x00, (byte) 0x00 };
+		assertArrayEquals(referenceBTS_L_I_F, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_I, scalingFactor_I);
+		assertArrayEquals(referenceBTS_L_I_F, targetArr);
 	}
 
 	@Test
@@ -1528,6 +1928,23 @@ public class ApiTests {
 	// L_I_D
 	@Test
 	public void testWriting_L_I_D() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final int scalingOffset_I = (int) 1.2;
+		final int scalingFactor_I = (int) 24.3;
+		final int numSamples = 10;
+		final double[] values = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (double) (scalingOffset_I + i*scalingFactor_I);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_I, scalingFactor_I);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_I_D = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1547,6 +1964,10 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x65, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x40, (byte) 0x68, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x40, (byte) 0x6B, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
+		assertArrayEquals(referenceBTS_L_I_D, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_I, scalingFactor_I);
+		assertArrayEquals(referenceBTS_L_I_D, targetArr);
 	}
 
 	@Test
@@ -1556,6 +1977,23 @@ public class ApiTests {
 	// L_L_B
 	@Test
 	public void testWriting_L_L_B() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final long scalingOffset_L = (long) 1.2;
+		final long scalingFactor_L = (long) 24.3;
+		final int numSamples = 10;
+		final byte[] values = new byte[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (byte) (scalingOffset_L + i*scalingFactor_L);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(1, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_L, scalingFactor_L);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_L_B = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1567,6 +2005,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0A,
 			(byte) 0x01, (byte) 0x19, (byte) 0x31, (byte) 0x49, (byte) 0x61, (byte) 0x79, (byte) 0x91, (byte) 0xA9,
 			(byte) 0xC1, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_L_L_B, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_L, scalingFactor_L);
+		assertArrayEquals(referenceBTS_L_L_B, targetArr);
 	}
 
 	@Test
@@ -1576,6 +2018,23 @@ public class ApiTests {
 	// L_L_S
 	@Test
 	public void testWriting_L_L_S() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final long scalingOffset_L = (long) 1.2;
+		final long scalingFactor_L = (long) 24.3;
+		final int numSamples = 10;
+		final short[] values = new short[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (short) (scalingOffset_L + i*scalingFactor_L);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(2, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_L, scalingFactor_L);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_L_S = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1588,6 +2047,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x19, (byte) 0x00, (byte) 0x31, (byte) 0x00, (byte) 0x49,
 			(byte) 0x00, (byte) 0x61, (byte) 0x00, (byte) 0x79, (byte) 0x00, (byte) 0x91, (byte) 0x00, (byte) 0xA9,
 			(byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_L_L_S, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_L, scalingFactor_L);
+		assertArrayEquals(referenceBTS_L_L_S, targetArr);
 	}
 
 	@Test
@@ -1597,6 +2060,23 @@ public class ApiTests {
 	// L_L_I
 	@Test
 	public void testWriting_L_L_I() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final long scalingOffset_L = (long) 1.2;
+		final long scalingFactor_L = (long) 24.3;
+		final int numSamples = 10;
+		final int[] values = new int[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (int) (scalingOffset_L + i*scalingFactor_L);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_L, scalingFactor_L);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_L_I = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1611,6 +2091,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x61, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x79,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x91, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xA9,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_L_L_I, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_L, scalingFactor_L);
+		assertArrayEquals(referenceBTS_L_L_I, targetArr);
 	}
 
 	@Test
@@ -1620,6 +2104,23 @@ public class ApiTests {
 	// L_L_L
 	@Test
 	public void testWriting_L_L_L() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final long scalingOffset_L = (long) 1.2;
+		final long scalingFactor_L = (long) 24.3;
+		final int numSamples = 10;
+		final long[] values = new long[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (long) (scalingOffset_L + i*scalingFactor_L);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_L, scalingFactor_L);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_L_L = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1639,6 +2140,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xA9,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC1,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_L_L_L, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_L, scalingFactor_L);
+		assertArrayEquals(referenceBTS_L_L_L, targetArr);
 	}
 
 	@Test
@@ -1648,6 +2153,23 @@ public class ApiTests {
 	// L_L_F
 	@Test
 	public void testWriting_L_L_F() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final long scalingOffset_L = (long) 1.2;
+		final long scalingFactor_L = (long) 24.3;
+		final int numSamples = 10;
+		final float[] values = new float[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (float) (scalingOffset_L + i*scalingFactor_L);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_L, scalingFactor_L);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_L_F = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1662,6 +2184,10 @@ public class ApiTests {
 			(byte) 0x42, (byte) 0xC2, (byte) 0x00, (byte) 0x00, (byte) 0x42, (byte) 0xF2, (byte) 0x00, (byte) 0x00,
 			(byte) 0x43, (byte) 0x11, (byte) 0x00, (byte) 0x00, (byte) 0x43, (byte) 0x29, (byte) 0x00, (byte) 0x00,
 			(byte) 0x43, (byte) 0x41, (byte) 0x00, (byte) 0x00, (byte) 0x43, (byte) 0x59, (byte) 0x00, (byte) 0x00 };
+		assertArrayEquals(referenceBTS_L_L_F, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_L, scalingFactor_L);
+		assertArrayEquals(referenceBTS_L_L_F, targetArr);
 	}
 
 	@Test
@@ -1671,6 +2197,23 @@ public class ApiTests {
 	// L_L_D
 	@Test
 	public void testWriting_L_L_D() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final long scalingOffset_L = (long) 1.2;
+		final long scalingFactor_L = (long) 24.3;
+		final int numSamples = 10;
+		final double[] values = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (double) (scalingOffset_L + i*scalingFactor_L);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_L, scalingFactor_L);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_L_D = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1690,6 +2233,10 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x65, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x40, (byte) 0x68, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x40, (byte) 0x6B, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
+		assertArrayEquals(referenceBTS_L_L_D, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_L, scalingFactor_L);
+		assertArrayEquals(referenceBTS_L_L_D, targetArr);
 	}
 
 	@Test
@@ -1699,6 +2246,23 @@ public class ApiTests {
 	// L_F_B
 	@Test
 	public void testWriting_L_F_B() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final float scalingOffset_F = (float) 1.2;
+		final float scalingFactor_F = (float) 24.3;
+		final int numSamples = 10;
+		final byte[] values = new byte[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (byte) (scalingOffset_F + i*scalingFactor_F);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(1, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_F, scalingFactor_F);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_F_B = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1710,6 +2274,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0A,
 			(byte) 0x01, (byte) 0x19, (byte) 0x31, (byte) 0x4A, (byte) 0x62, (byte) 0x7A, (byte) 0x92, (byte) 0xAB,
 			(byte) 0xC3, (byte) 0xDB };
+		assertArrayEquals(referenceBTS_L_F_B, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_F, scalingFactor_F);
+		assertArrayEquals(referenceBTS_L_F_B, targetArr);
 	}
 
 	@Test
@@ -1719,6 +2287,23 @@ public class ApiTests {
 	// L_F_S
 	@Test
 	public void testWriting_L_F_S() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final float scalingOffset_F = (float) 1.2;
+		final float scalingFactor_F = (float) 24.3;
+		final int numSamples = 10;
+		final short[] values = new short[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (short) (scalingOffset_F + i*scalingFactor_F);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(2, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_F, scalingFactor_F);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_F_S = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1731,6 +2316,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x19, (byte) 0x00, (byte) 0x31, (byte) 0x00, (byte) 0x4A,
 			(byte) 0x00, (byte) 0x62, (byte) 0x00, (byte) 0x7A, (byte) 0x00, (byte) 0x92, (byte) 0x00, (byte) 0xAB,
 			(byte) 0x00, (byte) 0xC3, (byte) 0x00, (byte) 0xDB };
+		assertArrayEquals(referenceBTS_L_F_S, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_F, scalingFactor_F);
+		assertArrayEquals(referenceBTS_L_F_S, targetArr);
 	}
 
 	@Test
@@ -1740,6 +2329,23 @@ public class ApiTests {
 	// L_F_I
 	@Test
 	public void testWriting_L_F_I() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final float scalingOffset_F = (float) 1.2;
+		final float scalingFactor_F = (float) 24.3;
+		final int numSamples = 10;
+		final int[] values = new int[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (int) (scalingOffset_F + i*scalingFactor_F);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_F, scalingFactor_F);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_F_I = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1754,6 +2360,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x62, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x7A,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x92, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xAB,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC3, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xDB };
+		assertArrayEquals(referenceBTS_L_F_I, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_F, scalingFactor_F);
+		assertArrayEquals(referenceBTS_L_F_I, targetArr);
 	}
 
 	@Test
@@ -1763,6 +2373,23 @@ public class ApiTests {
 	// L_F_L
 	@Test
 	public void testWriting_L_F_L() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final float scalingOffset_F = (float) 1.2;
+		final float scalingFactor_F = (float) 24.3;
+		final int numSamples = 10;
+		final long[] values = new long[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (long) (scalingOffset_F + i*scalingFactor_F);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_F, scalingFactor_F);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_F_L = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1782,6 +2409,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xAB,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC3,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xDB };
+		assertArrayEquals(referenceBTS_L_F_L, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_F, scalingFactor_F);
+		assertArrayEquals(referenceBTS_L_F_L, targetArr);
 	}
 
 	@Test
@@ -1791,6 +2422,23 @@ public class ApiTests {
 	// L_F_F
 	@Test
 	public void testWriting_L_F_F() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final float scalingOffset_F = (float) 1.2;
+		final float scalingFactor_F = (float) 24.3;
+		final int numSamples = 10;
+		final float[] values = new float[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (float) (scalingOffset_F + i*scalingFactor_F);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_F, scalingFactor_F);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_F_F = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1805,6 +2453,10 @@ public class ApiTests {
 			(byte) 0x42, (byte) 0xC4, (byte) 0xCC, (byte) 0xCC, (byte) 0x42, (byte) 0xF5, (byte) 0x66, (byte) 0x66,
 			(byte) 0x43, (byte) 0x12, (byte) 0xFF, (byte) 0xFF, (byte) 0x43, (byte) 0x2B, (byte) 0x4C, (byte) 0xCC,
 			(byte) 0x43, (byte) 0x43, (byte) 0x99, (byte) 0x99, (byte) 0x43, (byte) 0x5B, (byte) 0xE6, (byte) 0x66 };
+		assertArrayEquals(referenceBTS_L_F_F, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_F, scalingFactor_F);
+		assertArrayEquals(referenceBTS_L_F_F, targetArr);
 	}
 
 	@Test
@@ -1814,6 +2466,23 @@ public class ApiTests {
 	// L_F_D
 	@Test
 	public void testWriting_L_F_D() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final float scalingOffset_F = (float) 1.2;
+		final float scalingFactor_F = (float) 24.3;
+		final int numSamples = 10;
+		final double[] values = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (double) (scalingOffset_F + i*scalingFactor_F);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_F, scalingFactor_F);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_F_D = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1833,6 +2502,10 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x65, (byte) 0x69, (byte) 0x99, (byte) 0x80, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x40, (byte) 0x68, (byte) 0x73, (byte) 0x33, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x40, (byte) 0x6B, (byte) 0x7C, (byte) 0xCC, (byte) 0xC0, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
+		assertArrayEquals(referenceBTS_L_F_D, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_F, scalingFactor_F);
+		assertArrayEquals(referenceBTS_L_F_D, targetArr);
 	}
 
 	@Test
@@ -1842,6 +2515,23 @@ public class ApiTests {
 	// L_D_B
 	@Test
 	public void testWriting_L_D_B() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final double scalingOffset_D = (double) 1.2;
+		final double scalingFactor_D = (double) 24.3;
+		final int numSamples = 10;
+		final byte[] values = new byte[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (byte) (scalingOffset_D + i*scalingFactor_D);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(1, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_D, scalingFactor_D);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_D_B = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1853,6 +2543,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0A,
 			(byte) 0x01, (byte) 0x19, (byte) 0x31, (byte) 0x4A, (byte) 0x62, (byte) 0x7A, (byte) 0x93, (byte) 0xAB,
 			(byte) 0xC3, (byte) 0xDB };
+		assertArrayEquals(referenceBTS_L_D_B, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_D, scalingFactor_D);
+		assertArrayEquals(referenceBTS_L_D_B, targetArr);
 	}
 
 	@Test
@@ -1862,6 +2556,23 @@ public class ApiTests {
 	// L_D_S
 	@Test
 	public void testWriting_L_D_S() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final double scalingOffset_D = (double) 1.2;
+		final double scalingFactor_D = (double) 24.3;
+		final int numSamples = 10;
+		final short[] values = new short[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (short) (scalingOffset_D + i*scalingFactor_D);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(2, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_D, scalingFactor_D);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_D_S = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1874,6 +2585,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x19, (byte) 0x00, (byte) 0x31, (byte) 0x00, (byte) 0x4A,
 			(byte) 0x00, (byte) 0x62, (byte) 0x00, (byte) 0x7A, (byte) 0x00, (byte) 0x93, (byte) 0x00, (byte) 0xAB,
 			(byte) 0x00, (byte) 0xC3, (byte) 0x00, (byte) 0xDB };
+		assertArrayEquals(referenceBTS_L_D_S, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_D, scalingFactor_D);
+		assertArrayEquals(referenceBTS_L_D_S, targetArr);
 	}
 
 	@Test
@@ -1883,6 +2598,23 @@ public class ApiTests {
 	// L_D_I
 	@Test
 	public void testWriting_L_D_I() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final double scalingOffset_D = (double) 1.2;
+		final double scalingFactor_D = (double) 24.3;
+		final int numSamples = 10;
+		final int[] values = new int[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (int) (scalingOffset_D + i*scalingFactor_D);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_D, scalingFactor_D);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_D_I = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1897,6 +2629,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x62, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x7A,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x93, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xAB,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC3, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xDB };
+		assertArrayEquals(referenceBTS_L_D_I, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_D, scalingFactor_D);
+		assertArrayEquals(referenceBTS_L_D_I, targetArr);
 	}
 
 	@Test
@@ -1906,6 +2642,23 @@ public class ApiTests {
 	// L_D_L
 	@Test
 	public void testWriting_L_D_L() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final double scalingOffset_D = (double) 1.2;
+		final double scalingFactor_D = (double) 24.3;
+		final int numSamples = 10;
+		final long[] values = new long[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (long) (scalingOffset_D + i*scalingFactor_D);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_D, scalingFactor_D);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_D_L = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1925,6 +2678,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xAB,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC3,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xDB };
+		assertArrayEquals(referenceBTS_L_D_L, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_D, scalingFactor_D);
+		assertArrayEquals(referenceBTS_L_D_L, targetArr);
 	}
 
 	@Test
@@ -1934,6 +2691,23 @@ public class ApiTests {
 	// L_D_F
 	@Test
 	public void testWriting_L_D_F() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final double scalingOffset_D = (double) 1.2;
+		final double scalingFactor_D = (double) 24.3;
+		final int numSamples = 10;
+		final float[] values = new float[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (float) (scalingOffset_D + i*scalingFactor_D);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_D, scalingFactor_D);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_D_F = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1948,6 +2722,10 @@ public class ApiTests {
 			(byte) 0x42, (byte) 0xC4, (byte) 0xCC, (byte) 0xCD, (byte) 0x42, (byte) 0xF5, (byte) 0x66, (byte) 0x66,
 			(byte) 0x43, (byte) 0x13, (byte) 0x00, (byte) 0x00, (byte) 0x43, (byte) 0x2B, (byte) 0x4C, (byte) 0xCD,
 			(byte) 0x43, (byte) 0x43, (byte) 0x99, (byte) 0x9A, (byte) 0x43, (byte) 0x5B, (byte) 0xE6, (byte) 0x66 };
+		assertArrayEquals(referenceBTS_L_D_F, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_D, scalingFactor_D);
+		assertArrayEquals(referenceBTS_L_D_F, targetArr);
 	}
 
 	@Test
@@ -1957,6 +2735,23 @@ public class ApiTests {
 	// L_D_D
 	@Test
 	public void testWriting_L_D_D() {
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		final double scalingOffset_D = (double) 1.2;
+		final double scalingFactor_D = (double) 24.3;
+		final int numSamples = 10;
+		final double[] values = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (double) (scalingOffset_D + i*scalingFactor_D);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_D, scalingFactor_D);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_L_D_D = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1976,6 +2771,10 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x65, (byte) 0x69, (byte) 0x99, (byte) 0x99, (byte) 0x99, (byte) 0x99, (byte) 0x99,
 			(byte) 0x40, (byte) 0x68, (byte) 0x73, (byte) 0x33, (byte) 0x33, (byte) 0x33, (byte) 0x33, (byte) 0x33,
 			(byte) 0x40, (byte) 0x6B, (byte) 0x7C, (byte) 0xCC, (byte) 0xCC, (byte) 0xCC, (byte) 0xCC, (byte) 0xCD };
+		assertArrayEquals(referenceBTS_L_D_D, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_D, scalingFactor_D);
+		assertArrayEquals(referenceBTS_L_D_D, targetArr);
 	}
 
 	@Test
@@ -2029,6 +2828,21 @@ public class ApiTests {
 
 	@Test
 	public void testWriting_D_N_B() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final int numSamples = 10;
+		final byte[] values = new byte[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (byte) i;
+		}
+		int fileSize = BinaryTimeseries.fileOffset(1, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScalingDisabled(target);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_N_B = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2040,6 +2854,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0A,
 			(byte) 0x00, (byte) 0x01, (byte) 0x02, (byte) 0x03, (byte) 0x04, (byte) 0x05, (byte) 0x06, (byte) 0x07,
 			(byte) 0x08, (byte) 0x09 };
+		assertArrayEquals(referenceBTS_D_N_B, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values);
+		assertArrayEquals(referenceBTS_D_N_B, targetArr);
 	}
 
 	@Test
@@ -2049,6 +2867,21 @@ public class ApiTests {
 	// D_N_S
 	@Test
 	public void testWriting_D_N_S() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final int numSamples = 10;
+		final short[] values = new short[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (short) i;
+		}
+		int fileSize = BinaryTimeseries.fileOffset(2, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScalingDisabled(target);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_N_S = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2061,6 +2894,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x02, (byte) 0x00, (byte) 0x03,
 			(byte) 0x00, (byte) 0x04, (byte) 0x00, (byte) 0x05, (byte) 0x00, (byte) 0x06, (byte) 0x00, (byte) 0x07,
 			(byte) 0x00, (byte) 0x08, (byte) 0x00, (byte) 0x09 };
+		assertArrayEquals(referenceBTS_D_N_S, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values);
+		assertArrayEquals(referenceBTS_D_N_S, targetArr);
 	}
 
 	@Test
@@ -2070,6 +2907,21 @@ public class ApiTests {
 	// D_N_I
 	@Test
 	public void testWriting_D_N_I() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final int numSamples = 10;
+		final int[] values = new int[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (int) i;
+		}
+		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScalingDisabled(target);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_N_I = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2084,6 +2936,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x05,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x06, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x07,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x08, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x09 };
+		assertArrayEquals(referenceBTS_D_N_I, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values);
+		assertArrayEquals(referenceBTS_D_N_I, targetArr);
 	}
 
 	@Test
@@ -2093,6 +2949,21 @@ public class ApiTests {
 	// D_N_L
 	@Test
 	public void testWriting_D_N_L() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final int numSamples = 10;
+		final long[] values = new long[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (long) i;
+		}
+		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScalingDisabled(target);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_N_L = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2112,6 +2983,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x07,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x08,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x09 };
+		assertArrayEquals(referenceBTS_D_N_L, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values);
+		assertArrayEquals(referenceBTS_D_N_L, targetArr);
 	}
 
 	@Test
@@ -2121,6 +2996,21 @@ public class ApiTests {
 	// D_N_F
 	@Test
 	public void testWriting_D_N_F() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final int numSamples = 10;
+		final float[] values = new float[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (float) i;
+		}
+		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScalingDisabled(target);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_N_F = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2135,6 +3025,10 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x80, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0xA0, (byte) 0x00, (byte) 0x00,
 			(byte) 0x40, (byte) 0xC0, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0xE0, (byte) 0x00, (byte) 0x00,
 			(byte) 0x41, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x41, (byte) 0x10, (byte) 0x00, (byte) 0x00 };
+		assertArrayEquals(referenceBTS_D_N_F, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values);
+		assertArrayEquals(referenceBTS_D_N_F, targetArr);
 	}
 
 	@Test
@@ -2144,6 +3038,21 @@ public class ApiTests {
 	// D_N_D
 	@Test
 	public void testWriting_D_N_D() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final int numSamples = 10;
+		final double[] values = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (double) i;
+		}
+		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScalingDisabled(target);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_N_D = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2163,6 +3072,10 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x1C, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x40, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x40, (byte) 0x22, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
+		assertArrayEquals(referenceBTS_D_N_D, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values);
+		assertArrayEquals(referenceBTS_D_N_D, targetArr);
 	}
 
 	@Test
@@ -2172,6 +3085,23 @@ public class ApiTests {
 	// D_B_B
 	@Test
 	public void testWriting_D_B_B() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final byte scalingOffset_B = (byte) 1.2;
+		final byte scalingFactor_B = (byte) 24.3;
+		final int numSamples = 10;
+		final byte[] values = new byte[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (byte) (scalingOffset_B + i*scalingFactor_B);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(1, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_B, scalingFactor_B);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_B_B = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2183,6 +3113,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0A,
 			(byte) 0x01, (byte) 0x19, (byte) 0x31, (byte) 0x49, (byte) 0x61, (byte) 0x79, (byte) 0x91, (byte) 0xA9,
 			(byte) 0xC1, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_D_B_B, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_B, scalingFactor_B);
+		assertArrayEquals(referenceBTS_D_B_B, targetArr);
 	}
 
 	@Test
@@ -2192,6 +3126,23 @@ public class ApiTests {
 	// D_B_S
 	@Test
 	public void testWriting_D_B_S() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final byte scalingOffset_B = (byte) 1.2;
+		final byte scalingFactor_B = (byte) 24.3;
+		final int numSamples = 10;
+		final short[] values = new short[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (short) (scalingOffset_B + i*scalingFactor_B);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(2, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_B, scalingFactor_B);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_B_S = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2204,6 +3155,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x19, (byte) 0x00, (byte) 0x31, (byte) 0x00, (byte) 0x49,
 			(byte) 0x00, (byte) 0x61, (byte) 0x00, (byte) 0x79, (byte) 0x00, (byte) 0x91, (byte) 0x00, (byte) 0xA9,
 			(byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_D_B_S, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_B, scalingFactor_B);
+		assertArrayEquals(referenceBTS_D_B_S, targetArr);
 	}
 
 	@Test
@@ -2213,6 +3168,23 @@ public class ApiTests {
 	// D_B_I
 	@Test
 	public void testWriting_D_B_I() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final byte scalingOffset_B = (byte) 1.2;
+		final byte scalingFactor_B = (byte) 24.3;
+		final int numSamples = 10;
+		final int[] values = new int[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (int) (scalingOffset_B + i*scalingFactor_B);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_B, scalingFactor_B);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_B_I = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2227,6 +3199,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x61, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x79,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x91, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xA9,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_D_B_I, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_B, scalingFactor_B);
+		assertArrayEquals(referenceBTS_D_B_I, targetArr);
 	}
 
 	@Test
@@ -2236,6 +3212,23 @@ public class ApiTests {
 	// D_B_L
 	@Test
 	public void testWriting_D_B_L() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final byte scalingOffset_B = (byte) 1.2;
+		final byte scalingFactor_B = (byte) 24.3;
+		final int numSamples = 10;
+		final long[] values = new long[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (long) (scalingOffset_B + i*scalingFactor_B);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_B, scalingFactor_B);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_B_L = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2255,6 +3248,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xA9,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC1,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_D_B_L, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_B, scalingFactor_B);
+		assertArrayEquals(referenceBTS_D_B_L, targetArr);
 	}
 
 	@Test
@@ -2264,6 +3261,23 @@ public class ApiTests {
 	// D_B_F
 	@Test
 	public void testWriting_D_B_F() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final byte scalingOffset_B = (byte) 1.2;
+		final byte scalingFactor_B = (byte) 24.3;
+		final int numSamples = 10;
+		final float[] values = new float[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (float) (scalingOffset_B + i*scalingFactor_B);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_B, scalingFactor_B);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_B_F = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2278,6 +3292,10 @@ public class ApiTests {
 			(byte) 0x42, (byte) 0xC2, (byte) 0x00, (byte) 0x00, (byte) 0x42, (byte) 0xF2, (byte) 0x00, (byte) 0x00,
 			(byte) 0x43, (byte) 0x11, (byte) 0x00, (byte) 0x00, (byte) 0x43, (byte) 0x29, (byte) 0x00, (byte) 0x00,
 			(byte) 0x43, (byte) 0x41, (byte) 0x00, (byte) 0x00, (byte) 0x43, (byte) 0x59, (byte) 0x00, (byte) 0x00 };
+		assertArrayEquals(referenceBTS_D_B_F, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_B, scalingFactor_B);
+		assertArrayEquals(referenceBTS_D_B_F, targetArr);
 	}
 
 	@Test
@@ -2287,6 +3305,23 @@ public class ApiTests {
 	// D_B_D
 	@Test
 	public void testWriting_D_B_D() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final byte scalingOffset_B = (byte) 1.2;
+		final byte scalingFactor_B = (byte) 24.3;
+		final int numSamples = 10;
+		final double[] values = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (double) (scalingOffset_B + i*scalingFactor_B);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_B, scalingFactor_B);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_B_D = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2306,6 +3341,10 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x65, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x40, (byte) 0x68, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x40, (byte) 0x6B, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
+		assertArrayEquals(referenceBTS_D_B_D, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_B, scalingFactor_B);
+		assertArrayEquals(referenceBTS_D_B_D, targetArr);
 	}
 
 	@Test
@@ -2315,6 +3354,23 @@ public class ApiTests {
 	// D_S_B
 	@Test
 	public void testWriting_D_S_B() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final short scalingOffset_S = (short) 1.2;
+		final short scalingFactor_S = (short) 24.3;
+		final int numSamples = 10;
+		final byte[] values = new byte[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (byte) (scalingOffset_S + i*scalingFactor_S);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(1, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_S, scalingFactor_S);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_S_B = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2326,6 +3382,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0A,
 			(byte) 0x01, (byte) 0x19, (byte) 0x31, (byte) 0x49, (byte) 0x61, (byte) 0x79, (byte) 0x91, (byte) 0xA9,
 			(byte) 0xC1, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_D_S_B, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_S, scalingFactor_S);
+		assertArrayEquals(referenceBTS_D_S_B, targetArr);
 	}
 
 	@Test
@@ -2335,6 +3395,23 @@ public class ApiTests {
 	// D_S_S
 	@Test
 	public void testWriting_D_S_S() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final short scalingOffset_S = (short) 1.2;
+		final short scalingFactor_S = (short) 24.3;
+		final int numSamples = 10;
+		final short[] values = new short[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (short) (scalingOffset_S + i*scalingFactor_S);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(2, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_S, scalingFactor_S);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_S_S = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2347,6 +3424,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x19, (byte) 0x00, (byte) 0x31, (byte) 0x00, (byte) 0x49,
 			(byte) 0x00, (byte) 0x61, (byte) 0x00, (byte) 0x79, (byte) 0x00, (byte) 0x91, (byte) 0x00, (byte) 0xA9,
 			(byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_D_S_S, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_S, scalingFactor_S);
+		assertArrayEquals(referenceBTS_D_S_S, targetArr);
 	}
 
 	@Test
@@ -2356,6 +3437,23 @@ public class ApiTests {
 	// D_S_I
 	@Test
 	public void testWriting_D_S_I() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final short scalingOffset_S = (short) 1.2;
+		final short scalingFactor_S = (short) 24.3;
+		final int numSamples = 10;
+		final int[] values = new int[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (int) (scalingOffset_S + i*scalingFactor_S);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_S, scalingFactor_S);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_S_I = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2370,6 +3468,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x61, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x79,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x91, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xA9,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_D_S_I, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_S, scalingFactor_S);
+		assertArrayEquals(referenceBTS_D_S_I, targetArr);
 	}
 
 	@Test
@@ -2379,6 +3481,23 @@ public class ApiTests {
 	// D_S_L
 	@Test
 	public void testWriting_D_S_L() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final short scalingOffset_S = (short) 1.2;
+		final short scalingFactor_S = (short) 24.3;
+		final int numSamples = 10;
+		final long[] values = new long[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (long) (scalingOffset_S + i*scalingFactor_S);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_S, scalingFactor_S);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_S_L = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2398,6 +3517,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xA9,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC1,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_D_S_L, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_S, scalingFactor_S);
+		assertArrayEquals(referenceBTS_D_S_L, targetArr);
 	}
 
 	@Test
@@ -2407,6 +3530,23 @@ public class ApiTests {
 	// D_S_F
 	@Test
 	public void testWriting_D_S_F() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final short scalingOffset_S = (short) 1.2;
+		final short scalingFactor_S = (short) 24.3;
+		final int numSamples = 10;
+		final float[] values = new float[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (float) (scalingOffset_S + i*scalingFactor_S);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_S, scalingFactor_S);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_S_F = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2421,6 +3561,10 @@ public class ApiTests {
 			(byte) 0x42, (byte) 0xC2, (byte) 0x00, (byte) 0x00, (byte) 0x42, (byte) 0xF2, (byte) 0x00, (byte) 0x00,
 			(byte) 0x43, (byte) 0x11, (byte) 0x00, (byte) 0x00, (byte) 0x43, (byte) 0x29, (byte) 0x00, (byte) 0x00,
 			(byte) 0x43, (byte) 0x41, (byte) 0x00, (byte) 0x00, (byte) 0x43, (byte) 0x59, (byte) 0x00, (byte) 0x00 };
+		assertArrayEquals(referenceBTS_D_S_F, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_S, scalingFactor_S);
+		assertArrayEquals(referenceBTS_D_S_F, targetArr);
 	}
 
 	@Test
@@ -2430,6 +3574,23 @@ public class ApiTests {
 	// D_S_D
 	@Test
 	public void testWriting_D_S_D() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final short scalingOffset_S = (short) 1.2;
+		final short scalingFactor_S = (short) 24.3;
+		final int numSamples = 10;
+		final double[] values = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (double) (scalingOffset_S + i*scalingFactor_S);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_S, scalingFactor_S);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_S_D = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2449,6 +3610,10 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x65, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x40, (byte) 0x68, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x40, (byte) 0x6B, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
+		assertArrayEquals(referenceBTS_D_S_D, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_S, scalingFactor_S);
+		assertArrayEquals(referenceBTS_D_S_D, targetArr);
 	}
 
 	@Test
@@ -2458,6 +3623,23 @@ public class ApiTests {
 	// D_I_B
 	@Test
 	public void testWriting_D_I_B() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final int scalingOffset_I = (int) 1.2;
+		final int scalingFactor_I = (int) 24.3;
+		final int numSamples = 10;
+		final byte[] values = new byte[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (byte) (scalingOffset_I + i*scalingFactor_I);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(1, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_I, scalingFactor_I);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_I_B = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2469,6 +3651,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0A,
 			(byte) 0x01, (byte) 0x19, (byte) 0x31, (byte) 0x49, (byte) 0x61, (byte) 0x79, (byte) 0x91, (byte) 0xA9,
 			(byte) 0xC1, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_D_I_B, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_I, scalingFactor_I);
+		assertArrayEquals(referenceBTS_D_I_B, targetArr);
 	}
 
 	@Test
@@ -2478,6 +3664,23 @@ public class ApiTests {
 	// D_I_S
 	@Test
 	public void testWriting_D_I_S() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final int scalingOffset_I = (int) 1.2;
+		final int scalingFactor_I = (int) 24.3;
+		final int numSamples = 10;
+		final short[] values = new short[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (short) (scalingOffset_I + i*scalingFactor_I);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(2, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_I, scalingFactor_I);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_I_S = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2490,6 +3693,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x19, (byte) 0x00, (byte) 0x31, (byte) 0x00, (byte) 0x49,
 			(byte) 0x00, (byte) 0x61, (byte) 0x00, (byte) 0x79, (byte) 0x00, (byte) 0x91, (byte) 0x00, (byte) 0xA9,
 			(byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_D_I_S, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_I, scalingFactor_I);
+		assertArrayEquals(referenceBTS_D_I_S, targetArr);
 	}
 
 	@Test
@@ -2499,6 +3706,23 @@ public class ApiTests {
 	// D_I_I
 	@Test
 	public void testWriting_D_I_I() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final int scalingOffset_I = (int) 1.2;
+		final int scalingFactor_I = (int) 24.3;
+		final int numSamples = 10;
+		final int[] values = new int[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (int) (scalingOffset_I + i*scalingFactor_I);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_I, scalingFactor_I);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_I_I = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2513,6 +3737,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x61, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x79,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x91, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xA9,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_D_I_I, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_I, scalingFactor_I);
+		assertArrayEquals(referenceBTS_D_I_I, targetArr);
 	}
 
 	@Test
@@ -2522,6 +3750,23 @@ public class ApiTests {
 	// D_I_L
 	@Test
 	public void testWriting_D_I_L() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final int scalingOffset_I = (int) 1.2;
+		final int scalingFactor_I = (int) 24.3;
+		final int numSamples = 10;
+		final long[] values = new long[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (long) (scalingOffset_I + i*scalingFactor_I);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_I, scalingFactor_I);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_I_L = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2541,6 +3786,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xA9,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC1,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_D_I_L, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_I, scalingFactor_I);
+		assertArrayEquals(referenceBTS_D_I_L, targetArr);
 	}
 
 	@Test
@@ -2550,6 +3799,23 @@ public class ApiTests {
 	// D_I_F
 	@Test
 	public void testWriting_D_I_F() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final int scalingOffset_I = (int) 1.2;
+		final int scalingFactor_I = (int) 24.3;
+		final int numSamples = 10;
+		final float[] values = new float[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (float) (scalingOffset_I + i*scalingFactor_I);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_I, scalingFactor_I);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_I_F = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2564,6 +3830,10 @@ public class ApiTests {
 			(byte) 0x42, (byte) 0xC2, (byte) 0x00, (byte) 0x00, (byte) 0x42, (byte) 0xF2, (byte) 0x00, (byte) 0x00,
 			(byte) 0x43, (byte) 0x11, (byte) 0x00, (byte) 0x00, (byte) 0x43, (byte) 0x29, (byte) 0x00, (byte) 0x00,
 			(byte) 0x43, (byte) 0x41, (byte) 0x00, (byte) 0x00, (byte) 0x43, (byte) 0x59, (byte) 0x00, (byte) 0x00 };
+		assertArrayEquals(referenceBTS_D_I_F, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_I, scalingFactor_I);
+		assertArrayEquals(referenceBTS_D_I_F, targetArr);
 	}
 
 	@Test
@@ -2573,6 +3843,23 @@ public class ApiTests {
 	// D_I_D
 	@Test
 	public void testWriting_D_I_D() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final int scalingOffset_I = (int) 1.2;
+		final int scalingFactor_I = (int) 24.3;
+		final int numSamples = 10;
+		final double[] values = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (double) (scalingOffset_I + i*scalingFactor_I);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_I, scalingFactor_I);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_I_D = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2592,6 +3879,10 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x65, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x40, (byte) 0x68, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x40, (byte) 0x6B, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
+		assertArrayEquals(referenceBTS_D_I_D, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_I, scalingFactor_I);
+		assertArrayEquals(referenceBTS_D_I_D, targetArr);
 	}
 
 	@Test
@@ -2601,6 +3892,23 @@ public class ApiTests {
 	// D_L_B
 	@Test
 	public void testWriting_D_L_B() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final long scalingOffset_L = (long) 1.2;
+		final long scalingFactor_L = (long) 24.3;
+		final int numSamples = 10;
+		final byte[] values = new byte[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (byte) (scalingOffset_L + i*scalingFactor_L);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(1, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_L, scalingFactor_L);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_L_B = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2612,6 +3920,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0A,
 			(byte) 0x01, (byte) 0x19, (byte) 0x31, (byte) 0x49, (byte) 0x61, (byte) 0x79, (byte) 0x91, (byte) 0xA9,
 			(byte) 0xC1, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_D_L_B, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_L, scalingFactor_L);
+		assertArrayEquals(referenceBTS_D_L_B, targetArr);
 	}
 
 	@Test
@@ -2621,6 +3933,23 @@ public class ApiTests {
 	// D_L_S
 	@Test
 	public void testWriting_D_L_S() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final long scalingOffset_L = (long) 1.2;
+		final long scalingFactor_L = (long) 24.3;
+		final int numSamples = 10;
+		final short[] values = new short[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (short) (scalingOffset_L + i*scalingFactor_L);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(2, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_L, scalingFactor_L);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_L_S = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2633,6 +3962,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x19, (byte) 0x00, (byte) 0x31, (byte) 0x00, (byte) 0x49,
 			(byte) 0x00, (byte) 0x61, (byte) 0x00, (byte) 0x79, (byte) 0x00, (byte) 0x91, (byte) 0x00, (byte) 0xA9,
 			(byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_D_L_S, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_L, scalingFactor_L);
+		assertArrayEquals(referenceBTS_D_L_S, targetArr);
 	}
 
 	@Test
@@ -2642,6 +3975,23 @@ public class ApiTests {
 	// D_L_I
 	@Test
 	public void testWriting_D_L_I() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final long scalingOffset_L = (long) 1.2;
+		final long scalingFactor_L = (long) 24.3;
+		final int numSamples = 10;
+		final int[] values = new int[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (int) (scalingOffset_L + i*scalingFactor_L);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_L, scalingFactor_L);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_L_I = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2656,6 +4006,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x61, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x79,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x91, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xA9,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_D_L_I, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_L, scalingFactor_L);
+		assertArrayEquals(referenceBTS_D_L_I, targetArr);
 	}
 
 	@Test
@@ -2665,6 +4019,23 @@ public class ApiTests {
 	// D_L_L
 	@Test
 	public void testWriting_D_L_L() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final long scalingOffset_L = (long) 1.2;
+		final long scalingFactor_L = (long) 24.3;
+		final int numSamples = 10;
+		final long[] values = new long[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (long) (scalingOffset_L + i*scalingFactor_L);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_L, scalingFactor_L);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_L_L = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2684,6 +4055,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xA9,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC1,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
+		assertArrayEquals(referenceBTS_D_L_L, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_L, scalingFactor_L);
+		assertArrayEquals(referenceBTS_D_L_L, targetArr);
 	}
 
 	@Test
@@ -2693,6 +4068,23 @@ public class ApiTests {
 	// D_L_F
 	@Test
 	public void testWriting_D_L_F() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final long scalingOffset_L = (long) 1.2;
+		final long scalingFactor_L = (long) 24.3;
+		final int numSamples = 10;
+		final float[] values = new float[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (float) (scalingOffset_L + i*scalingFactor_L);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_L, scalingFactor_L);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_L_F = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2707,6 +4099,10 @@ public class ApiTests {
 			(byte) 0x42, (byte) 0xC2, (byte) 0x00, (byte) 0x00, (byte) 0x42, (byte) 0xF2, (byte) 0x00, (byte) 0x00,
 			(byte) 0x43, (byte) 0x11, (byte) 0x00, (byte) 0x00, (byte) 0x43, (byte) 0x29, (byte) 0x00, (byte) 0x00,
 			(byte) 0x43, (byte) 0x41, (byte) 0x00, (byte) 0x00, (byte) 0x43, (byte) 0x59, (byte) 0x00, (byte) 0x00 };
+		assertArrayEquals(referenceBTS_D_L_F, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_L, scalingFactor_L);
+		assertArrayEquals(referenceBTS_D_L_F, targetArr);
 	}
 
 	@Test
@@ -2716,6 +4112,23 @@ public class ApiTests {
 	// D_L_D
 	@Test
 	public void testWriting_D_L_D() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final long scalingOffset_L = (long) 1.2;
+		final long scalingFactor_L = (long) 24.3;
+		final int numSamples = 10;
+		final double[] values = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (double) (scalingOffset_L + i*scalingFactor_L);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_L, scalingFactor_L);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_L_D = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2735,6 +4148,10 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x65, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x40, (byte) 0x68, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x40, (byte) 0x6B, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
+		assertArrayEquals(referenceBTS_D_L_D, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_L, scalingFactor_L);
+		assertArrayEquals(referenceBTS_D_L_D, targetArr);
 	}
 
 	@Test
@@ -2744,6 +4161,23 @@ public class ApiTests {
 	// D_F_B
 	@Test
 	public void testWriting_D_F_B() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final float scalingOffset_F = (float) 1.2;
+		final float scalingFactor_F = (float) 24.3;
+		final int numSamples = 10;
+		final byte[] values = new byte[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (byte) (scalingOffset_F + i*scalingFactor_F);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(1, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_F, scalingFactor_F);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_F_B = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2755,6 +4189,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0A,
 			(byte) 0x01, (byte) 0x19, (byte) 0x31, (byte) 0x4A, (byte) 0x62, (byte) 0x7A, (byte) 0x92, (byte) 0xAB,
 			(byte) 0xC3, (byte) 0xDB };
+		assertArrayEquals(referenceBTS_D_F_B, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_F, scalingFactor_F);
+		assertArrayEquals(referenceBTS_D_F_B, targetArr);
 	}
 
 	@Test
@@ -2764,6 +4202,23 @@ public class ApiTests {
 	// D_F_S
 	@Test
 	public void testWriting_D_F_S() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final float scalingOffset_F = (float) 1.2;
+		final float scalingFactor_F = (float) 24.3;
+		final int numSamples = 10;
+		final short[] values = new short[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (short) (scalingOffset_F + i*scalingFactor_F);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(2, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_F, scalingFactor_F);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_F_S = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2776,6 +4231,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x19, (byte) 0x00, (byte) 0x31, (byte) 0x00, (byte) 0x4A,
 			(byte) 0x00, (byte) 0x62, (byte) 0x00, (byte) 0x7A, (byte) 0x00, (byte) 0x92, (byte) 0x00, (byte) 0xAB,
 			(byte) 0x00, (byte) 0xC3, (byte) 0x00, (byte) 0xDB };
+		assertArrayEquals(referenceBTS_D_F_S, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_F, scalingFactor_F);
+		assertArrayEquals(referenceBTS_D_F_S, targetArr);
 	}
 
 	@Test
@@ -2785,6 +4244,23 @@ public class ApiTests {
 	// D_F_I
 	@Test
 	public void testWriting_D_F_I() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final float scalingOffset_F = (float) 1.2;
+		final float scalingFactor_F = (float) 24.3;
+		final int numSamples = 10;
+		final int[] values = new int[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (int) (scalingOffset_F + i*scalingFactor_F);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_F, scalingFactor_F);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_F_I = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2799,6 +4275,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x62, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x7A,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x92, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xAB,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC3, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xDB };
+		assertArrayEquals(referenceBTS_D_F_I, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_F, scalingFactor_F);
+		assertArrayEquals(referenceBTS_D_F_I, targetArr);
 	}
 
 	@Test
@@ -2808,6 +4288,23 @@ public class ApiTests {
 	// D_F_L
 	@Test
 	public void testWriting_D_F_L() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final float scalingOffset_F = (float) 1.2;
+		final float scalingFactor_F = (float) 24.3;
+		final int numSamples = 10;
+		final long[] values = new long[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (long) (scalingOffset_F + i*scalingFactor_F);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_F, scalingFactor_F);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_F_L = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2827,6 +4324,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xAB,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC3,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xDB };
+		assertArrayEquals(referenceBTS_D_F_L, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_F, scalingFactor_F);
+		assertArrayEquals(referenceBTS_D_F_L, targetArr);
 	}
 
 	@Test
@@ -2836,6 +4337,23 @@ public class ApiTests {
 	// D_F_F
 	@Test
 	public void testWriting_D_F_F() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final float scalingOffset_F = (float) 1.2;
+		final float scalingFactor_F = (float) 24.3;
+		final int numSamples = 10;
+		final float[] values = new float[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (float) (scalingOffset_F + i*scalingFactor_F);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_F, scalingFactor_F);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_F_F = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2850,6 +4368,10 @@ public class ApiTests {
 			(byte) 0x42, (byte) 0xC4, (byte) 0xCC, (byte) 0xCC, (byte) 0x42, (byte) 0xF5, (byte) 0x66, (byte) 0x66,
 			(byte) 0x43, (byte) 0x12, (byte) 0xFF, (byte) 0xFF, (byte) 0x43, (byte) 0x2B, (byte) 0x4C, (byte) 0xCC,
 			(byte) 0x43, (byte) 0x43, (byte) 0x99, (byte) 0x99, (byte) 0x43, (byte) 0x5B, (byte) 0xE6, (byte) 0x66 };
+		assertArrayEquals(referenceBTS_D_F_F, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_F, scalingFactor_F);
+		assertArrayEquals(referenceBTS_D_F_F, targetArr);
 	}
 
 	@Test
@@ -2859,6 +4381,23 @@ public class ApiTests {
 	// D_F_D
 	@Test
 	public void testWriting_D_F_D() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final float scalingOffset_F = (float) 1.2;
+		final float scalingFactor_F = (float) 24.3;
+		final int numSamples = 10;
+		final double[] values = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (double) (scalingOffset_F + i*scalingFactor_F);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_F, scalingFactor_F);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_F_D = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2878,6 +4417,10 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x65, (byte) 0x69, (byte) 0x99, (byte) 0x80, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x40, (byte) 0x68, (byte) 0x73, (byte) 0x33, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x40, (byte) 0x6B, (byte) 0x7C, (byte) 0xCC, (byte) 0xC0, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
+		assertArrayEquals(referenceBTS_D_F_D, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_F, scalingFactor_F);
+		assertArrayEquals(referenceBTS_D_F_D, targetArr);
 	}
 
 	@Test
@@ -2887,6 +4430,23 @@ public class ApiTests {
 	// D_D_B
 	@Test
 	public void testWriting_D_D_B() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final double scalingOffset_D = (double) 1.2;
+		final double scalingFactor_D = (double) 24.3;
+		final int numSamples = 10;
+		final byte[] values = new byte[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (byte) (scalingOffset_D + i*scalingFactor_D);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(1, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_D, scalingFactor_D);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_D_B = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2898,6 +4458,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0A,
 			(byte) 0x01, (byte) 0x19, (byte) 0x31, (byte) 0x4A, (byte) 0x62, (byte) 0x7A, (byte) 0x93, (byte) 0xAB,
 			(byte) 0xC3, (byte) 0xDB };
+		assertArrayEquals(referenceBTS_D_D_B, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_D, scalingFactor_D);
+		assertArrayEquals(referenceBTS_D_D_B, targetArr);
 	}
 
 	@Test
@@ -2907,6 +4471,23 @@ public class ApiTests {
 	// D_D_S
 	@Test
 	public void testWriting_D_D_S() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final double scalingOffset_D = (double) 1.2;
+		final double scalingFactor_D = (double) 24.3;
+		final int numSamples = 10;
+		final short[] values = new short[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (short) (scalingOffset_D + i*scalingFactor_D);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(2, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_D, scalingFactor_D);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_D_S = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2919,6 +4500,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x19, (byte) 0x00, (byte) 0x31, (byte) 0x00, (byte) 0x4A,
 			(byte) 0x00, (byte) 0x62, (byte) 0x00, (byte) 0x7A, (byte) 0x00, (byte) 0x93, (byte) 0x00, (byte) 0xAB,
 			(byte) 0x00, (byte) 0xC3, (byte) 0x00, (byte) 0xDB };
+		assertArrayEquals(referenceBTS_D_D_S, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_D, scalingFactor_D);
+		assertArrayEquals(referenceBTS_D_D_S, targetArr);
 	}
 
 	@Test
@@ -2928,6 +4513,23 @@ public class ApiTests {
 	// D_D_I
 	@Test
 	public void testWriting_D_D_I() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final double scalingOffset_D = (double) 1.2;
+		final double scalingFactor_D = (double) 24.3;
+		final int numSamples = 10;
+		final int[] values = new int[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (int) (scalingOffset_D + i*scalingFactor_D);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_D, scalingFactor_D);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_D_I = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2942,6 +4544,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x62, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x7A,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x93, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xAB,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC3, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xDB };
+		assertArrayEquals(referenceBTS_D_D_I, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_D, scalingFactor_D);
+		assertArrayEquals(referenceBTS_D_D_I, targetArr);
 	}
 
 	@Test
@@ -2951,6 +4557,23 @@ public class ApiTests {
 	// D_D_L
 	@Test
 	public void testWriting_D_D_L() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final double scalingOffset_D = (double) 1.2;
+		final double scalingFactor_D = (double) 24.3;
+		final int numSamples = 10;
+		final long[] values = new long[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (long) (scalingOffset_D + i*scalingFactor_D);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_D, scalingFactor_D);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_D_L = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2970,6 +4593,10 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xAB,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC3,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xDB };
+		assertArrayEquals(referenceBTS_D_D_L, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_D, scalingFactor_D);
+		assertArrayEquals(referenceBTS_D_D_L, targetArr);
 	}
 
 	@Test
@@ -2979,6 +4606,23 @@ public class ApiTests {
 	// D_D_F
 	@Test
 	public void testWriting_D_D_F() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final double scalingOffset_D = (double) 1.2;
+		final double scalingFactor_D = (double) 24.3;
+		final int numSamples = 10;
+		final float[] values = new float[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (float) (scalingOffset_D + i*scalingFactor_D);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_D, scalingFactor_D);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_D_F = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -2993,6 +4637,10 @@ public class ApiTests {
 			(byte) 0x42, (byte) 0xC4, (byte) 0xCC, (byte) 0xCD, (byte) 0x42, (byte) 0xF5, (byte) 0x66, (byte) 0x66,
 			(byte) 0x43, (byte) 0x13, (byte) 0x00, (byte) 0x00, (byte) 0x43, (byte) 0x2B, (byte) 0x4C, (byte) 0xCD,
 			(byte) 0x43, (byte) 0x43, (byte) 0x99, (byte) 0x9A, (byte) 0x43, (byte) 0x5B, (byte) 0xE6, (byte) 0x66 };
+		assertArrayEquals(referenceBTS_D_D_F, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_D, scalingFactor_D);
+		assertArrayEquals(referenceBTS_D_D_F, targetArr);
 	}
 
 	@Test
@@ -3002,6 +4650,23 @@ public class ApiTests {
 	// D_D_D
 	@Test
 	public void testWriting_D_D_D() {
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
+		final double scalingOffset_D = (double) 1.2;
+		final double scalingFactor_D = (double) 24.3;
+		final int numSamples = 10;
+		final double[] values = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (double) (scalingOffset_D + i*scalingFactor_D);
+		}
+		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_D, dt_D);
+		BinaryTimeseries.writeScaling(target, scalingOffset_D, scalingFactor_D);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
 		final byte[] referenceBTS_D_D_D = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x06, (byte) 0x40, (byte) 0x2A, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x42, (byte) 0x80, (byte) 0x00, (byte) 0x00,
@@ -3021,11 +4686,29 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x65, (byte) 0x69, (byte) 0x99, (byte) 0x99, (byte) 0x99, (byte) 0x99, (byte) 0x99,
 			(byte) 0x40, (byte) 0x68, (byte) 0x73, (byte) 0x33, (byte) 0x33, (byte) 0x33, (byte) 0x33, (byte) 0x33,
 			(byte) 0x40, (byte) 0x6B, (byte) 0x7C, (byte) 0xCC, (byte) 0xCC, (byte) 0xCC, (byte) 0xCC, (byte) 0xCD };
+		assertArrayEquals(referenceBTS_D_D_D, targetArr);
+		target.position(0);
+		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_D, scalingFactor_D);
+		assertArrayEquals(referenceBTS_D_D_D, targetArr);
 	}
 
 	@Test
 	public void testReading_D_D_D() {
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

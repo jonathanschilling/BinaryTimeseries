@@ -703,7 +703,7 @@ public class BinaryTimeseries {
 		write(target, t0, dt, rawData, null, null);
 	}
 
-	public static final void write(final ByteBuffer target, Object t0, Object dt, Object rawData, Object scalingFactor, Object scalingOffset) {
+	public static final void write(final ByteBuffer target, Object t0, Object dt, Object rawData, Object scalingOffset, Object scalingFactor) {
 		BinaryTimeseries.writeEndianessCheckValue(target);
 		if (t0 == null) { throw new RuntimeException("t0 cannot be null"); }
 		if (dt == null) { throw new RuntimeException("dt cannot be null"); }
