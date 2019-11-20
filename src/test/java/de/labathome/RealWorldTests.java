@@ -14,6 +14,11 @@ import java.nio.file.Paths;
 
 import org.junit.jupiter.api.Test;
 
+/**
+ * Some tests resembling real-world use cases of BinaryTimeseries.
+ * 
+ * @author Jonathan Schilling (jonathan.schilling@mail.de)
+ */
 public class RealWorldTests {
 
 	/**
