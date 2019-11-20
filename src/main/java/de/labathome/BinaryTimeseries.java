@@ -372,6 +372,67 @@ public class BinaryTimeseries {
 	
 	
 	
+	public static final void write(final ByteBuffer target, Object t0, Object dt, Object rawData) {
+		write(target, t0, dt, rawData, null, null);
+	}
+	
+	public static final void write(final ByteBuffer target, Object t0, Object dt, Object rawData, Object scalingFactor, Object scalingOffset) {
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		if (t0 == null) { throw new RuntimeException("t0 cannot be null"); }
+		if (dt == null) { throw new RuntimeException("dt cannot be null"); }
+		if (Long.class.equals(t0.getClass()) && Long.class.equals(dt.getClass())) {
+			BinaryTimeseries.writeTimebase(target, (long)t0, (long)dt);
+		} else if (Double.class.equals(t0.getClass()) && Double.class.equals(dt.getClass())) {
+			BinaryTimeseries.writeTimebase(target, (double)t0, (double)dt);
+		} else {
+			throw new RuntimeException("t0 and dt must be of the same class and either long or double");
+		}
+		if (scalingFactor == null && scalingOffset == null) {
+			BinaryTimeseries.writeScalingDisabled(target);
+		} else {
+			if (scalingFactor == null) { throw new RuntimeException("if scalingOffset is given, also give scalingFactor"); }
+			if (scalingOffset == null) { throw new RuntimeException("if scalingFactor is given, also give scalingOffset"); }
+			if (Byte.class.equals(scalingFactor.getClass()) && Byte.class.equals(scalingFactor.getClass())) {
+				BinaryTimeseries.writeScaling(target, (byte)scalingOffset, (byte)scalingFactor);
+			} else if (Short.class.equals(scalingFactor.getClass()) && Short.class.equals(scalingFactor.getClass())) {
+				BinaryTimeseries.writeScaling(target, (short)scalingOffset, (short)scalingFactor);
+			} else if (Integer.class.equals(scalingFactor.getClass()) && Integer.class.equals(scalingFactor.getClass())) {
+				BinaryTimeseries.writeScaling(target, (int)scalingOffset, (int)scalingFactor);
+			} else if (Long.class.equals(scalingFactor.getClass()) && Long.class.equals(scalingFactor.getClass())) {
+				BinaryTimeseries.writeScaling(target, (long)scalingOffset, (long)scalingFactor);
+			} else if (Float.class.equals(scalingFactor.getClass()) && Float.class.equals(scalingFactor.getClass())) {
+				BinaryTimeseries.writeScaling(target, (float)scalingOffset, (float)scalingFactor);
+			} else if (Double.class.equals(scalingFactor.getClass()) && Double.class.equals(scalingFactor.getClass())) {
+				BinaryTimeseries.writeScaling(target, (double)scalingOffset, (double)scalingFactor);
+			} else {
+				throw new RuntimeException("scalingOffset and scalingFactor must be of the same class, which can be one of (byte, short, int, long, float, double)");
+			}
+		}
+		BinaryTimeseries.writeReservedDummy(target);
+		if (rawData == null) { throw new RuntimeException("rawData must not be null"); }
+		if (rawData.getClass().isArray()) {
+			if (byte.class.equals(rawData.getClass().getComponentType())) {
+				BinaryTimeseries.writeData(target, (byte[])rawData);
+			} else if (short.class.equals(rawData.getClass().getComponentType())) {
+				BinaryTimeseries.writeData(target, (short[])rawData);
+			} else if (int.class.equals(rawData.getClass().getComponentType())) {
+				BinaryTimeseries.writeData(target, (int[])rawData);
+			} else if (long.class.equals(rawData.getClass().getComponentType())) {
+				BinaryTimeseries.writeData(target, (long[])rawData);
+			} else if (float.class.equals(rawData.getClass().getComponentType())) {
+				BinaryTimeseries.writeData(target, (float[])rawData);
+			} else if (double.class.equals(rawData.getClass().getComponentType())) {
+				BinaryTimeseries.writeData(target, (double[])rawData);
+			} else {
+				throw new RuntimeException("rawData elements must be of one of the following types: byte, short, int, long, float, double");
+			}
+		} else {
+			throw new RuntimeException("rawData must be an array");
+		}
+	}
+	
+	
+	
 	
 	
 	

@@ -50,21 +50,10 @@ public class RealWorldTests {
 		// write
 		try (RandomAccessFile memoryFile = new RandomAccessFile(tmpFile.toFile(), "rw")) {
 			MappedByteBuffer mappedByteBuffer = memoryFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, filesize);
-
+			
 			long start = -System.nanoTime();
-			assertEquals(0, mappedByteBuffer.position());
-			BinaryTimeseries.writeEndianessCheckValue(mappedByteBuffer);
-			assertEquals(2, mappedByteBuffer.position());
-			BinaryTimeseries.writeTimebase(mappedByteBuffer, t0, dt);
-			assertEquals(19, mappedByteBuffer.position());
-			BinaryTimeseries.writeScalingDisabled(mappedByteBuffer);
-			assertEquals(36, mappedByteBuffer.position());
-			BinaryTimeseries.writeReservedDummy(mappedByteBuffer);
-			assertEquals(59, mappedByteBuffer.position());
-			BinaryTimeseries.writeData(mappedByteBuffer, values);
-			assertEquals(filesize, mappedByteBuffer.position());
+			BinaryTimeseries.write(mappedByteBuffer, t0, dt, values);	
 			System.out.println("writing took " + (int)(Math.round((start+System.nanoTime())/1e3))+" us");
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -153,17 +142,7 @@ public class RealWorldTests {
 			MappedByteBuffer mappedByteBuffer = memoryFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, filesize);
 
 			long start = -System.nanoTime();
-			assertEquals(0, mappedByteBuffer.position());
-			BinaryTimeseries.writeEndianessCheckValue(mappedByteBuffer);
-			assertEquals(2, mappedByteBuffer.position());
-			BinaryTimeseries.writeTimebase(mappedByteBuffer, t0, dt);
-			assertEquals(19, mappedByteBuffer.position());
-			BinaryTimeseries.writeScalingDisabled(mappedByteBuffer);
-			assertEquals(36, mappedByteBuffer.position());
-			BinaryTimeseries.writeReservedDummy(mappedByteBuffer);
-			assertEquals(59, mappedByteBuffer.position());
-			BinaryTimeseries.writeData(mappedByteBuffer, values);
-			assertEquals(filesize, mappedByteBuffer.position());
+			BinaryTimeseries.write(mappedByteBuffer, t0, dt, values);
 			System.out.println("writing took " + (int)(Math.round((start+System.nanoTime())/1e3))+" us");
 
 		} catch (Exception e) {
