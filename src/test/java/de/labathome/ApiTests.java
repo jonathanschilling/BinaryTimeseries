@@ -1,5 +1,6 @@
 package de.labathome;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,7 @@ public class ApiTests {
 	 */
 	public static void main(String[] args) {
 		
-		final byte[]    time_dtypes = new byte[] {
+		final byte[] time_dtypes = new byte[] {
 				BinaryTimeseries.DTYPE_LONG,
 				BinaryTimeseries.DTYPE_DOUBLE
 		};
@@ -33,7 +34,7 @@ public class ApiTests {
 				BinaryTimeseries.DTYPE_DOUBLE
 		};
 		
-		final byte[]    data_dtypes = new byte[] {
+		final byte[] data_dtypes = new byte[] {
 				BinaryTimeseries.DTYPE_BYTE,
 				BinaryTimeseries.DTYPE_SHORT,
 				BinaryTimeseries.DTYPE_INT,
@@ -62,26 +63,113 @@ public class ApiTests {
 					final byte data_dtype = data_dtypes[data_dtype_idx];
 					final int data_size = data_sizes[data_dtype_idx];
 					
-					System.out.println(String.format("// %2d ", numTests+1)+
+					System.out.println(String.format("	// %2d ", numTests+1)+
 							BinaryTimeseries.dtypeStr(   time_dtype)+" "+
 							BinaryTimeseries.dtypeStr(scaling_dtype)+" "+
 							BinaryTimeseries.dtypeStr(   data_dtype)
 					);
 					
-					// header and ten samples
-					final int filesize = 64 + data_size*10;
+					final int numSamples = 10;
+					
+					final   long t0_l = 13;
+					final double t0_d = 13.0;
+					
+					final   long dt_l = 37;
+					final double dt_d = 37.0;
+					
+					final int numSamplesSubset = 5;
+					final int sourceOffset = 2;
+					final int targetOffset = 0;
+					
+					// compute file size from reserved number of header bytes, sample size and number of samples
+					final int filesize = 64 + data_size*numSamples;
 					
 					
 					
 					
 					
 					// check static routines
+					if (scaling_dtype_idx == 0 && data_dtype_idx == 0) {
+						// these need to be executed only once per time type
+						
+						// buildTimebase
+						if (time_dtype == BinaryTimeseries.DTYPE_LONG) {
+							System.out.println("	@Test\n"+
+									"	public void testBuiltTimebase_"+BinaryTimeseries.dtypeStr(time_dtype)+"() {\n"+
+									"		final int numSamples = "+numSamples+";\n"+
+									"		final long t0_l = "+t0_l+";\n"+
+									"		final long dt_l = "+dt_l+";\n"+
+									"		final int numSamplesSubset = "+numSamplesSubset+";\n"+
+									"		final int sourceOffset = "+sourceOffset+";\n"+
+									"		final int targetOffset = "+targetOffset+";\n"+
+									"		\n"+
+									"		// 'manually' build reference time stamps\n"+ 
+									"		final long[] timebase = new long[numSamples];\n"+
+									"		for (int i=0; i<numSamples; ++i) {\n"+
+									"			timebase[i] = t0_l + i*dt_l;\n"+
+									"		}\n"+
+									"		final long[] timebase_subset = new long[numSamplesSubset];\n"+
+									"		System.arraycopy(timebase, sourceOffset, timebase_subset, targetOffset, numSamplesSubset);\n"+
+									"		\n"+
+									"		// no sourceOffset and targetOffset given\n"+
+									"		final long[] targetTimebase = new long[numSamples];\n"+
+									"		BinaryTimeseries.buildTimebase(targetTimebase, t0_l, dt_l);\n"+
+									"		assertArrayEquals(timebase, targetTimebase);\n"+
+									"		\n"+
+									"		// sourceOffset and targetOffset are given\n"+
+									"		final long[] targetTimebase_subset = new long[numSamplesSubset];\n"+
+									"		BinaryTimeseries.buildTimebase(sourceOffset, targetTimebase_subset, targetOffset, numSamplesSubset, t0_l, dt_l);\n"+
+									"		assertArrayEquals(timebase_subset, targetTimebase_subset);\n"+
+									"	}\n");
+							                                                                                                                                          
+						} else if (time_dtype == BinaryTimeseries.DTYPE_DOUBLE) {
+							System.out.println("	@Test\n"+
+									"	public void testBuiltTimebase_"+BinaryTimeseries.dtypeStr(time_dtype)+"() {\n"+
+									"		final int numSamples = "+numSamples+";\n"+
+									"		final double t0_d = "+t0_d+";\n"+
+									"		final double dt_d = "+dt_d+";\n"+
+									"		final int numSamplesSubset = "+numSamplesSubset+";\n"+
+									"		final int sourceOffset = "+sourceOffset+";\n"+
+									"		final int targetOffset = "+targetOffset+";\n"+
+									"		\n"+
+									"		// 'manually' build reference time stamps\n"+ 
+									"		final double[] timebase = new double[numSamples];\n"+
+									"		for (int i=0; i<numSamples; ++i) {\n"+
+									"			timebase[i] = t0_d + i*dt_d;\n"+
+									"		}\n"+
+									"		final double[] timebase_subset = new double[numSamplesSubset];\n"+
+									"		System.arraycopy(timebase, sourceOffset, timebase_subset, targetOffset, numSamplesSubset);\n"+
+									"		\n"+
+									"		// no sourceOffset and targetOffset given\n"+
+									"		final double[] targetTimebase = new double[numSamples];\n"+
+									"		BinaryTimeseries.buildTimebase(targetTimebase, t0_d, dt_d);\n"+
+									"		assertArrayEquals(timebase, targetTimebase);\n"+
+									"		\n"+
+									"		// sourceOffset and targetOffset are given\n"+
+									"		final double[] targetTimebase_subset = new double[numSamplesSubset];\n"+
+									"		BinaryTimeseries.buildTimebase(sourceOffset, targetTimebase_subset, targetOffset, numSamplesSubset, t0_d, dt_d);\n"+
+									"		assertArrayEquals(timebase_subset, targetTimebase_subset);\n"+
+									"	}\n");
+						}
+						
+					}
+					
+					if (time_dtype_idx == 0 && data_dtype_idx == 0) {
+						// these need to be executed only once per scaling type
+						
+						
+						
+						
+					}
+					
 					if (time_dtype_idx == 0 && scaling_dtype_idx == 0) {
-						// this needs to be executed only once per data type
-						System.out.println("@Test\n"+
-								"public void testFileOffset_"+BinaryTimeseries.dtypeStr(data_dtype)+"() {\n"+
-								"	assertEquals("+filesize+", BinaryTimeseries.fileOffset("+data_size+", 10));\n"+
-								"}\n");
+						// these need to be executed only once per data type
+						
+						// fileOffset
+						System.out.println("	@Test\n"+
+								"	public void testFileOffset_"+BinaryTimeseries.dtypeStr(data_dtype)+"() {\n"+
+								"		assertEquals("+filesize+", BinaryTimeseries.fileOffset("+data_size+", 10));\n"+
+								"	}\n");
 					}
 					
 					
@@ -104,10 +192,7 @@ public class ApiTests {
 			
 		}
 		
-		System.out.println("// total number of tests: "+numTests);
-		
-		
-		
+		System.out.println("	// total number of tests: "+numTests);
 	}
 	
 	// block comment headers are:
@@ -121,6 +206,34 @@ public class ApiTests {
 	 ***********************************/
 	
 	//  1 L N B
+	@Test
+	public void testBuiltTimebase_L() {
+		final int numSamples = 10;
+		final long t0_l = 13;
+		final long dt_l = 37;
+		final int numSamplesSubset = 5;
+		final int sourceOffset = 2;
+		final int targetOffset = 0;
+		
+		// 'manually' build reference time stamps
+		final long[] timebase = new long[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			timebase[i] = t0_l + i*dt_l;
+		}
+		final long[] timebase_subset = new long[numSamplesSubset];
+		System.arraycopy(timebase, sourceOffset, timebase_subset, targetOffset, numSamplesSubset);
+		
+		// no sourceOffset and targetOffset given
+		final long[] targetTimebase = new long[numSamples];
+		BinaryTimeseries.buildTimebase(targetTimebase, t0_l, dt_l);
+		assertArrayEquals(timebase, targetTimebase);
+		
+		// sourceOffset and targetOffset are given
+		final long[] targetTimebase_subset = new long[numSamplesSubset];
+		BinaryTimeseries.buildTimebase(sourceOffset, targetTimebase_subset, targetOffset, numSamplesSubset, t0_l, dt_l);
+		assertArrayEquals(timebase_subset, targetTimebase_subset);
+	}
+
 	@Test
 	public void testFileOffset_B() {
 		assertEquals(74, BinaryTimeseries.fileOffset(1, 10));
@@ -155,7 +268,115 @@ public class ApiTests {
 	public void testFileOffset_D() {
 		assertEquals(144, BinaryTimeseries.fileOffset(8, 10));
 	}
-	
+
+	//  7 L B B
+	//  8 L B S
+	//  9 L B I
+	// 10 L B L
+	// 11 L B F
+	// 12 L B D
+	// 13 L S B
+	// 14 L S S
+	// 15 L S I
+	// 16 L S L
+	// 17 L S F
+	// 18 L S D
+	// 19 L I B
+	// 20 L I S
+	// 21 L I I
+	// 22 L I L
+	// 23 L I F
+	// 24 L I D
+	// 25 L L B
+	// 26 L L S
+	// 27 L L I
+	// 28 L L L
+	// 29 L L F
+	// 30 L L D
+	// 31 L F B
+	// 32 L F S
+	// 33 L F I
+	// 34 L F L
+	// 35 L F F
+	// 36 L F D
+	// 37 L D B
+	// 38 L D S
+	// 39 L D I
+	// 40 L D L
+	// 41 L D F
+	// 42 L D D
+	// 43 D N B
+	@Test
+	public void testBuiltTimebase_D() {
+		final int numSamples = 10;
+		final double t0_d = 13.0;
+		final double dt_d = 37.0;
+		final int numSamplesSubset = 5;
+		final int sourceOffset = 2;
+		final int targetOffset = 0;
+		
+		// 'manually' build reference time stamps
+		final double[] timebase = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			timebase[i] = t0_d + i*dt_d;
+		}
+		final double[] timebase_subset = new double[numSamplesSubset];
+		System.arraycopy(timebase, sourceOffset, timebase_subset, targetOffset, numSamplesSubset);
+		
+		// no sourceOffset and targetOffset given
+		final double[] targetTimebase = new double[numSamples];
+		BinaryTimeseries.buildTimebase(targetTimebase, t0_d, dt_d);
+		assertArrayEquals(timebase, targetTimebase);
+		
+		// sourceOffset and targetOffset are given
+		final double[] targetTimebase_subset = new double[numSamplesSubset];
+		BinaryTimeseries.buildTimebase(sourceOffset, targetTimebase_subset, targetOffset, numSamplesSubset, t0_d, dt_d);
+		assertArrayEquals(timebase_subset, targetTimebase_subset);
+	}
+
+	// 44 D N S
+	// 45 D N I
+	// 46 D N L
+	// 47 D N F
+	// 48 D N D
+	// 49 D B B
+	// 50 D B S
+	// 51 D B I
+	// 52 D B L
+	// 53 D B F
+	// 54 D B D
+	// 55 D S B
+	// 56 D S S
+	// 57 D S I
+	// 58 D S L
+	// 59 D S F
+	// 60 D S D
+	// 61 D I B
+	// 62 D I S
+	// 63 D I I
+	// 64 D I L
+	// 65 D I F
+	// 66 D I D
+	// 67 D L B
+	// 68 D L S
+	// 69 D L I
+	// 70 D L L
+	// 71 D L F
+	// 72 D L D
+	// 73 D F B
+	// 74 D F S
+	// 75 D F I
+	// 76 D F L
+	// 77 D F F
+	// 78 D F D
+	// 79 D D B
+	// 80 D D S
+	// 81 D D I
+	// 82 D D L
+	// 83 D D F
+	// 84 D D D
+	// total number of tests: 84
+
 	
 	
 	

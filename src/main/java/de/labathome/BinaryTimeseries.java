@@ -80,34 +80,6 @@ public class BinaryTimeseries {
 	 * @param t0 reference timestamp; will go into {@code target[0]}
 	 * @param dt time interval between two samples
 	 */
-	public static final void buildTimebase(final double[] target, final double t0, final double dt) {
-		final int sourceOffset = 0, targetOffset = 0;
-		buildTimebase(sourceOffset, target, targetOffset, target.length, t0, dt);
-	}
-
-	/**
-	 * Compute the timebase values for a given t_0 and Delta_t.
-	 * All entries in {@code target} from {@code sourceOffset} up to and including {@code sourceOffset+numSamples-1} are filled with appropriate values of the timebase.
-	 * @param sourceOffset offset in the time series indices
-	 * @param target [numSamples] array into which to put the timebase values t_i
-	 * @param targetOffset index at which to put t_0 in the {@code target} array
-	 * @param numSamples number of time stamps to generate; has to greater than or equal to {@code target.length}
-	 * @param t0 reference timestamp; will go into {@code target[targetOffset]}
-	 * @param dt time interval between two consecutive samples
-	 */
-	public static final void buildTimebase(final int sourceOffset, final double[] target, final int targetOffset, final int numSamples, final double t0, final double dt) {
-		for (int i=0; i<numSamples; ++i) {
-			target[targetOffset+i] = t0+(sourceOffset+i)*dt;
-		}
-	}
-
-	/**
-	 * Compute the timebase values for a given t_0 and Delta_t.
-	 * The number of values is given by the length of the {@code target} array, into which the values are put.
-	 * @param target [N] array into which to put the timebase values t_i.
-	 * @param t0 reference timestamp; will go into {@code target[0]}
-	 * @param dt time interval between two samples
-	 */
 	public static final void buildTimebase(final long[] target, final long t0, final long dt) {
 		final int sourceOffset = 0, targetOffset = 0;
 		buildTimebase(sourceOffset, target, targetOffset, target.length, t0, dt);
@@ -128,29 +100,33 @@ public class BinaryTimeseries {
 			target[targetOffset+i] = t0+(sourceOffset+i)*dt;
 		}
 	}
-
+	
 	/**
-	 * Given a timebase (t0, dt), compute the first index of timestamps inside the given time interval [{@code t_l}, {@code t_u}].
-	 * @param t0 reference timestamp from the file
-	 * @param dt time interval between two consecutive samples from the file
-	 * @param t_l lower boundary of the time interval to read data from
-	 * @return first index inside the time interval [{@code t_l}, {@code t_u}]
-	 * @see Eqn. (5) in the documentation
+	 * Compute the timebase values for a given t_0 and Delta_t.
+	 * The number of values is given by the length of the {@code target} array, into which the values are put.
+	 * @param target [N] array into which to put the timebase values t_i.
+	 * @param t0 reference timestamp; will go into {@code target[0]}
+	 * @param dt time interval between two samples
 	 */
-	public static final int firstIndexInside(final double t0, final double dt, final double t_l) {
-		return (int) Math.ceil ((t_l-t0)/dt);
+	public static final void buildTimebase(final double[] target, final double t0, final double dt) {
+		final int sourceOffset = 0, targetOffset = 0;
+		buildTimebase(sourceOffset, target, targetOffset, target.length, t0, dt);
 	}
 
 	/**
-	 * Given a timebase (t0, dt), compute the first index of timestamps inside the given time interval [{@code t_l}, {@code t_u}].
-	 * @param t0 reference timestamp from the file
-	 * @param dt time interval between two consecutive samples from the file
-	 * @param t_u upper boundary of the time interval to read data from
-	 * @return last index inside the time interval [{@code t_l}, {@code t_u}]
-	 * @see Eqn. (6) in the documentation
+	 * Compute the timebase values for a given t_0 and Delta_t.
+	 * All entries in {@code target} from {@code sourceOffset} up to and including {@code sourceOffset+numSamples-1} are filled with appropriate values of the timebase.
+	 * @param sourceOffset offset in the time series indices
+	 * @param target [numSamples] array into which to put the timebase values t_i
+	 * @param targetOffset index at which to put t_0 in the {@code target} array
+	 * @param numSamples number of time stamps to generate; has to greater than or equal to {@code target.length}
+	 * @param t0 reference timestamp; will go into {@code target[targetOffset]}
+	 * @param dt time interval between two consecutive samples
 	 */
-	public static final int lastIndexInside(final double t0, final double dt, final double t_u) {
-		return (int) Math.floor((t_u-t0)/dt);
+	public static final void buildTimebase(final int sourceOffset, final double[] target, final int targetOffset, final int numSamples, final double t0, final double dt) {
+		for (int i=0; i<numSamples; ++i) {
+			target[targetOffset+i] = t0+(sourceOffset+i)*dt;
+		}
 	}
 
 	/**
@@ -178,6 +154,30 @@ public class BinaryTimeseries {
 		return (int) ((t_u-t0         ) / dt);
 	}
 
+	/**
+	 * Given a timebase (t0, dt), compute the first index of timestamps inside the given time interval [{@code t_l}, {@code t_u}].
+	 * @param t0 reference timestamp from the file
+	 * @param dt time interval between two consecutive samples from the file
+	 * @param t_l lower boundary of the time interval to read data from
+	 * @return first index inside the time interval [{@code t_l}, {@code t_u}]
+	 * @see Eqn. (5) in the documentation
+	 */
+	public static final int firstIndexInside(final double t0, final double dt, final double t_l) {
+		return (int) Math.ceil ((t_l-t0)/dt);
+	}
+
+	/**
+	 * Given a timebase (t0, dt), compute the first index of timestamps inside the given time interval [{@code t_l}, {@code t_u}].
+	 * @param t0 reference timestamp from the file
+	 * @param dt time interval between two consecutive samples from the file
+	 * @param t_u upper boundary of the time interval to read data from
+	 * @return last index inside the time interval [{@code t_l}, {@code t_u}]
+	 * @see Eqn. (6) in the documentation
+	 */
+	public static final int lastIndexInside(final double t0, final double dt, final double t_u) {
+		return (int) Math.floor((t_u-t0)/dt);
+	}
+	
 	/**
 	 * Compute the file offset (and buffer size when reading the file) in bytes given the size of the contained raw data type and the number of samples/index.
 	 * These values can be obtained from first just reading the header and then continuing with reading the whole file.
