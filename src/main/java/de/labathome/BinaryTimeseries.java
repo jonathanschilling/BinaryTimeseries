@@ -760,9 +760,6 @@ public class BinaryTimeseries {
 
 
 
-
-
-
 	/***********************
 	 *                     *
 	 *   READING METHODS   *

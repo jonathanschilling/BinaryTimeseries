@@ -924,14 +924,21 @@ public class ApiTests {
 		for (int i=0; i<numSamples; ++i) {
 			values[i] = (byte) i;
 		}
+		// writing
 		int fileSize = BinaryTimeseries.fileOffset(1, numSamples);
 		final byte[] targetArr = new byte[fileSize];
 		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		assertEquals(0, target.position());
 		BinaryTimeseries.writeEndianessCheckValue(target);
+		assertEquals(2, target.position());
 		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		assertEquals(19, target.position());
 		BinaryTimeseries.writeScalingDisabled(target);
+		assertEquals(36, target.position());
 		BinaryTimeseries.writeReservedDummy(target);
+		assertEquals(59, target.position());
 		BinaryTimeseries.writeData(target, values);
+		assertEquals(fileSize, target.position());
 		final byte[] referenceBTS_L_N_B = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -946,7 +953,33 @@ public class ApiTests {
 		assertArrayEquals(referenceBTS_L_N_B, targetArr);
 		target.position(0);
 		BinaryTimeseries.write(target, t0_L, dt_L, values);
+		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_N_B, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_N_B);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(BinaryTimeseries.DTYPE_LONG, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(BinaryTimeseries.DTYPE_NONE, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		BinaryTimeseries.readScalingDisabled(source);
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(BinaryTimeseries.DTYPE_BYTE, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final byte[] rawData = new byte[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	@Test
