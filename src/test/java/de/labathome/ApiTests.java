@@ -540,7 +540,58 @@ public class ApiTests {
 							"		assertArrayEquals(values, rawData);\n";
 					
 					// test reading of data into a given array type --> readData_byte...
-					
+					writeTestCode += 
+							"		// read and scale into given primitive array\n" +
+							"		final   byte[] referenceData_byte   = new   byte[numSamples];\n" +
+							"		final  short[] referenceData_short  = new  short[numSamples];\n" +
+							"		final    int[] referenceData_int    = new    int[numSamples];\n" +
+							"		final   long[] referenceData_long   = new   long[numSamples];\n" +
+							"		final  float[] referenceData_float  = new  float[numSamples];\n" +
+							"		final double[] referenceData_double = new double[numSamples];\n" +
+							"		for (int i=0; i<numSamples; ++i) {\n";
+							if (scaling_dtype == BinaryTimeseries.DTYPE_NONE) {
+								writeTestCode +=
+										"			referenceData_byte  [i] = (byte  )i;\n" +
+										"			referenceData_short [i] = (short )i;\n" +
+										"			referenceData_int   [i] = (int   )i;\n" +
+										"			referenceData_long  [i] = (long  )i;\n" +
+										"			referenceData_float [i] = (float )i;\n" +
+										"			referenceData_double[i] = (double)i;\n";
+							} else {
+								writeTestCode +=
+										"			final "+jtD+" referenceValue = ("+jtD+") (scalingOffset_"+tS+" + i*scalingFactor_"+tS+");\n" +
+										"			referenceData_byte  [i] = (byte  )(scalingOffset_"+tS+" + referenceValue*scalingFactor_"+tS+");\n" +
+										"			referenceData_short [i] = (short )(scalingOffset_"+tS+" + referenceValue*scalingFactor_"+tS+");\n" +
+										"			referenceData_int   [i] = (int   )(scalingOffset_"+tS+" + referenceValue*scalingFactor_"+tS+");\n" +
+										"			referenceData_long  [i] = (long  )(scalingOffset_"+tS+" + referenceValue*scalingFactor_"+tS+");\n" +
+										"			referenceData_float [i] = (float )(scalingOffset_"+tS+" + referenceValue*scalingFactor_"+tS+");\n" +
+										"			referenceData_double[i] = (double)(scalingOffset_"+tS+" + referenceValue*scalingFactor_"+tS+");\n";
+							}
+							writeTestCode += "		}\n" +
+							"		source.position(19);\n" +
+							"		final byte[] data_byte = BinaryTimeseries.readData_byte(source);\n" +
+							"		assertEquals(fileSize, source.position());\n" +
+							"		assertArrayEquals(referenceData_byte, data_byte);\n" +
+							"		source.position(19);\n" +
+							"		final short[] data_short = BinaryTimeseries.readData_short(source);\n" +
+							"		assertEquals(fileSize, source.position());\n" +
+							"		assertArrayEquals(referenceData_short, data_short);\n" +
+							"		source.position(19);\n" +
+							"		final int[] data_int = BinaryTimeseries.readData_int(source);\n" +
+							"		assertEquals(fileSize, source.position());\n" +
+							"		assertArrayEquals(referenceData_int, data_int);\n" +
+							"		source.position(19);\n" +
+							"		final long[] data_long = BinaryTimeseries.readData_long(source);\n" +
+							"		assertEquals(fileSize, source.position());\n" +
+							"		assertArrayEquals(referenceData_long, data_long);\n" +
+							"		source.position(19);\n" +
+							"		final float[] data_float = BinaryTimeseries.readData_float(source);\n" +
+							"		assertEquals(fileSize, source.position());\n" +
+							"		assertArrayEquals(referenceData_float, data_float);\n" +
+							"		source.position(19);\n" +
+							"		final double[] data_double = BinaryTimeseries.readData_double(source);\n" +
+							"		assertEquals(fileSize, source.position());\n" +
+							"		assertArrayEquals(referenceData_double, data_double);\n";
 					
 					
 					writeTestCode += "	}\n";
@@ -1016,6 +1067,45 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			referenceData_byte  [i] = (byte  )i;
+			referenceData_short [i] = (short )i;
+			referenceData_int   [i] = (int   )i;
+			referenceData_long  [i] = (long  )i;
+			referenceData_float [i] = (float )i;
+			referenceData_double[i] = (double)i;
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_N_S
@@ -1090,6 +1180,45 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			referenceData_byte  [i] = (byte  )i;
+			referenceData_short [i] = (short )i;
+			referenceData_int   [i] = (int   )i;
+			referenceData_long  [i] = (long  )i;
+			referenceData_float [i] = (float )i;
+			referenceData_double[i] = (double)i;
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_N_I
@@ -1166,6 +1295,45 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			referenceData_byte  [i] = (byte  )i;
+			referenceData_short [i] = (short )i;
+			referenceData_int   [i] = (int   )i;
+			referenceData_long  [i] = (long  )i;
+			referenceData_float [i] = (float )i;
+			referenceData_double[i] = (double)i;
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_N_L
@@ -1247,6 +1415,45 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			referenceData_byte  [i] = (byte  )i;
+			referenceData_short [i] = (short )i;
+			referenceData_int   [i] = (int   )i;
+			referenceData_long  [i] = (long  )i;
+			referenceData_float [i] = (float )i;
+			referenceData_double[i] = (double)i;
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_N_F
@@ -1323,6 +1530,45 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			referenceData_byte  [i] = (byte  )i;
+			referenceData_short [i] = (short )i;
+			referenceData_int   [i] = (int   )i;
+			referenceData_long  [i] = (long  )i;
+			referenceData_float [i] = (float )i;
+			referenceData_double[i] = (double)i;
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_N_D
@@ -1404,6 +1650,45 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			referenceData_byte  [i] = (byte  )i;
+			referenceData_short [i] = (short )i;
+			referenceData_int   [i] = (int   )i;
+			referenceData_long  [i] = (long  )i;
+			referenceData_float [i] = (float )i;
+			referenceData_double[i] = (double)i;
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_B_B
@@ -1477,6 +1762,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final byte referenceValue = (byte) (scalingOffset_B + i*scalingFactor_B);
+			referenceData_byte  [i] = (byte  )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_short [i] = (short )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_int   [i] = (int   )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_long  [i] = (long  )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_float [i] = (float )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_double[i] = (double)(scalingOffset_B + referenceValue*scalingFactor_B);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_B_S
@@ -1551,6 +1876,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final short referenceValue = (short) (scalingOffset_B + i*scalingFactor_B);
+			referenceData_byte  [i] = (byte  )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_short [i] = (short )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_int   [i] = (int   )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_long  [i] = (long  )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_float [i] = (float )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_double[i] = (double)(scalingOffset_B + referenceValue*scalingFactor_B);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_B_I
@@ -1627,6 +1992,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final int referenceValue = (int) (scalingOffset_B + i*scalingFactor_B);
+			referenceData_byte  [i] = (byte  )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_short [i] = (short )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_int   [i] = (int   )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_long  [i] = (long  )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_float [i] = (float )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_double[i] = (double)(scalingOffset_B + referenceValue*scalingFactor_B);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_B_L
@@ -1708,6 +2113,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final long referenceValue = (long) (scalingOffset_B + i*scalingFactor_B);
+			referenceData_byte  [i] = (byte  )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_short [i] = (short )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_int   [i] = (int   )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_long  [i] = (long  )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_float [i] = (float )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_double[i] = (double)(scalingOffset_B + referenceValue*scalingFactor_B);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_B_F
@@ -1784,6 +2229,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final float referenceValue = (float) (scalingOffset_B + i*scalingFactor_B);
+			referenceData_byte  [i] = (byte  )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_short [i] = (short )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_int   [i] = (int   )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_long  [i] = (long  )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_float [i] = (float )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_double[i] = (double)(scalingOffset_B + referenceValue*scalingFactor_B);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_B_D
@@ -1865,6 +2350,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final double referenceValue = (double) (scalingOffset_B + i*scalingFactor_B);
+			referenceData_byte  [i] = (byte  )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_short [i] = (short )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_int   [i] = (int   )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_long  [i] = (long  )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_float [i] = (float )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_double[i] = (double)(scalingOffset_B + referenceValue*scalingFactor_B);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_S_B
@@ -1938,6 +2463,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final byte referenceValue = (byte) (scalingOffset_S + i*scalingFactor_S);
+			referenceData_byte  [i] = (byte  )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_short [i] = (short )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_int   [i] = (int   )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_long  [i] = (long  )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_float [i] = (float )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_double[i] = (double)(scalingOffset_S + referenceValue*scalingFactor_S);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_S_S
@@ -2012,6 +2577,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final short referenceValue = (short) (scalingOffset_S + i*scalingFactor_S);
+			referenceData_byte  [i] = (byte  )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_short [i] = (short )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_int   [i] = (int   )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_long  [i] = (long  )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_float [i] = (float )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_double[i] = (double)(scalingOffset_S + referenceValue*scalingFactor_S);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_S_I
@@ -2088,6 +2693,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final int referenceValue = (int) (scalingOffset_S + i*scalingFactor_S);
+			referenceData_byte  [i] = (byte  )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_short [i] = (short )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_int   [i] = (int   )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_long  [i] = (long  )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_float [i] = (float )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_double[i] = (double)(scalingOffset_S + referenceValue*scalingFactor_S);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_S_L
@@ -2169,6 +2814,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final long referenceValue = (long) (scalingOffset_S + i*scalingFactor_S);
+			referenceData_byte  [i] = (byte  )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_short [i] = (short )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_int   [i] = (int   )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_long  [i] = (long  )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_float [i] = (float )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_double[i] = (double)(scalingOffset_S + referenceValue*scalingFactor_S);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_S_F
@@ -2245,6 +2930,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final float referenceValue = (float) (scalingOffset_S + i*scalingFactor_S);
+			referenceData_byte  [i] = (byte  )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_short [i] = (short )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_int   [i] = (int   )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_long  [i] = (long  )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_float [i] = (float )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_double[i] = (double)(scalingOffset_S + referenceValue*scalingFactor_S);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_S_D
@@ -2326,6 +3051,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final double referenceValue = (double) (scalingOffset_S + i*scalingFactor_S);
+			referenceData_byte  [i] = (byte  )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_short [i] = (short )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_int   [i] = (int   )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_long  [i] = (long  )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_float [i] = (float )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_double[i] = (double)(scalingOffset_S + referenceValue*scalingFactor_S);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_I_B
@@ -2399,6 +3164,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final byte referenceValue = (byte) (scalingOffset_I + i*scalingFactor_I);
+			referenceData_byte  [i] = (byte  )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_short [i] = (short )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_int   [i] = (int   )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_long  [i] = (long  )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_float [i] = (float )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_double[i] = (double)(scalingOffset_I + referenceValue*scalingFactor_I);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_I_S
@@ -2473,6 +3278,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final short referenceValue = (short) (scalingOffset_I + i*scalingFactor_I);
+			referenceData_byte  [i] = (byte  )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_short [i] = (short )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_int   [i] = (int   )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_long  [i] = (long  )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_float [i] = (float )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_double[i] = (double)(scalingOffset_I + referenceValue*scalingFactor_I);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_I_I
@@ -2549,6 +3394,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final int referenceValue = (int) (scalingOffset_I + i*scalingFactor_I);
+			referenceData_byte  [i] = (byte  )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_short [i] = (short )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_int   [i] = (int   )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_long  [i] = (long  )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_float [i] = (float )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_double[i] = (double)(scalingOffset_I + referenceValue*scalingFactor_I);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_I_L
@@ -2630,6 +3515,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final long referenceValue = (long) (scalingOffset_I + i*scalingFactor_I);
+			referenceData_byte  [i] = (byte  )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_short [i] = (short )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_int   [i] = (int   )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_long  [i] = (long  )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_float [i] = (float )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_double[i] = (double)(scalingOffset_I + referenceValue*scalingFactor_I);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_I_F
@@ -2706,6 +3631,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final float referenceValue = (float) (scalingOffset_I + i*scalingFactor_I);
+			referenceData_byte  [i] = (byte  )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_short [i] = (short )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_int   [i] = (int   )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_long  [i] = (long  )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_float [i] = (float )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_double[i] = (double)(scalingOffset_I + referenceValue*scalingFactor_I);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_I_D
@@ -2787,6 +3752,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final double referenceValue = (double) (scalingOffset_I + i*scalingFactor_I);
+			referenceData_byte  [i] = (byte  )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_short [i] = (short )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_int   [i] = (int   )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_long  [i] = (long  )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_float [i] = (float )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_double[i] = (double)(scalingOffset_I + referenceValue*scalingFactor_I);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_L_B
@@ -2860,6 +3865,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final byte referenceValue = (byte) (scalingOffset_L + i*scalingFactor_L);
+			referenceData_byte  [i] = (byte  )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_short [i] = (short )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_int   [i] = (int   )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_long  [i] = (long  )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_float [i] = (float )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_double[i] = (double)(scalingOffset_L + referenceValue*scalingFactor_L);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_L_S
@@ -2934,6 +3979,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final short referenceValue = (short) (scalingOffset_L + i*scalingFactor_L);
+			referenceData_byte  [i] = (byte  )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_short [i] = (short )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_int   [i] = (int   )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_long  [i] = (long  )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_float [i] = (float )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_double[i] = (double)(scalingOffset_L + referenceValue*scalingFactor_L);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_L_I
@@ -3010,6 +4095,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final int referenceValue = (int) (scalingOffset_L + i*scalingFactor_L);
+			referenceData_byte  [i] = (byte  )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_short [i] = (short )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_int   [i] = (int   )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_long  [i] = (long  )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_float [i] = (float )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_double[i] = (double)(scalingOffset_L + referenceValue*scalingFactor_L);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_L_L
@@ -3091,6 +4216,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final long referenceValue = (long) (scalingOffset_L + i*scalingFactor_L);
+			referenceData_byte  [i] = (byte  )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_short [i] = (short )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_int   [i] = (int   )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_long  [i] = (long  )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_float [i] = (float )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_double[i] = (double)(scalingOffset_L + referenceValue*scalingFactor_L);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_L_F
@@ -3167,6 +4332,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final float referenceValue = (float) (scalingOffset_L + i*scalingFactor_L);
+			referenceData_byte  [i] = (byte  )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_short [i] = (short )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_int   [i] = (int   )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_long  [i] = (long  )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_float [i] = (float )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_double[i] = (double)(scalingOffset_L + referenceValue*scalingFactor_L);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_L_D
@@ -3248,6 +4453,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final double referenceValue = (double) (scalingOffset_L + i*scalingFactor_L);
+			referenceData_byte  [i] = (byte  )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_short [i] = (short )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_int   [i] = (int   )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_long  [i] = (long  )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_float [i] = (float )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_double[i] = (double)(scalingOffset_L + referenceValue*scalingFactor_L);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_F_B
@@ -3321,6 +4566,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final byte referenceValue = (byte) (scalingOffset_F + i*scalingFactor_F);
+			referenceData_byte  [i] = (byte  )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_short [i] = (short )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_int   [i] = (int   )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_long  [i] = (long  )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_float [i] = (float )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_double[i] = (double)(scalingOffset_F + referenceValue*scalingFactor_F);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_F_S
@@ -3395,6 +4680,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final short referenceValue = (short) (scalingOffset_F + i*scalingFactor_F);
+			referenceData_byte  [i] = (byte  )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_short [i] = (short )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_int   [i] = (int   )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_long  [i] = (long  )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_float [i] = (float )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_double[i] = (double)(scalingOffset_F + referenceValue*scalingFactor_F);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_F_I
@@ -3471,6 +4796,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final int referenceValue = (int) (scalingOffset_F + i*scalingFactor_F);
+			referenceData_byte  [i] = (byte  )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_short [i] = (short )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_int   [i] = (int   )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_long  [i] = (long  )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_float [i] = (float )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_double[i] = (double)(scalingOffset_F + referenceValue*scalingFactor_F);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_F_L
@@ -3552,6 +4917,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final long referenceValue = (long) (scalingOffset_F + i*scalingFactor_F);
+			referenceData_byte  [i] = (byte  )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_short [i] = (short )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_int   [i] = (int   )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_long  [i] = (long  )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_float [i] = (float )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_double[i] = (double)(scalingOffset_F + referenceValue*scalingFactor_F);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_F_F
@@ -3628,6 +5033,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final float referenceValue = (float) (scalingOffset_F + i*scalingFactor_F);
+			referenceData_byte  [i] = (byte  )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_short [i] = (short )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_int   [i] = (int   )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_long  [i] = (long  )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_float [i] = (float )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_double[i] = (double)(scalingOffset_F + referenceValue*scalingFactor_F);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_F_D
@@ -3709,6 +5154,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final double referenceValue = (double) (scalingOffset_F + i*scalingFactor_F);
+			referenceData_byte  [i] = (byte  )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_short [i] = (short )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_int   [i] = (int   )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_long  [i] = (long  )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_float [i] = (float )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_double[i] = (double)(scalingOffset_F + referenceValue*scalingFactor_F);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_D_B
@@ -3782,6 +5267,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final byte referenceValue = (byte) (scalingOffset_D + i*scalingFactor_D);
+			referenceData_byte  [i] = (byte  )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_short [i] = (short )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_int   [i] = (int   )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_long  [i] = (long  )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_float [i] = (float )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_double[i] = (double)(scalingOffset_D + referenceValue*scalingFactor_D);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_D_S
@@ -3856,6 +5381,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final short referenceValue = (short) (scalingOffset_D + i*scalingFactor_D);
+			referenceData_byte  [i] = (byte  )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_short [i] = (short )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_int   [i] = (int   )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_long  [i] = (long  )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_float [i] = (float )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_double[i] = (double)(scalingOffset_D + referenceValue*scalingFactor_D);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_D_I
@@ -3932,6 +5497,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final int referenceValue = (int) (scalingOffset_D + i*scalingFactor_D);
+			referenceData_byte  [i] = (byte  )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_short [i] = (short )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_int   [i] = (int   )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_long  [i] = (long  )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_float [i] = (float )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_double[i] = (double)(scalingOffset_D + referenceValue*scalingFactor_D);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_D_L
@@ -4013,6 +5618,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final long referenceValue = (long) (scalingOffset_D + i*scalingFactor_D);
+			referenceData_byte  [i] = (byte  )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_short [i] = (short )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_int   [i] = (int   )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_long  [i] = (long  )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_float [i] = (float )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_double[i] = (double)(scalingOffset_D + referenceValue*scalingFactor_D);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_D_F
@@ -4089,6 +5734,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final float referenceValue = (float) (scalingOffset_D + i*scalingFactor_D);
+			referenceData_byte  [i] = (byte  )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_short [i] = (short )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_int   [i] = (int   )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_long  [i] = (long  )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_float [i] = (float )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_double[i] = (double)(scalingOffset_D + referenceValue*scalingFactor_D);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// L_D_D
@@ -4170,6 +5855,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final double referenceValue = (double) (scalingOffset_D + i*scalingFactor_D);
+			referenceData_byte  [i] = (byte  )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_short [i] = (short )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_int   [i] = (int   )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_long  [i] = (long  )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_float [i] = (float )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_double[i] = (double)(scalingOffset_D + referenceValue*scalingFactor_D);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_N_B
@@ -4282,6 +6007,45 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			referenceData_byte  [i] = (byte  )i;
+			referenceData_short [i] = (short )i;
+			referenceData_int   [i] = (int   )i;
+			referenceData_long  [i] = (long  )i;
+			referenceData_float [i] = (float )i;
+			referenceData_double[i] = (double)i;
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_N_S
@@ -4351,6 +6115,45 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			referenceData_byte  [i] = (byte  )i;
+			referenceData_short [i] = (short )i;
+			referenceData_int   [i] = (int   )i;
+			referenceData_long  [i] = (long  )i;
+			referenceData_float [i] = (float )i;
+			referenceData_double[i] = (double)i;
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_N_I
@@ -4422,6 +6225,45 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			referenceData_byte  [i] = (byte  )i;
+			referenceData_short [i] = (short )i;
+			referenceData_int   [i] = (int   )i;
+			referenceData_long  [i] = (long  )i;
+			referenceData_float [i] = (float )i;
+			referenceData_double[i] = (double)i;
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_N_L
@@ -4498,6 +6340,45 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			referenceData_byte  [i] = (byte  )i;
+			referenceData_short [i] = (short )i;
+			referenceData_int   [i] = (int   )i;
+			referenceData_long  [i] = (long  )i;
+			referenceData_float [i] = (float )i;
+			referenceData_double[i] = (double)i;
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_N_F
@@ -4569,6 +6450,45 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			referenceData_byte  [i] = (byte  )i;
+			referenceData_short [i] = (short )i;
+			referenceData_int   [i] = (int   )i;
+			referenceData_long  [i] = (long  )i;
+			referenceData_float [i] = (float )i;
+			referenceData_double[i] = (double)i;
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_N_D
@@ -4645,6 +6565,45 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			referenceData_byte  [i] = (byte  )i;
+			referenceData_short [i] = (short )i;
+			referenceData_int   [i] = (int   )i;
+			referenceData_long  [i] = (long  )i;
+			referenceData_float [i] = (float )i;
+			referenceData_double[i] = (double)i;
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_B_B
@@ -4718,6 +6677,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final byte referenceValue = (byte) (scalingOffset_B + i*scalingFactor_B);
+			referenceData_byte  [i] = (byte  )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_short [i] = (short )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_int   [i] = (int   )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_long  [i] = (long  )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_float [i] = (float )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_double[i] = (double)(scalingOffset_B + referenceValue*scalingFactor_B);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_B_S
@@ -4792,6 +6791,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final short referenceValue = (short) (scalingOffset_B + i*scalingFactor_B);
+			referenceData_byte  [i] = (byte  )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_short [i] = (short )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_int   [i] = (int   )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_long  [i] = (long  )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_float [i] = (float )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_double[i] = (double)(scalingOffset_B + referenceValue*scalingFactor_B);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_B_I
@@ -4868,6 +6907,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final int referenceValue = (int) (scalingOffset_B + i*scalingFactor_B);
+			referenceData_byte  [i] = (byte  )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_short [i] = (short )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_int   [i] = (int   )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_long  [i] = (long  )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_float [i] = (float )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_double[i] = (double)(scalingOffset_B + referenceValue*scalingFactor_B);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_B_L
@@ -4949,6 +7028,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final long referenceValue = (long) (scalingOffset_B + i*scalingFactor_B);
+			referenceData_byte  [i] = (byte  )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_short [i] = (short )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_int   [i] = (int   )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_long  [i] = (long  )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_float [i] = (float )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_double[i] = (double)(scalingOffset_B + referenceValue*scalingFactor_B);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_B_F
@@ -5025,6 +7144,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final float referenceValue = (float) (scalingOffset_B + i*scalingFactor_B);
+			referenceData_byte  [i] = (byte  )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_short [i] = (short )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_int   [i] = (int   )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_long  [i] = (long  )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_float [i] = (float )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_double[i] = (double)(scalingOffset_B + referenceValue*scalingFactor_B);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_B_D
@@ -5106,6 +7265,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final double referenceValue = (double) (scalingOffset_B + i*scalingFactor_B);
+			referenceData_byte  [i] = (byte  )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_short [i] = (short )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_int   [i] = (int   )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_long  [i] = (long  )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_float [i] = (float )(scalingOffset_B + referenceValue*scalingFactor_B);
+			referenceData_double[i] = (double)(scalingOffset_B + referenceValue*scalingFactor_B);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_S_B
@@ -5179,6 +7378,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final byte referenceValue = (byte) (scalingOffset_S + i*scalingFactor_S);
+			referenceData_byte  [i] = (byte  )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_short [i] = (short )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_int   [i] = (int   )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_long  [i] = (long  )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_float [i] = (float )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_double[i] = (double)(scalingOffset_S + referenceValue*scalingFactor_S);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_S_S
@@ -5253,6 +7492,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final short referenceValue = (short) (scalingOffset_S + i*scalingFactor_S);
+			referenceData_byte  [i] = (byte  )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_short [i] = (short )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_int   [i] = (int   )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_long  [i] = (long  )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_float [i] = (float )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_double[i] = (double)(scalingOffset_S + referenceValue*scalingFactor_S);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_S_I
@@ -5329,9 +7608,6 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
-		
-		
-		
 		// read and scale into given primitive array
 		final   byte[] referenceData_byte   = new   byte[numSamples];
 		final  short[] referenceData_short  = new  short[numSamples];
@@ -5453,6 +7729,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final long referenceValue = (long) (scalingOffset_S + i*scalingFactor_S);
+			referenceData_byte  [i] = (byte  )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_short [i] = (short )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_int   [i] = (int   )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_long  [i] = (long  )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_float [i] = (float )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_double[i] = (double)(scalingOffset_S + referenceValue*scalingFactor_S);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_S_F
@@ -5529,6 +7845,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final float referenceValue = (float) (scalingOffset_S + i*scalingFactor_S);
+			referenceData_byte  [i] = (byte  )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_short [i] = (short )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_int   [i] = (int   )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_long  [i] = (long  )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_float [i] = (float )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_double[i] = (double)(scalingOffset_S + referenceValue*scalingFactor_S);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_S_D
@@ -5610,6 +7966,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final double referenceValue = (double) (scalingOffset_S + i*scalingFactor_S);
+			referenceData_byte  [i] = (byte  )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_short [i] = (short )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_int   [i] = (int   )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_long  [i] = (long  )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_float [i] = (float )(scalingOffset_S + referenceValue*scalingFactor_S);
+			referenceData_double[i] = (double)(scalingOffset_S + referenceValue*scalingFactor_S);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_I_B
@@ -5683,6 +8079,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final byte referenceValue = (byte) (scalingOffset_I + i*scalingFactor_I);
+			referenceData_byte  [i] = (byte  )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_short [i] = (short )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_int   [i] = (int   )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_long  [i] = (long  )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_float [i] = (float )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_double[i] = (double)(scalingOffset_I + referenceValue*scalingFactor_I);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_I_S
@@ -5757,6 +8193,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final short referenceValue = (short) (scalingOffset_I + i*scalingFactor_I);
+			referenceData_byte  [i] = (byte  )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_short [i] = (short )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_int   [i] = (int   )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_long  [i] = (long  )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_float [i] = (float )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_double[i] = (double)(scalingOffset_I + referenceValue*scalingFactor_I);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_I_I
@@ -5833,6 +8309,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final int referenceValue = (int) (scalingOffset_I + i*scalingFactor_I);
+			referenceData_byte  [i] = (byte  )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_short [i] = (short )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_int   [i] = (int   )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_long  [i] = (long  )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_float [i] = (float )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_double[i] = (double)(scalingOffset_I + referenceValue*scalingFactor_I);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_I_L
@@ -5914,6 +8430,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final long referenceValue = (long) (scalingOffset_I + i*scalingFactor_I);
+			referenceData_byte  [i] = (byte  )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_short [i] = (short )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_int   [i] = (int   )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_long  [i] = (long  )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_float [i] = (float )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_double[i] = (double)(scalingOffset_I + referenceValue*scalingFactor_I);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_I_F
@@ -5990,6 +8546,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final float referenceValue = (float) (scalingOffset_I + i*scalingFactor_I);
+			referenceData_byte  [i] = (byte  )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_short [i] = (short )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_int   [i] = (int   )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_long  [i] = (long  )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_float [i] = (float )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_double[i] = (double)(scalingOffset_I + referenceValue*scalingFactor_I);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_I_D
@@ -6071,6 +8667,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final double referenceValue = (double) (scalingOffset_I + i*scalingFactor_I);
+			referenceData_byte  [i] = (byte  )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_short [i] = (short )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_int   [i] = (int   )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_long  [i] = (long  )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_float [i] = (float )(scalingOffset_I + referenceValue*scalingFactor_I);
+			referenceData_double[i] = (double)(scalingOffset_I + referenceValue*scalingFactor_I);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_L_B
@@ -6144,6 +8780,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final byte referenceValue = (byte) (scalingOffset_L + i*scalingFactor_L);
+			referenceData_byte  [i] = (byte  )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_short [i] = (short )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_int   [i] = (int   )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_long  [i] = (long  )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_float [i] = (float )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_double[i] = (double)(scalingOffset_L + referenceValue*scalingFactor_L);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_L_S
@@ -6218,6 +8894,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final short referenceValue = (short) (scalingOffset_L + i*scalingFactor_L);
+			referenceData_byte  [i] = (byte  )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_short [i] = (short )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_int   [i] = (int   )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_long  [i] = (long  )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_float [i] = (float )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_double[i] = (double)(scalingOffset_L + referenceValue*scalingFactor_L);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_L_I
@@ -6294,6 +9010,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final int referenceValue = (int) (scalingOffset_L + i*scalingFactor_L);
+			referenceData_byte  [i] = (byte  )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_short [i] = (short )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_int   [i] = (int   )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_long  [i] = (long  )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_float [i] = (float )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_double[i] = (double)(scalingOffset_L + referenceValue*scalingFactor_L);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_L_L
@@ -6375,6 +9131,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final long referenceValue = (long) (scalingOffset_L + i*scalingFactor_L);
+			referenceData_byte  [i] = (byte  )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_short [i] = (short )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_int   [i] = (int   )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_long  [i] = (long  )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_float [i] = (float )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_double[i] = (double)(scalingOffset_L + referenceValue*scalingFactor_L);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_L_F
@@ -6451,6 +9247,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final float referenceValue = (float) (scalingOffset_L + i*scalingFactor_L);
+			referenceData_byte  [i] = (byte  )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_short [i] = (short )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_int   [i] = (int   )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_long  [i] = (long  )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_float [i] = (float )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_double[i] = (double)(scalingOffset_L + referenceValue*scalingFactor_L);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_L_D
@@ -6532,6 +9368,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final double referenceValue = (double) (scalingOffset_L + i*scalingFactor_L);
+			referenceData_byte  [i] = (byte  )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_short [i] = (short )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_int   [i] = (int   )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_long  [i] = (long  )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_float [i] = (float )(scalingOffset_L + referenceValue*scalingFactor_L);
+			referenceData_double[i] = (double)(scalingOffset_L + referenceValue*scalingFactor_L);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_F_B
@@ -6605,6 +9481,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final byte referenceValue = (byte) (scalingOffset_F + i*scalingFactor_F);
+			referenceData_byte  [i] = (byte  )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_short [i] = (short )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_int   [i] = (int   )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_long  [i] = (long  )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_float [i] = (float )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_double[i] = (double)(scalingOffset_F + referenceValue*scalingFactor_F);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_F_S
@@ -6679,6 +9595,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final short referenceValue = (short) (scalingOffset_F + i*scalingFactor_F);
+			referenceData_byte  [i] = (byte  )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_short [i] = (short )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_int   [i] = (int   )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_long  [i] = (long  )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_float [i] = (float )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_double[i] = (double)(scalingOffset_F + referenceValue*scalingFactor_F);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_F_I
@@ -6755,6 +9711,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final int referenceValue = (int) (scalingOffset_F + i*scalingFactor_F);
+			referenceData_byte  [i] = (byte  )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_short [i] = (short )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_int   [i] = (int   )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_long  [i] = (long  )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_float [i] = (float )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_double[i] = (double)(scalingOffset_F + referenceValue*scalingFactor_F);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_F_L
@@ -6836,6 +9832,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final long referenceValue = (long) (scalingOffset_F + i*scalingFactor_F);
+			referenceData_byte  [i] = (byte  )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_short [i] = (short )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_int   [i] = (int   )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_long  [i] = (long  )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_float [i] = (float )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_double[i] = (double)(scalingOffset_F + referenceValue*scalingFactor_F);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_F_F
@@ -6912,6 +9948,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final float referenceValue = (float) (scalingOffset_F + i*scalingFactor_F);
+			referenceData_byte  [i] = (byte  )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_short [i] = (short )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_int   [i] = (int   )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_long  [i] = (long  )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_float [i] = (float )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_double[i] = (double)(scalingOffset_F + referenceValue*scalingFactor_F);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_F_D
@@ -6993,6 +10069,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final double referenceValue = (double) (scalingOffset_F + i*scalingFactor_F);
+			referenceData_byte  [i] = (byte  )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_short [i] = (short )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_int   [i] = (int   )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_long  [i] = (long  )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_float [i] = (float )(scalingOffset_F + referenceValue*scalingFactor_F);
+			referenceData_double[i] = (double)(scalingOffset_F + referenceValue*scalingFactor_F);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_D_B
@@ -7066,6 +10182,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final byte referenceValue = (byte) (scalingOffset_D + i*scalingFactor_D);
+			referenceData_byte  [i] = (byte  )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_short [i] = (short )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_int   [i] = (int   )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_long  [i] = (long  )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_float [i] = (float )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_double[i] = (double)(scalingOffset_D + referenceValue*scalingFactor_D);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_D_S
@@ -7140,6 +10296,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final short referenceValue = (short) (scalingOffset_D + i*scalingFactor_D);
+			referenceData_byte  [i] = (byte  )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_short [i] = (short )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_int   [i] = (int   )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_long  [i] = (long  )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_float [i] = (float )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_double[i] = (double)(scalingOffset_D + referenceValue*scalingFactor_D);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_D_I
@@ -7216,6 +10412,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final int referenceValue = (int) (scalingOffset_D + i*scalingFactor_D);
+			referenceData_byte  [i] = (byte  )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_short [i] = (short )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_int   [i] = (int   )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_long  [i] = (long  )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_float [i] = (float )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_double[i] = (double)(scalingOffset_D + referenceValue*scalingFactor_D);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_D_L
@@ -7297,6 +10533,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final long referenceValue = (long) (scalingOffset_D + i*scalingFactor_D);
+			referenceData_byte  [i] = (byte  )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_short [i] = (short )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_int   [i] = (int   )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_long  [i] = (long  )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_float [i] = (float )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_double[i] = (double)(scalingOffset_D + referenceValue*scalingFactor_D);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_D_F
@@ -7373,6 +10649,46 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final float referenceValue = (float) (scalingOffset_D + i*scalingFactor_D);
+			referenceData_byte  [i] = (byte  )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_short [i] = (short )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_int   [i] = (int   )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_long  [i] = (long  )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_float [i] = (float )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_double[i] = (double)(scalingOffset_D + referenceValue*scalingFactor_D);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
 	// D_D_D
@@ -7454,37 +10770,48 @@ public class ApiTests {
 		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
 		assertEquals(fileSize, source.position());
 		assertArrayEquals(values, rawData);
+		// read and scale into given primitive array
+		final   byte[] referenceData_byte   = new   byte[numSamples];
+		final  short[] referenceData_short  = new  short[numSamples];
+		final    int[] referenceData_int    = new    int[numSamples];
+		final   long[] referenceData_long   = new   long[numSamples];
+		final  float[] referenceData_float  = new  float[numSamples];
+		final double[] referenceData_double = new double[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			final double referenceValue = (double) (scalingOffset_D + i*scalingFactor_D);
+			referenceData_byte  [i] = (byte  )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_short [i] = (short )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_int   [i] = (int   )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_long  [i] = (long  )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_float [i] = (float )(scalingOffset_D + referenceValue*scalingFactor_D);
+			referenceData_double[i] = (double)(scalingOffset_D + referenceValue*scalingFactor_D);
+		}
+		source.position(19);
+		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_byte, data_byte);
+		source.position(19);
+		final short[] data_short = BinaryTimeseries.readData_short(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_short, data_short);
+		source.position(19);
+		final int[] data_int = BinaryTimeseries.readData_int(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_int, data_int);
+		source.position(19);
+		final long[] data_long = BinaryTimeseries.readData_long(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_long, data_long);
+		source.position(19);
+		final float[] data_float = BinaryTimeseries.readData_float(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_float, data_float);
+		source.position(19);
+		final double[] data_double = BinaryTimeseries.readData_double(source);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(referenceData_double, data_double);
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
-	
-	
-	
 	/***********************************
 	 * AUTO-GENERATED CODE  ENDS  HERE *
 	 ***********************************/
