@@ -1037,7 +1037,7 @@ public class BinaryTimeseries {
 	/**
 	 * Read the number of samples from the given {@code source} buffer.
 	 * @param source buffer from which to read
-	 * @return number of samples; should be > 0
+	 * @return number of samples; should be &gt; 0
 	 */
 	public static final int readNumSamples(final ByteBuffer source) {
 		final int numSamples = source.getInt();
