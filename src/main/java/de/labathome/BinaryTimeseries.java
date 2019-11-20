@@ -910,8 +910,7 @@ public class BinaryTimeseries {
 
 
 	public static final void readReservedDummy(final ByteBuffer source) {
-		final byte[] dummy = new byte[23];
-		source.get(dummy);
+		source.get(new byte[23]);
 	}
 
 
@@ -962,7 +961,7 @@ public class BinaryTimeseries {
 		}
 	}
 
-	public static final byte[] readDataIntoByte(final ByteBuffer source) {
+	public static final byte[] readData_byte(final ByteBuffer source) {
 
 		final byte scaling_dtype = readScalingType(source);
 		if (hasScaling(scaling_dtype)) {
@@ -1002,7 +1001,7 @@ public class BinaryTimeseries {
 				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 
-			} else if (scaling_dtype == DTYPE_BYTE) {
+			} else if (scaling_dtype == DTYPE_SHORT) {
 				final short scalingOffset = readScalingOffset_short(source);
 				final short scalingFactor = readScalingFactor_short(source);
 				readReservedDummy(source);
@@ -1244,7 +1243,7 @@ public class BinaryTimeseries {
 		}
 	}
 
-	public static final short[] readDataIntoShort(final ByteBuffer source) {
+	public static final short[] readData_short(final ByteBuffer source) {
 
 		final byte scaling_dtype = readScalingType(source);
 		if (hasScaling(scaling_dtype)) {
@@ -1284,7 +1283,7 @@ public class BinaryTimeseries {
 				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 
-			} else if (scaling_dtype == DTYPE_BYTE) {
+			} else if (scaling_dtype == DTYPE_SHORT) {
 				final short scalingOffset = readScalingOffset_short(source);
 				final short scalingFactor = readScalingFactor_short(source);
 				readReservedDummy(source);
@@ -1527,7 +1526,7 @@ public class BinaryTimeseries {
 		}
 	}
 
-	public static final int[] readDataIntoInt(final ByteBuffer source) {
+	public static final int[] readData_int(final ByteBuffer source) {
 
 		final byte scaling_dtype = readScalingType(source);
 		if (hasScaling(scaling_dtype)) {
@@ -1535,7 +1534,7 @@ public class BinaryTimeseries {
 			if (scaling_dtype == DTYPE_BYTE) {
 				final byte scalingOffset = readScalingOffset_byte(source);
 				final byte scalingFactor = readScalingFactor_byte(source);
-
+				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final int[] target = new int[numSamples];
@@ -1567,10 +1566,10 @@ public class BinaryTimeseries {
 				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 
-			} else if (scaling_dtype == DTYPE_BYTE) {
+			} else if (scaling_dtype == DTYPE_SHORT) {
 				final short scalingOffset = readScalingOffset_short(source);
 				final short scalingFactor = readScalingFactor_short(source);
-
+				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final int[] target = new int[numSamples];
@@ -1604,7 +1603,7 @@ public class BinaryTimeseries {
 			} else if (scaling_dtype == DTYPE_INT) {
 				final int scalingOffset = readScalingOffset_int(source);
 				final int scalingFactor = readScalingFactor_int(source);
-
+				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final int[] target = new int[numSamples];
@@ -1638,7 +1637,7 @@ public class BinaryTimeseries {
 			} else if (scaling_dtype == DTYPE_LONG) {
 				final long scalingOffset = readScalingOffset_long(source);
 				final long scalingFactor = readScalingFactor_long(source);
-
+				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final int[] target = new int[numSamples];
@@ -1672,7 +1671,7 @@ public class BinaryTimeseries {
 			} else if (scaling_dtype == DTYPE_FLOAT) {
 				final float scalingOffset = readScalingOffset_float(source);
 				final float scalingFactor = readScalingFactor_float(source);
-
+				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final int[] target = new int[numSamples];
@@ -1706,7 +1705,7 @@ public class BinaryTimeseries {
 			} else if (scaling_dtype == DTYPE_DOUBLE) {
 				final double scalingOffset = readScalingOffset_double(source);
 				final double scalingFactor = readScalingFactor_double(source);
-
+				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final int[] target = new int[numSamples];
@@ -1740,7 +1739,7 @@ public class BinaryTimeseries {
 			} else {
 				// silently ignore unknown scaling values
 				readScalingDisabled(source);
-
+				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final int[] target = new int[numSamples];
@@ -1775,7 +1774,7 @@ public class BinaryTimeseries {
 		} else {
 			// no scaling provided, so read raw data
 			readScalingDisabled(source);
-
+			readReservedDummy(source);
 			final byte data_dtype = readDataType(source);
 			final int numSamples = readNumSamples(source);
 			final int[] target = new int[numSamples];
@@ -1811,7 +1810,7 @@ public class BinaryTimeseries {
 
 
 
-	public static final long[] readDataIntoLong(final ByteBuffer source) {
+	public static final long[] readData_long(final ByteBuffer source) {
 
 		final byte scaling_dtype = readScalingType(source);
 		if (hasScaling(scaling_dtype)) {
@@ -1819,7 +1818,7 @@ public class BinaryTimeseries {
 			if (scaling_dtype == DTYPE_BYTE) {
 				final byte scalingOffset = readScalingOffset_byte(source);
 				final byte scalingFactor = readScalingFactor_byte(source);
-
+				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final long[] target = new long[numSamples];
@@ -1851,10 +1850,10 @@ public class BinaryTimeseries {
 				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 
-			} else if (scaling_dtype == DTYPE_BYTE) {
+			} else if (scaling_dtype == DTYPE_SHORT) {
 				final short scalingOffset = readScalingOffset_short(source);
 				final short scalingFactor = readScalingFactor_short(source);
-
+				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final long[] target = new long[numSamples];
@@ -1888,7 +1887,7 @@ public class BinaryTimeseries {
 			} else if (scaling_dtype == DTYPE_INT) {
 				final int scalingOffset = readScalingOffset_int(source);
 				final int scalingFactor = readScalingFactor_int(source);
-
+				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final long[] target = new long[numSamples];
@@ -1922,7 +1921,7 @@ public class BinaryTimeseries {
 			} else if (scaling_dtype == DTYPE_LONG) {
 				final long scalingOffset = readScalingOffset_long(source);
 				final long scalingFactor = readScalingFactor_long(source);
-
+				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final long[] target = new long[numSamples];
@@ -1956,7 +1955,7 @@ public class BinaryTimeseries {
 			} else if (scaling_dtype == DTYPE_FLOAT) {
 				final float scalingOffset = readScalingOffset_float(source);
 				final float scalingFactor = readScalingFactor_float(source);
-
+				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final long[] target = new long[numSamples];
@@ -1990,7 +1989,7 @@ public class BinaryTimeseries {
 			} else if (scaling_dtype == DTYPE_DOUBLE) {
 				final double scalingOffset = readScalingOffset_double(source);
 				final double scalingFactor = readScalingFactor_double(source);
-
+				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final long[] target = new long[numSamples];
@@ -2024,7 +2023,7 @@ public class BinaryTimeseries {
 			} else {
 				// silently ignore unknown scaling values
 				readScalingDisabled(source);
-
+				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final long[] target = new long[numSamples];
@@ -2059,7 +2058,7 @@ public class BinaryTimeseries {
 		} else {
 			// no scaling provided, so read raw data
 			readScalingDisabled(source);
-
+			readReservedDummy(source);
 			final byte data_dtype = readDataType(source);
 			final int numSamples = readNumSamples(source);
 			final long[] target = new long[numSamples];
@@ -2094,7 +2093,7 @@ public class BinaryTimeseries {
 	}
 
 
-	public static final float[] readDataIntoFloat(final ByteBuffer source) {
+	public static final float[] readData_float(final ByteBuffer source) {
 
 		final byte scaling_dtype = readScalingType(source);
 		if (hasScaling(scaling_dtype)) {
@@ -2102,7 +2101,7 @@ public class BinaryTimeseries {
 			if (scaling_dtype == DTYPE_BYTE) {
 				final byte scalingOffset = readScalingOffset_byte(source);
 				final byte scalingFactor = readScalingFactor_byte(source);
-
+				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final float[] target = new float[numSamples];
@@ -2134,10 +2133,10 @@ public class BinaryTimeseries {
 				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 
-			} else if (scaling_dtype == DTYPE_BYTE) {
+			} else if (scaling_dtype == DTYPE_SHORT) {
 				final short scalingOffset = readScalingOffset_short(source);
 				final short scalingFactor = readScalingFactor_short(source);
-
+				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final float[] target = new float[numSamples];
@@ -2171,7 +2170,7 @@ public class BinaryTimeseries {
 			} else if (scaling_dtype == DTYPE_INT) {
 				final int scalingOffset = readScalingOffset_int(source);
 				final int scalingFactor = readScalingFactor_int(source);
-
+				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final float[] target = new float[numSamples];
@@ -2205,7 +2204,7 @@ public class BinaryTimeseries {
 			} else if (scaling_dtype == DTYPE_LONG) {
 				final long scalingOffset = readScalingOffset_long(source);
 				final long scalingFactor = readScalingFactor_long(source);
-
+				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final float[] target = new float[numSamples];
@@ -2239,7 +2238,7 @@ public class BinaryTimeseries {
 			} else if (scaling_dtype == DTYPE_FLOAT) {
 				final float scalingOffset = readScalingOffset_float(source);
 				final float scalingFactor = readScalingFactor_float(source);
-
+				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final float[] target = new float[numSamples];
@@ -2273,7 +2272,7 @@ public class BinaryTimeseries {
 			} else if (scaling_dtype == DTYPE_DOUBLE) {
 				final double scalingOffset = readScalingOffset_double(source);
 				final double scalingFactor = readScalingFactor_double(source);
-
+				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final float[] target = new float[numSamples];
@@ -2307,7 +2306,7 @@ public class BinaryTimeseries {
 			} else {
 				// silently ignore unknown scaling values
 				readScalingDisabled(source);
-
+				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final float[] target = new float[numSamples];
@@ -2342,7 +2341,7 @@ public class BinaryTimeseries {
 		} else {
 			// no scaling provided, so read raw data
 			readScalingDisabled(source);
-
+			readReservedDummy(source);
 			final byte data_dtype = readDataType(source);
 			final int numSamples = readNumSamples(source);
 			final float[] target = new float[numSamples];
@@ -2376,7 +2375,7 @@ public class BinaryTimeseries {
 		}
 	}
 
-	public static final double[] readDataIntoDouble(final ByteBuffer source) {
+	public static final double[] readData_double(final ByteBuffer source) {
 
 		final byte scaling_dtype = readScalingType(source);
 		if (hasScaling(scaling_dtype)) {
@@ -2384,7 +2383,7 @@ public class BinaryTimeseries {
 			if (scaling_dtype == DTYPE_BYTE) {
 				final byte scalingOffset = readScalingOffset_byte(source);
 				final byte scalingFactor = readScalingFactor_byte(source);
-
+				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final double[] target = new double[numSamples];
@@ -2416,10 +2415,10 @@ public class BinaryTimeseries {
 				// silently ignore unknown data dtype and return an array filled with zeros
 				return target;
 
-			} else if (scaling_dtype == DTYPE_BYTE) {
+			} else if (scaling_dtype == DTYPE_SHORT) {
 				final short scalingOffset = readScalingOffset_short(source);
 				final short scalingFactor = readScalingFactor_short(source);
-
+				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final double[] target = new double[numSamples];
@@ -2453,7 +2452,7 @@ public class BinaryTimeseries {
 			} else if (scaling_dtype == DTYPE_INT) {
 				final int scalingOffset = readScalingOffset_int(source);
 				final int scalingFactor = readScalingFactor_int(source);
-
+				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final double[] target = new double[numSamples];
@@ -2487,7 +2486,7 @@ public class BinaryTimeseries {
 			} else if (scaling_dtype == DTYPE_LONG) {
 				final long scalingOffset = readScalingOffset_long(source);
 				final long scalingFactor = readScalingFactor_long(source);
-
+				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final double[] target = new double[numSamples];
@@ -2521,7 +2520,7 @@ public class BinaryTimeseries {
 			} else if (scaling_dtype == DTYPE_FLOAT) {
 				final float scalingOffset = readScalingOffset_float(source);
 				final float scalingFactor = readScalingFactor_float(source);
-
+				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final double[] target = new double[numSamples];
@@ -2555,7 +2554,7 @@ public class BinaryTimeseries {
 			} else if (scaling_dtype == DTYPE_DOUBLE) {
 				final double scalingOffset = readScalingOffset_double(source);
 				final double scalingFactor = readScalingFactor_double(source);
-
+				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final double[] target = new double[numSamples];
@@ -2589,7 +2588,7 @@ public class BinaryTimeseries {
 			} else {
 				// silently ignore unknown scaling values
 				readScalingDisabled(source);
-
+				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
 				final double[] target = new double[numSamples];
@@ -2624,7 +2623,7 @@ public class BinaryTimeseries {
 		} else {
 			// no scaling provided, so read raw data
 			readScalingDisabled(source);
-
+			readReservedDummy(source);
 			final byte data_dtype = readDataType(source);
 			final int numSamples = readNumSamples(source);
 			final double[] target = new double[numSamples];

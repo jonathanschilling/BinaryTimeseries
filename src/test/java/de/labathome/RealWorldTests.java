@@ -83,7 +83,7 @@ public class RealWorldTests {
 			_t0_dt[0] = BinaryTimeseries.readTimeT0_long(mappedByteBuffer);
 			_t0_dt[1] = BinaryTimeseries.readTimeDt_long(mappedByteBuffer);
 			assertEquals(19, mappedByteBuffer.position());
-			final short[] _values = BinaryTimeseries.readDataIntoShort(mappedByteBuffer);
+			final short[] _values = BinaryTimeseries.readData_short(mappedByteBuffer);
 			System.out.println("reading took " + (int)(Math.round((start+System.nanoTime())/1e3))+" us");
 
 			// check
