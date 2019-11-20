@@ -63,8 +63,7 @@ public class RealWorldTests {
 			MappedByteBuffer mappedByteBuffer = memoryFile.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, filesize);
 
 			long[] _t0_dt = new long[2];
-			short[] _values = new short[numValues];
-
+			
 			long start = -System.nanoTime();
 			assertEquals(0, mappedByteBuffer.position());
 			assertEquals(true, BinaryTimeseries.readEndianessOk(mappedByteBuffer));
@@ -73,17 +72,26 @@ public class RealWorldTests {
 			_t0_dt[0] = BinaryTimeseries.readTimeT0_long(mappedByteBuffer);
 			_t0_dt[1] = BinaryTimeseries.readTimeDt_long(mappedByteBuffer);
 			assertEquals(19, mappedByteBuffer.position());
-			assertEquals(BinaryTimeseries.DTYPE_NONE, BinaryTimeseries.readScalingType(mappedByteBuffer));
-			BinaryTimeseries.readScalingDisabled(mappedByteBuffer);
-			assertEquals(36, mappedByteBuffer.position());
-			BinaryTimeseries.readReservedDummy(mappedByteBuffer);
-			assertEquals(59, mappedByteBuffer.position());
-			assertEquals(BinaryTimeseries.DTYPE_SHORT, BinaryTimeseries.readDataType(mappedByteBuffer));
-			assertEquals(60, mappedByteBuffer.position());
-			assertEquals(numValues, BinaryTimeseries.readNumSamples(mappedByteBuffer));
-			assertEquals(64, mappedByteBuffer.position());
-			BinaryTimeseries.readRawData(mappedByteBuffer, _values, 0, numValues);
-			assertEquals(filesize, mappedByteBuffer.position());
+			
+			
+//			assertEquals(BinaryTimeseries.DTYPE_NONE, BinaryTimeseries.readScalingType(mappedByteBuffer));
+//			BinaryTimeseries.readScalingDisabled(mappedByteBuffer);
+//			assertEquals(36, mappedByteBuffer.position());
+//			BinaryTimeseries.readReservedDummy(mappedByteBuffer);
+//			assertEquals(59, mappedByteBuffer.position());
+//			assertEquals(BinaryTimeseries.DTYPE_SHORT, BinaryTimeseries.readDataType(mappedByteBuffer));
+//			assertEquals(60, mappedByteBuffer.position());
+//			int _numValues = BinaryTimeseries.readNumSamples(mappedByteBuffer);
+//			assertEquals(numValues, _numValues);
+//			assertEquals(64, mappedByteBuffer.position());
+//			short[] _values = new short[_numValues];
+//			BinaryTimeseries.readRawData(mappedByteBuffer, _values, 0, numValues);
+//			assertEquals(filesize, mappedByteBuffer.position());
+			
+			
+			final short[] _values = BinaryTimeseries.readDataIntoShort(mappedByteBuffer);
+			
+			
 			System.out.println("reading took " + (int)(Math.round((start+System.nanoTime())/1e3))+" us");
 
 			// check
