@@ -217,9 +217,6 @@ public class ApiTests {
 					
 					
 					
-					
-				
-					
 					// 'manually' build a BinaryTimeseries
 					final ByteBuffer referenceTarget = ByteBuffer.wrap(binaryTimeseries);
 					//assertEquals(0, referenceTarget.position());
@@ -507,18 +504,40 @@ public class ApiTests {
 					
 					// now that the writing routines are verified, check the reading routines
 					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
+					writeTestCode += 
+							"		// reading\n"+
+							"		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_"+testId+");\n"+
+							"		assertEquals(0, source.position());\n" + 
+							"		assertEquals(true, BinaryTimeseries.readEndianessOk(source));\n" + 
+							"		assertEquals(2, source.position());\n" + 
+							"		assertEquals("+time_dtype+", BinaryTimeseries.readTimeType(source));\n" + 
+							"		assertEquals(3, source.position());\n" + 
+							"		assertEquals(t0_"+tT+", BinaryTimeseries.readTimeT0_"+jtT+"(source));\n" + 
+							"		assertEquals(11, source.position());\n" + 
+							"		assertEquals(dt_"+tT+", BinaryTimeseries.readTimeDt_"+jtT+"(source));\n" + 
+							"		assertEquals(19, source.position());\n" + 
+							"		assertEquals("+scaling_dtype+", BinaryTimeseries.readScalingType(source));\n" + 
+							"		assertEquals(20, source.position());\n"; 
+					if (scaling_dtype == BinaryTimeseries.DTYPE_NONE) {
+						writeTestCode += "		BinaryTimeseries.readScalingDisabled(source);\n";
+					} else {
+						writeTestCode += "		assertEquals(scalingOffset_"+tS+", BinaryTimeseries.readScalingOffset_"+jtS+"(source));\n"+
+								"		assertEquals(28, source.position());\n"+
+								"		assertEquals(scalingFactor_"+tS+", BinaryTimeseries.readScalingFactor_"+jtS+"(source));\n"+
+								"		assertEquals(36, source.position());\n";
+					}
+					writeTestCode += 
+							"		assertEquals(36, source.position());\n" + 
+							"		BinaryTimeseries.readReservedDummy(source);\n" + 
+							"		assertEquals(59, source.position());\n" + 
+							"		assertEquals("+data_dtype+", BinaryTimeseries.readDataType(source));\n" + 
+							"		assertEquals(60, source.position());\n" + 
+							"		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));\n" + 
+							"		assertEquals(64, source.position());\n" + 
+							"		final "+jtD+"[] rawData = new "+jtD+"[numSamples];\n" + 
+							"		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);\n" + 
+							"		assertEquals(fileSize, source.position());\n" + 
+							"		assertArrayEquals(values, rawData);\n";
 					
 					
 					
@@ -964,6 +983,31 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_N_B, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_N_B);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(0, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		BinaryTimeseries.readScalingDisabled(source);
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(1, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final byte[] rawData = new byte[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_N_S
@@ -1013,6 +1057,31 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_N_S, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_N_S);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(0, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		BinaryTimeseries.readScalingDisabled(source);
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(2, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final short[] rawData = new short[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_N_I
@@ -1064,6 +1133,31 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_N_I, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_N_I);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(0, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		BinaryTimeseries.readScalingDisabled(source);
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(3, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final int[] rawData = new int[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_N_L
@@ -1120,6 +1214,31 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_N_L, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_N_L);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(0, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		BinaryTimeseries.readScalingDisabled(source);
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(4, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final long[] rawData = new long[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_N_F
@@ -1171,6 +1290,31 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_N_F, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_N_F);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(0, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		BinaryTimeseries.readScalingDisabled(source);
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(5, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final float[] rawData = new float[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_N_D
@@ -1227,6 +1371,31 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_N_D, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_N_D);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(0, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		BinaryTimeseries.readScalingDisabled(source);
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(6, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final double[] rawData = new double[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_B_B
@@ -1272,6 +1441,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_B, scalingFactor_B);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_B_B, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_B_B);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(1, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_B, BinaryTimeseries.readScalingOffset_byte(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_B, BinaryTimeseries.readScalingFactor_byte(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(1, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final byte[] rawData = new byte[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_B_S
@@ -1318,6 +1515,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_B, scalingFactor_B);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_B_S, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_B_S);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(1, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_B, BinaryTimeseries.readScalingOffset_byte(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_B, BinaryTimeseries.readScalingFactor_byte(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(2, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final short[] rawData = new short[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_B_I
@@ -1366,6 +1591,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_B, scalingFactor_B);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_B_I, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_B_I);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(1, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_B, BinaryTimeseries.readScalingOffset_byte(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_B, BinaryTimeseries.readScalingFactor_byte(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(3, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final int[] rawData = new int[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_B_L
@@ -1419,6 +1672,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_B, scalingFactor_B);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_B_L, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_B_L);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(1, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_B, BinaryTimeseries.readScalingOffset_byte(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_B, BinaryTimeseries.readScalingFactor_byte(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(4, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final long[] rawData = new long[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_B_F
@@ -1467,6 +1748,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_B, scalingFactor_B);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_B_F, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_B_F);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(1, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_B, BinaryTimeseries.readScalingOffset_byte(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_B, BinaryTimeseries.readScalingFactor_byte(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(5, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final float[] rawData = new float[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_B_D
@@ -1520,6 +1829,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_B, scalingFactor_B);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_B_D, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_B_D);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(1, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_B, BinaryTimeseries.readScalingOffset_byte(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_B, BinaryTimeseries.readScalingFactor_byte(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(6, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final double[] rawData = new double[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_S_B
@@ -1565,6 +1902,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_S, scalingFactor_S);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_S_B, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_S_B);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(2, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_S, BinaryTimeseries.readScalingOffset_short(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_S, BinaryTimeseries.readScalingFactor_short(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(1, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final byte[] rawData = new byte[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_S_S
@@ -1611,6 +1976,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_S, scalingFactor_S);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_S_S, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_S_S);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(2, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_S, BinaryTimeseries.readScalingOffset_short(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_S, BinaryTimeseries.readScalingFactor_short(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(2, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final short[] rawData = new short[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_S_I
@@ -1659,6 +2052,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_S, scalingFactor_S);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_S_I, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_S_I);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(2, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_S, BinaryTimeseries.readScalingOffset_short(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_S, BinaryTimeseries.readScalingFactor_short(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(3, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final int[] rawData = new int[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_S_L
@@ -1712,6 +2133,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_S, scalingFactor_S);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_S_L, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_S_L);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(2, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_S, BinaryTimeseries.readScalingOffset_short(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_S, BinaryTimeseries.readScalingFactor_short(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(4, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final long[] rawData = new long[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_S_F
@@ -1760,6 +2209,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_S, scalingFactor_S);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_S_F, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_S_F);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(2, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_S, BinaryTimeseries.readScalingOffset_short(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_S, BinaryTimeseries.readScalingFactor_short(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(5, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final float[] rawData = new float[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_S_D
@@ -1813,6 +2290,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_S, scalingFactor_S);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_S_D, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_S_D);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(2, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_S, BinaryTimeseries.readScalingOffset_short(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_S, BinaryTimeseries.readScalingFactor_short(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(6, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final double[] rawData = new double[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_I_B
@@ -1858,6 +2363,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_I, scalingFactor_I);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_I_B, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_I_B);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(3, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_I, BinaryTimeseries.readScalingOffset_int(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_I, BinaryTimeseries.readScalingFactor_int(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(1, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final byte[] rawData = new byte[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_I_S
@@ -1904,6 +2437,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_I, scalingFactor_I);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_I_S, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_I_S);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(3, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_I, BinaryTimeseries.readScalingOffset_int(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_I, BinaryTimeseries.readScalingFactor_int(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(2, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final short[] rawData = new short[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_I_I
@@ -1952,6 +2513,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_I, scalingFactor_I);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_I_I, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_I_I);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(3, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_I, BinaryTimeseries.readScalingOffset_int(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_I, BinaryTimeseries.readScalingFactor_int(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(3, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final int[] rawData = new int[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_I_L
@@ -2005,6 +2594,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_I, scalingFactor_I);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_I_L, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_I_L);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(3, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_I, BinaryTimeseries.readScalingOffset_int(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_I, BinaryTimeseries.readScalingFactor_int(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(4, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final long[] rawData = new long[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_I_F
@@ -2053,6 +2670,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_I, scalingFactor_I);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_I_F, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_I_F);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(3, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_I, BinaryTimeseries.readScalingOffset_int(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_I, BinaryTimeseries.readScalingFactor_int(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(5, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final float[] rawData = new float[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_I_D
@@ -2106,6 +2751,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_I, scalingFactor_I);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_I_D, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_I_D);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(3, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_I, BinaryTimeseries.readScalingOffset_int(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_I, BinaryTimeseries.readScalingFactor_int(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(6, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final double[] rawData = new double[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_L_B
@@ -2151,6 +2824,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_L, scalingFactor_L);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_L_B, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_L_B);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(4, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_L, BinaryTimeseries.readScalingOffset_long(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_L, BinaryTimeseries.readScalingFactor_long(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(1, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final byte[] rawData = new byte[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_L_S
@@ -2197,6 +2898,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_L, scalingFactor_L);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_L_S, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_L_S);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(4, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_L, BinaryTimeseries.readScalingOffset_long(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_L, BinaryTimeseries.readScalingFactor_long(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(2, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final short[] rawData = new short[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_L_I
@@ -2245,6 +2974,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_L, scalingFactor_L);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_L_I, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_L_I);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(4, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_L, BinaryTimeseries.readScalingOffset_long(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_L, BinaryTimeseries.readScalingFactor_long(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(3, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final int[] rawData = new int[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_L_L
@@ -2298,6 +3055,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_L, scalingFactor_L);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_L_L, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_L_L);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(4, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_L, BinaryTimeseries.readScalingOffset_long(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_L, BinaryTimeseries.readScalingFactor_long(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(4, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final long[] rawData = new long[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_L_F
@@ -2346,6 +3131,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_L, scalingFactor_L);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_L_F, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_L_F);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(4, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_L, BinaryTimeseries.readScalingOffset_long(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_L, BinaryTimeseries.readScalingFactor_long(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(5, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final float[] rawData = new float[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_L_D
@@ -2399,6 +3212,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_L, scalingFactor_L);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_L_D, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_L_D);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(4, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_L, BinaryTimeseries.readScalingOffset_long(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_L, BinaryTimeseries.readScalingFactor_long(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(6, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final double[] rawData = new double[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_F_B
@@ -2444,6 +3285,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_F, scalingFactor_F);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_F_B, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_F_B);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(5, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_F, BinaryTimeseries.readScalingOffset_float(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_F, BinaryTimeseries.readScalingFactor_float(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(1, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final byte[] rawData = new byte[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_F_S
@@ -2490,6 +3359,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_F, scalingFactor_F);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_F_S, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_F_S);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(5, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_F, BinaryTimeseries.readScalingOffset_float(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_F, BinaryTimeseries.readScalingFactor_float(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(2, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final short[] rawData = new short[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_F_I
@@ -2538,6 +3435,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_F, scalingFactor_F);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_F_I, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_F_I);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(5, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_F, BinaryTimeseries.readScalingOffset_float(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_F, BinaryTimeseries.readScalingFactor_float(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(3, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final int[] rawData = new int[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_F_L
@@ -2591,6 +3516,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_F, scalingFactor_F);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_F_L, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_F_L);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(5, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_F, BinaryTimeseries.readScalingOffset_float(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_F, BinaryTimeseries.readScalingFactor_float(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(4, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final long[] rawData = new long[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_F_F
@@ -2639,6 +3592,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_F, scalingFactor_F);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_F_F, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_F_F);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(5, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_F, BinaryTimeseries.readScalingOffset_float(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_F, BinaryTimeseries.readScalingFactor_float(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(5, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final float[] rawData = new float[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_F_D
@@ -2692,6 +3673,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_F, scalingFactor_F);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_F_D, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_F_D);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(5, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_F, BinaryTimeseries.readScalingOffset_float(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_F, BinaryTimeseries.readScalingFactor_float(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(6, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final double[] rawData = new double[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_D_B
@@ -2737,6 +3746,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_D, scalingFactor_D);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_D_B, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_D_B);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(6, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_D, BinaryTimeseries.readScalingOffset_double(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_D, BinaryTimeseries.readScalingFactor_double(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(1, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final byte[] rawData = new byte[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_D_S
@@ -2783,6 +3820,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_D, scalingFactor_D);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_D_S, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_D_S);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(6, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_D, BinaryTimeseries.readScalingOffset_double(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_D, BinaryTimeseries.readScalingFactor_double(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(2, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final short[] rawData = new short[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_D_I
@@ -2831,6 +3896,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_D, scalingFactor_D);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_D_I, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_D_I);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(6, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_D, BinaryTimeseries.readScalingOffset_double(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_D, BinaryTimeseries.readScalingFactor_double(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(3, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final int[] rawData = new int[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_D_L
@@ -2884,6 +3977,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_D, scalingFactor_D);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_D_L, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_D_L);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(6, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_D, BinaryTimeseries.readScalingOffset_double(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_D, BinaryTimeseries.readScalingFactor_double(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(4, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final long[] rawData = new long[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_D_F
@@ -2932,6 +4053,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_D, scalingFactor_D);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_D_F, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_D_F);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(6, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_D, BinaryTimeseries.readScalingOffset_double(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_D, BinaryTimeseries.readScalingFactor_double(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(5, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final float[] rawData = new float[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// L_D_D
@@ -2985,6 +4134,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_L, dt_L, values, scalingOffset_D, scalingFactor_D);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_L_D_D, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_L_D_D);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(4, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_L, BinaryTimeseries.readTimeT0_long(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_L, BinaryTimeseries.readTimeDt_long(source));
+		assertEquals(19, source.position());
+		assertEquals(6, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_D, BinaryTimeseries.readScalingOffset_double(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_D, BinaryTimeseries.readScalingFactor_double(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(6, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final double[] rawData = new double[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_N_B
@@ -3072,6 +4249,31 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_N_B, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_N_B);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(0, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		BinaryTimeseries.readScalingDisabled(source);
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(1, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final byte[] rawData = new byte[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_N_S
@@ -3116,6 +4318,31 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_N_S, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_N_S);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(0, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		BinaryTimeseries.readScalingDisabled(source);
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(2, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final short[] rawData = new short[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_N_I
@@ -3162,6 +4389,31 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_N_I, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_N_I);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(0, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		BinaryTimeseries.readScalingDisabled(source);
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(3, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final int[] rawData = new int[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_N_L
@@ -3213,6 +4465,31 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_N_L, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_N_L);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(0, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		BinaryTimeseries.readScalingDisabled(source);
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(4, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final long[] rawData = new long[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_N_F
@@ -3259,6 +4536,31 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_N_F, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_N_F);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(0, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		BinaryTimeseries.readScalingDisabled(source);
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(5, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final float[] rawData = new float[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_N_D
@@ -3310,6 +4612,31 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_N_D, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_N_D);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(0, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		BinaryTimeseries.readScalingDisabled(source);
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(6, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final double[] rawData = new double[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_B_B
@@ -3355,6 +4682,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_B, scalingFactor_B);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_B_B, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_B_B);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(1, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_B, BinaryTimeseries.readScalingOffset_byte(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_B, BinaryTimeseries.readScalingFactor_byte(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(1, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final byte[] rawData = new byte[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_B_S
@@ -3401,6 +4756,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_B, scalingFactor_B);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_B_S, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_B_S);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(1, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_B, BinaryTimeseries.readScalingOffset_byte(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_B, BinaryTimeseries.readScalingFactor_byte(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(2, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final short[] rawData = new short[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_B_I
@@ -3449,6 +4832,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_B, scalingFactor_B);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_B_I, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_B_I);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(1, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_B, BinaryTimeseries.readScalingOffset_byte(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_B, BinaryTimeseries.readScalingFactor_byte(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(3, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final int[] rawData = new int[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_B_L
@@ -3502,6 +4913,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_B, scalingFactor_B);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_B_L, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_B_L);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(1, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_B, BinaryTimeseries.readScalingOffset_byte(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_B, BinaryTimeseries.readScalingFactor_byte(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(4, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final long[] rawData = new long[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_B_F
@@ -3550,6 +4989,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_B, scalingFactor_B);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_B_F, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_B_F);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(1, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_B, BinaryTimeseries.readScalingOffset_byte(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_B, BinaryTimeseries.readScalingFactor_byte(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(5, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final float[] rawData = new float[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_B_D
@@ -3603,6 +5070,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_B, scalingFactor_B);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_B_D, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_B_D);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(1, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_B, BinaryTimeseries.readScalingOffset_byte(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_B, BinaryTimeseries.readScalingFactor_byte(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(6, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final double[] rawData = new double[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_S_B
@@ -3648,6 +5143,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_S, scalingFactor_S);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_S_B, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_S_B);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(2, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_S, BinaryTimeseries.readScalingOffset_short(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_S, BinaryTimeseries.readScalingFactor_short(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(1, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final byte[] rawData = new byte[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_S_S
@@ -3694,6 +5217,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_S, scalingFactor_S);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_S_S, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_S_S);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(2, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_S, BinaryTimeseries.readScalingOffset_short(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_S, BinaryTimeseries.readScalingFactor_short(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(2, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final short[] rawData = new short[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_S_I
@@ -3742,6 +5293,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_S, scalingFactor_S);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_S_I, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_S_I);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(2, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_S, BinaryTimeseries.readScalingOffset_short(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_S, BinaryTimeseries.readScalingFactor_short(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(3, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final int[] rawData = new int[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_S_L
@@ -3795,6 +5374,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_S, scalingFactor_S);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_S_L, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_S_L);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(2, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_S, BinaryTimeseries.readScalingOffset_short(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_S, BinaryTimeseries.readScalingFactor_short(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(4, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final long[] rawData = new long[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_S_F
@@ -3843,6 +5450,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_S, scalingFactor_S);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_S_F, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_S_F);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(2, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_S, BinaryTimeseries.readScalingOffset_short(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_S, BinaryTimeseries.readScalingFactor_short(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(5, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final float[] rawData = new float[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_S_D
@@ -3896,6 +5531,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_S, scalingFactor_S);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_S_D, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_S_D);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(2, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_S, BinaryTimeseries.readScalingOffset_short(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_S, BinaryTimeseries.readScalingFactor_short(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(6, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final double[] rawData = new double[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_I_B
@@ -3941,6 +5604,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_I, scalingFactor_I);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_I_B, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_I_B);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(3, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_I, BinaryTimeseries.readScalingOffset_int(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_I, BinaryTimeseries.readScalingFactor_int(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(1, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final byte[] rawData = new byte[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_I_S
@@ -3987,6 +5678,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_I, scalingFactor_I);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_I_S, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_I_S);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(3, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_I, BinaryTimeseries.readScalingOffset_int(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_I, BinaryTimeseries.readScalingFactor_int(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(2, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final short[] rawData = new short[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_I_I
@@ -4035,6 +5754,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_I, scalingFactor_I);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_I_I, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_I_I);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(3, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_I, BinaryTimeseries.readScalingOffset_int(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_I, BinaryTimeseries.readScalingFactor_int(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(3, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final int[] rawData = new int[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_I_L
@@ -4088,6 +5835,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_I, scalingFactor_I);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_I_L, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_I_L);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(3, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_I, BinaryTimeseries.readScalingOffset_int(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_I, BinaryTimeseries.readScalingFactor_int(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(4, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final long[] rawData = new long[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_I_F
@@ -4136,6 +5911,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_I, scalingFactor_I);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_I_F, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_I_F);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(3, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_I, BinaryTimeseries.readScalingOffset_int(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_I, BinaryTimeseries.readScalingFactor_int(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(5, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final float[] rawData = new float[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_I_D
@@ -4189,6 +5992,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_I, scalingFactor_I);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_I_D, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_I_D);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(3, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_I, BinaryTimeseries.readScalingOffset_int(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_I, BinaryTimeseries.readScalingFactor_int(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(6, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final double[] rawData = new double[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_L_B
@@ -4234,6 +6065,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_L, scalingFactor_L);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_L_B, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_L_B);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(4, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_L, BinaryTimeseries.readScalingOffset_long(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_L, BinaryTimeseries.readScalingFactor_long(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(1, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final byte[] rawData = new byte[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_L_S
@@ -4280,6 +6139,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_L, scalingFactor_L);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_L_S, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_L_S);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(4, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_L, BinaryTimeseries.readScalingOffset_long(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_L, BinaryTimeseries.readScalingFactor_long(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(2, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final short[] rawData = new short[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_L_I
@@ -4328,6 +6215,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_L, scalingFactor_L);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_L_I, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_L_I);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(4, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_L, BinaryTimeseries.readScalingOffset_long(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_L, BinaryTimeseries.readScalingFactor_long(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(3, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final int[] rawData = new int[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_L_L
@@ -4381,6 +6296,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_L, scalingFactor_L);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_L_L, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_L_L);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(4, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_L, BinaryTimeseries.readScalingOffset_long(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_L, BinaryTimeseries.readScalingFactor_long(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(4, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final long[] rawData = new long[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_L_F
@@ -4429,6 +6372,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_L, scalingFactor_L);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_L_F, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_L_F);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(4, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_L, BinaryTimeseries.readScalingOffset_long(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_L, BinaryTimeseries.readScalingFactor_long(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(5, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final float[] rawData = new float[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_L_D
@@ -4482,6 +6453,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_L, scalingFactor_L);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_L_D, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_L_D);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(4, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_L, BinaryTimeseries.readScalingOffset_long(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_L, BinaryTimeseries.readScalingFactor_long(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(6, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final double[] rawData = new double[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_F_B
@@ -4527,6 +6526,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_F, scalingFactor_F);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_F_B, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_F_B);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(5, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_F, BinaryTimeseries.readScalingOffset_float(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_F, BinaryTimeseries.readScalingFactor_float(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(1, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final byte[] rawData = new byte[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_F_S
@@ -4573,6 +6600,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_F, scalingFactor_F);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_F_S, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_F_S);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(5, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_F, BinaryTimeseries.readScalingOffset_float(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_F, BinaryTimeseries.readScalingFactor_float(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(2, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final short[] rawData = new short[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_F_I
@@ -4621,6 +6676,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_F, scalingFactor_F);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_F_I, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_F_I);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(5, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_F, BinaryTimeseries.readScalingOffset_float(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_F, BinaryTimeseries.readScalingFactor_float(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(3, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final int[] rawData = new int[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_F_L
@@ -4674,6 +6757,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_F, scalingFactor_F);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_F_L, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_F_L);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(5, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_F, BinaryTimeseries.readScalingOffset_float(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_F, BinaryTimeseries.readScalingFactor_float(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(4, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final long[] rawData = new long[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_F_F
@@ -4722,6 +6833,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_F, scalingFactor_F);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_F_F, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_F_F);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(5, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_F, BinaryTimeseries.readScalingOffset_float(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_F, BinaryTimeseries.readScalingFactor_float(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(5, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final float[] rawData = new float[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_F_D
@@ -4775,6 +6914,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_F, scalingFactor_F);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_F_D, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_F_D);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(5, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_F, BinaryTimeseries.readScalingOffset_float(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_F, BinaryTimeseries.readScalingFactor_float(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(6, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final double[] rawData = new double[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_D_B
@@ -4820,6 +6987,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_D, scalingFactor_D);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_D_B, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_D_B);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(6, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_D, BinaryTimeseries.readScalingOffset_double(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_D, BinaryTimeseries.readScalingFactor_double(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(1, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final byte[] rawData = new byte[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_D_S
@@ -4866,6 +7061,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_D, scalingFactor_D);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_D_S, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_D_S);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(6, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_D, BinaryTimeseries.readScalingOffset_double(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_D, BinaryTimeseries.readScalingFactor_double(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(2, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final short[] rawData = new short[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_D_I
@@ -4914,6 +7137,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_D, scalingFactor_D);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_D_I, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_D_I);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(6, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_D, BinaryTimeseries.readScalingOffset_double(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_D, BinaryTimeseries.readScalingFactor_double(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(3, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final int[] rawData = new int[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_D_L
@@ -4967,6 +7218,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_D, scalingFactor_D);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_D_L, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_D_L);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(6, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_D, BinaryTimeseries.readScalingOffset_double(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_D, BinaryTimeseries.readScalingFactor_double(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(4, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final long[] rawData = new long[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_D_F
@@ -5015,6 +7294,34 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_D, scalingFactor_D);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_D_F, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_D_F);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(6, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_D, BinaryTimeseries.readScalingOffset_double(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_D, BinaryTimeseries.readScalingFactor_double(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(5, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final float[] rawData = new float[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
 
 	// D_D_D
@@ -5068,7 +7375,37 @@ public class ApiTests {
 		BinaryTimeseries.write(target, t0_D, dt_D, values, scalingOffset_D, scalingFactor_D);
 		assertEquals(fileSize, target.position());
 		assertArrayEquals(referenceBTS_D_D_D, targetArr);
+		// reading
+		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_D_D_D);
+		assertEquals(0, source.position());
+		assertEquals(true, BinaryTimeseries.readEndianessOk(source));
+		assertEquals(2, source.position());
+		assertEquals(6, BinaryTimeseries.readTimeType(source));
+		assertEquals(3, source.position());
+		assertEquals(t0_D, BinaryTimeseries.readTimeT0_double(source));
+		assertEquals(11, source.position());
+		assertEquals(dt_D, BinaryTimeseries.readTimeDt_double(source));
+		assertEquals(19, source.position());
+		assertEquals(6, BinaryTimeseries.readScalingType(source));
+		assertEquals(20, source.position());
+		assertEquals(scalingOffset_D, BinaryTimeseries.readScalingOffset_double(source));
+		assertEquals(28, source.position());
+		assertEquals(scalingFactor_D, BinaryTimeseries.readScalingFactor_double(source));
+		assertEquals(36, source.position());
+		assertEquals(36, source.position());
+		BinaryTimeseries.readReservedDummy(source);
+		assertEquals(59, source.position());
+		assertEquals(6, BinaryTimeseries.readDataType(source));
+		assertEquals(60, source.position());
+		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));
+		assertEquals(64, source.position());
+		final double[] rawData = new double[numSamples];
+		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);
+		assertEquals(fileSize, source.position());
+		assertArrayEquals(values, rawData);
 	}
+
+
 
 
 

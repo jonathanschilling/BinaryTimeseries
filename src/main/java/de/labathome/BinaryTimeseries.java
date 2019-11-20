@@ -832,31 +832,37 @@ public class BinaryTimeseries {
 
 	public static final byte readScalingOffset_byte(final ByteBuffer source) {
 		final byte scalingOffset = source.get();
+		source.get(new byte[8-Byte.BYTES]);
 		return scalingOffset;
 	}
 
 	public static final byte readScalingFactor_byte(final ByteBuffer source) {
 		final byte scalingFactor = source.get();
+		source.get(new byte[8-Byte.BYTES]);
 		return scalingFactor;
 	}
 
 	public static final short readScalingOffset_short(final ByteBuffer source) {
 		final short scalingOffset = source.getShort();
+		source.get(new byte[8-Short.BYTES]);
 		return scalingOffset;
 	}
 
 	public static final short readScalingFactor_short(final ByteBuffer source) {
 		final short scalingFactor = source.getShort();
+		source.get(new byte[8-Short.BYTES]);
 		return scalingFactor;
 	}
 
 	public static final int readScalingOffset_int(final ByteBuffer source) {
 		final int scalingOffset = source.getInt();
+		source.get(new byte[8-Integer.BYTES]);
 		return scalingOffset;
 	}
 
 	public static final int readScalingFactor_int(final ByteBuffer source) {
 		final int scalingFactor = source.getInt();
+		source.get(new byte[8-Integer.BYTES]);
 		return scalingFactor;
 	}
 
@@ -872,11 +878,13 @@ public class BinaryTimeseries {
 
 	public static final float readScalingOffset_float(final ByteBuffer source) {
 		final float scalingOffset = source.getFloat();
+		source.get(new byte[8-Float.BYTES]);
 		return scalingOffset;
 	}
 
 	public static final float readScalingFactor_float(final ByteBuffer source) {
 		final float scalingFactor = source.getFloat();
+		source.get(new byte[8-Float.BYTES]);
 		return scalingFactor;
 	}
 
