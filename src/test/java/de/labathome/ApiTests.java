@@ -54,7 +54,6 @@ public class ApiTests {
 				Double.BYTES
 		};
 		
-		int numTests = 0;
 		for (int time_dtype_idx=0; time_dtype_idx<time_dtypes.length; ++time_dtype_idx) {
 			final byte time_dtype = time_dtypes[time_dtype_idx];
 			final String strTime = BinaryTimeseries.dtypeStr(time_dtype);
@@ -69,29 +68,37 @@ public class ApiTests {
 					final int data_size = data_sizes[data_dtype_idx];
 					
 					final String testId = strTime+"_"+strScaling+"_"+strData;
-					System.out.println(String.format("	// %2d ", numTests+1)+testId);
+					System.out.println("	// "+testId);
 					
 					final int numSamples = 10;
 					
-					final   long t0_L = 13;
-					final double t0_D = 13.0;
+					final String t0Str = "13.0";
+					final double t0 = Double.parseDouble(t0Str);
+					final   long t0_L =   (long) t0;
+					final double t0_D = (double) t0;
 					
-					final   long dt_L = 37;
-					final double dt_D = 37.0;
+					final String dtStr = "37.0";
+					final double dt = Double.parseDouble(dtStr);
+					final   long dt_L =   (long) dt;
+					final double dt_D = (double) dt;
 					
-					final   byte scalingOffset_B = (byte)  1.2;
-					final  short scalingOffset_S = (short) 1.2;
-					final    int scalingOffset_I = (int)   1.2;
-					final   long scalingOffset_L = (long)  1.2;
-					final  float scalingOffset_F = (float) 1.2;
-					final double scalingOffset_D = (double)1.2;
+					final String scalingOffsetStr = "1.2";
+					final double scalingOffset = Double.parseDouble(scalingOffsetStr);
+					final   byte scalingOffset_B = (byte)  scalingOffset;
+					final  short scalingOffset_S = (short) scalingOffset;
+					final    int scalingOffset_I = (int)   scalingOffset;
+					final   long scalingOffset_L = (long)  scalingOffset;
+					final  float scalingOffset_F = (float) scalingOffset;
+					final double scalingOffset_D = (double)scalingOffset;
 					
-					final   byte scalingFactor_B = (byte)  24.3;
-					final  short scalingFactor_S = (short) 24.3;
-					final    int scalingFactor_I = (int)   24.3;
-					final   long scalingFactor_L = (long)  24.3;
-					final  float scalingFactor_F = (float) 24.3;
-					final double scalingFactor_D = (double)24.3;
+					final String scalingFactorStr = "24.3";
+					final double scalingFactor = Double.parseDouble(scalingFactorStr);
+					final   byte scalingFactor_B = (byte)  scalingFactor;
+					final  short scalingFactor_S = (short) scalingFactor;
+					final    int scalingFactor_I = (int)   scalingFactor;
+					final   long scalingFactor_L = (long)  scalingFactor;
+					final  float scalingFactor_F = (float) scalingFactor;
+					final double scalingFactor_D = (double)scalingFactor;
 					
 					// time series:
 					// idx | time  | value
@@ -110,11 +117,8 @@ public class ApiTests {
 					final int sourceOffset = 2;
 					final int targetOffset = 0;
 					
-					final   long t_l_L = 80;   // => firstIndexInside = 2
-					final double t_l_D = 80.0; // => firstIndexInside = 2
-					
-					final   long t_u_L = 300;   // => lastIndexInside = 7
-					final double t_u_D = 300.0; // => lastIndexInside = 7
+					final String t_lStr =  "80.0"; // => firstIndexInside = 2
+					final String t_uStr = "300.0"; // => lastIndexInside = 7
 					
 					// compute file size from reserved number of header bytes, sample size and number of samples
 					final int filesize = 64 + data_size*numSamples;
@@ -132,8 +136,8 @@ public class ApiTests {
 							System.out.println("	@Test\n"+
 									"	public void testBuiltTimebase_L() {\n"+
 									"		final int numSamples = "+numSamples+";\n"+
-									"		final long t0_L = "+t0_L+";\n"+
-									"		final long dt_L = "+dt_L+";\n"+
+									"		final long t0_L = (long) "+t0Str+";\n"+
+									"		final long dt_L = (long) "+dtStr+";\n"+
 									"		final int numSamplesSubset = "+numSamplesSubset+";\n"+
 									"		final int sourceOffset = "+sourceOffset+";\n"+
 									"		final int targetOffset = "+targetOffset+";\n"+
@@ -160,18 +164,18 @@ public class ApiTests {
 							// testFirstIndexInside_L
 							System.out.println("	@Test\n"+
 									"	public void testFirstIndexInside_L() {\n"+
-									"		final long t0_L  = "+t0_L+";\n"+
-									"		final long dt_L  = "+dt_L+";\n"+
-									"		final long t_l_L = "+t_l_L+";\n"+
+									"		final long t0_L  = (long) "+t0Str+";\n"+
+									"		final long dt_L  = (long) "+dtStr+";\n"+
+									"		final long t_l_L = (long) "+t_lStr+";\n"+
 									"		assertEquals(2, BinaryTimeseries.firstIndexInside(t0_L, dt_L, t_l_L));\n"+
 									"	}\n");
 							
 							// testLastIndexInside_L
 							System.out.println("	@Test\n"+
 									"	public void testLastIndexInside_L() {\n"+
-									"		final long t0_L  = "+t0_L+";\n"+
-									"		final long dt_L  = "+dt_L+";\n"+
-									"		final long t_u_L = "+t_u_L+";\n"+
+									"		final long t0_L  = (long) "+t0Str+";\n"+
+									"		final long dt_L  = (long) "+dtStr+";\n"+
+									"		final long t_u_L = (long) "+t_uStr+";\n"+
 									"		assertEquals(7, BinaryTimeseries.lastIndexInside(t0_L, dt_L, t_u_L));\n"+
 									"	}\n");
 							                                                                                                                                          
@@ -179,8 +183,8 @@ public class ApiTests {
 							System.out.println("	@Test\n"+
 									"	public void testBuiltTimebase_D() {\n"+
 									"		final int numSamples = "+numSamples+";\n"+
-									"		final double t0_D = "+t0_D+";\n"+
-									"		final double dt_D = "+dt_D+";\n"+
+									"		final double t0_D = (double) "+t0Str+";\n"+
+									"		final double dt_D = (double) "+dtStr+";\n"+
 									"		final int numSamplesSubset = "+numSamplesSubset+";\n"+
 									"		final int sourceOffset = "+sourceOffset+";\n"+
 									"		final int targetOffset = "+targetOffset+";\n"+
@@ -207,18 +211,18 @@ public class ApiTests {
 							// testFirstIndexInside_D
 							System.out.println("	@Test\n"+
 									"	public void testFirstIndexInside_D() {\n"+
-									"		final double t0_D  = "+t0_D+";\n"+
-									"		final double dt_D  = "+dt_D+";\n"+
-									"		final double t_l_D = "+t_l_D+";\n"+
+									"		final double t0_D  = (double) "+t0Str+";\n"+
+									"		final double dt_D  = (double) "+dtStr+";\n"+
+									"		final double t_l_D = (double) "+t_lStr+";\n"+
 									"		assertEquals(2, BinaryTimeseries.firstIndexInside(t0_D, dt_D, t_l_D));\n"+
 									"	}\n");
 							
 							// testLastIndexInside_D
 							System.out.println("	@Test\n"+
 									"	public void testLastIndexInside_D() {\n"+
-									"		final double t0_D  = "+t0_D+";\n"+
-									"		final double dt_D  = "+dt_D+";\n"+
-									"		final double t_u_D = "+t_u_D+";\n"+
+									"		final double t0_D  = (double) "+t0Str+";\n"+
+									"		final double dt_D  = (double) "+dtStr+";\n"+
+									"		final double t_u_D = (double) "+t_uStr+";\n"+
 									"		assertEquals(7, BinaryTimeseries.lastIndexInside(t0_D, dt_D, t_u_D));\n"+
 									"	}\n");
 						}
@@ -241,6 +245,15 @@ public class ApiTests {
 								"		assertEquals("+filesize+", BinaryTimeseries.fileOffset("+data_size+", 10));\n"+
 								"	}\n");
 					}
+					
+					// code for testing the API write and read methods
+					String writeTestCode = "	@Test\n"+
+							"	public void testWriting_"+testId+"() {\n";
+					String readTestCode = "	@Test\n"+
+							"	public void testReading_"+testId+"() {\n";
+					
+					
+					
 					
 					// 'manually' build a BinaryTimeseries
 					final ByteBuffer referenceTarget = ByteBuffer.wrap(binaryTimeseries);
@@ -456,6 +469,7 @@ public class ApiTests {
 					}
 					//assertEquals(filesize, referenceTarget.position());
 					
+					
 					// generate textual representation of byte array containing the reference BinaryTimeseries
 					String btsDef = "final byte[] referenceBTS_"+testId+" = new byte[] {\n\t";
 					for (int i=0; i<filesize-1; ++i) {
@@ -467,28 +481,16 @@ public class ApiTests {
 					}
 					btsDef += String.format("(byte) 0x%02X };", binaryTimeseries[filesize-1]);
 					
-					// check writing routines
-					System.out.println("	@Test\n"+
-							"	public void testWriting_"+testId+"() {\n"+
-							"		"+btsDef.replace("\t", "\t\t\t")+"\n"+
-							
-							
-							
-							
-							"	}\n");
+					writeTestCode += "		"+btsDef.replace("\t", "\t\t\t")+"\n";
+					
 					
 					// build BinaryTimeseries using API methods
-					//final   long t0_L = t0_L;
-					//final double t0_D = t0_D;
-					//final   long dt_L = dt_L;
-					//final double dt_D = dt_D;
-					
 					final int fileSize = BinaryTimeseries.fileOffset(data_size, numSamples);
 					final byte[] targetArr = new byte[fileSize];
 					final ByteBuffer target = ByteBuffer.wrap(targetArr);
 					assertEquals(0, target.position());
 					BinaryTimeseries.writeEndianessCheckValue(target);
-					assertEquals(1, target.position());
+					assertEquals(2, target.position());
 					if (time_dtype == BinaryTimeseries.DTYPE_LONG) {
 						BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
 					} else if (time_dtype == BinaryTimeseries.DTYPE_DOUBLE) {
@@ -546,13 +548,15 @@ public class ApiTests {
 					// check reading routines
 					
 					
-					numTests++;
+					writeTestCode += "	}\n";
+					readTestCode  += "	}\n";
+					
+					System.out.println(writeTestCode);
+					System.out.println(readTestCode);
 				}
 			}
 			
 		}
-		
-		System.out.println("	// total number of tests: "+numTests);
 	}
 	
 	/**
@@ -606,25 +610,25 @@ public class ApiTests {
 					
 					final int numSamples = 10;
 					
-					final   long t0_L = 13;
-					final double t0_D = 13.0;
+					final   long t0_L =   (long) 13.0;
+					final double t0_D = (double) 13.0;
 					
-					final   long dt_L = 37;
-					final double dt_D = 37.0;
+					final   long dt_L =   (long) 37.0;
+					final double dt_D = (double) 37.0;
 					
-					final   byte scalingOffset_B = (byte)  1.2;
-					final  short scalingOffset_S = (short) 1.2;
-					final    int scalingOffset_I = (int)   1.2;
-					final   long scalingOffset_L = (long)  1.2;
-					final  float scalingOffset_F = (float) 1.2;
-					final double scalingOffset_D = (double)1.2;
+					final   byte scalingOffset_B =   (byte) 1.2;
+					final  short scalingOffset_S =  (short) 1.2;
+					final    int scalingOffset_I =    (int) 1.2;
+					final   long scalingOffset_L =   (long) 1.2;
+					final  float scalingOffset_F =  (float) 1.2;
+					final double scalingOffset_D = (double) 1.2;
 					
-					final   byte scalingFactor_B = (byte)  24.3;
-					final  short scalingFactor_S = (short) 24.3;
-					final    int scalingFactor_I = (int)   24.3;
-					final   long scalingFactor_L = (long)  24.3;
-					final  float scalingFactor_F = (float) 24.3;
-					final double scalingFactor_D = (double)24.3;
+					final   byte scalingFactor_B =   (byte) 24.3;
+					final  short scalingFactor_S =  (short) 24.3;
+					final    int scalingFactor_I =    (int) 24.3;
+					final   long scalingFactor_L =   (long) 24.3;
+					final  float scalingFactor_F =  (float) 24.3;
+					final double scalingFactor_D = (double) 24.3;
 					
 					// time series:
 					// idx | time  | value
@@ -858,12 +862,12 @@ public class ApiTests {
 	 * AUTO-GENERATED CODE STARTS HERE *
 	 ***********************************/
 	
-	//  1 L_N_B
+	// L_N_B
 	@Test
 	public void testBuiltTimebase_L() {
 		final int numSamples = 10;
-		final long t0_L = 13;
-		final long dt_L = 37;
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
 		final int numSamplesSubset = 5;
 		final int sourceOffset = 2;
 		final int targetOffset = 0;
@@ -889,17 +893,17 @@ public class ApiTests {
 
 	@Test
 	public void testFirstIndexInside_L() {
-		final long t0_L  = 13;
-		final long dt_L  = 37;
-		final long t_l_L = 80;
+		final long t0_L  = (long) 13.0;
+		final long dt_L  = (long) 37.0;
+		final long t_l_L = (long) 80.0;
 		assertEquals(2, BinaryTimeseries.firstIndexInside(t0_L, dt_L, t_l_L));
 	}
 
 	@Test
 	public void testLastIndexInside_L() {
-		final long t0_L  = 13;
-		final long dt_L  = 37;
-		final long t_u_L = 300;
+		final long t0_L  = (long) 13.0;
+		final long dt_L  = (long) 37.0;
+		final long t_u_L = (long) 300.0;
 		assertEquals(7, BinaryTimeseries.lastIndexInside(t0_L, dt_L, t_u_L));
 	}
 
@@ -910,6 +914,25 @@ public class ApiTests {
 
 	@Test
 	public void testWriting_L_N_B() {
+		
+		final int numSamples = 10;
+		final   long t0_L =   (long) 13.0;
+		final   long dt_L =   (long) 37.0;
+		
+		final byte[] values = new byte[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (byte) i;
+		}
+		
+		int fileSize = BinaryTimeseries.fileOffset(Byte.BYTES, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScalingDisabled(target);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
+		
 		final byte[] referenceBTS_L_N_B = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -921,9 +944,15 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0A,
 			(byte) 0x00, (byte) 0x01, (byte) 0x02, (byte) 0x03, (byte) 0x04, (byte) 0x05, (byte) 0x06, (byte) 0x07,
 			(byte) 0x08, (byte) 0x09 };
+		
+		assertArrayEquals(referenceBTS_L_N_B, targetArr);
 	}
 
-	//  2 L_N_S
+	@Test
+	public void testReading_L_N_B() {
+	}
+
+	// L_N_S
 	@Test
 	public void testFileOffset_S() {
 		assertEquals(84, BinaryTimeseries.fileOffset(2, 10));
@@ -945,7 +974,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x08, (byte) 0x00, (byte) 0x09 };
 	}
 
-	//  3 L_N_I
+	@Test
+	public void testReading_L_N_S() {
+	}
+
+	// L_N_I
 	@Test
 	public void testFileOffset_I() {
 		assertEquals(104, BinaryTimeseries.fileOffset(4, 10));
@@ -969,7 +1002,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x08, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x09 };
 	}
 
-	//  4 L_N_L
+	@Test
+	public void testReading_L_N_I() {
+	}
+
+	// L_N_L
 	@Test
 	public void testFileOffset_L() {
 		assertEquals(144, BinaryTimeseries.fileOffset(8, 10));
@@ -998,7 +1035,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x09 };
 	}
 
-	//  5 L_N_F
+	@Test
+	public void testReading_L_N_L() {
+	}
+
+	// L_N_F
 	@Test
 	public void testFileOffset_F() {
 		assertEquals(104, BinaryTimeseries.fileOffset(4, 10));
@@ -1022,7 +1063,11 @@ public class ApiTests {
 			(byte) 0x41, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x41, (byte) 0x10, (byte) 0x00, (byte) 0x00 };
 	}
 
-	//  6 L_N_D
+	@Test
+	public void testReading_L_N_F() {
+	}
+
+	// L_N_D
 	@Test
 	public void testFileOffset_D() {
 		assertEquals(144, BinaryTimeseries.fileOffset(8, 10));
@@ -1051,9 +1096,35 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x22, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
 	}
 
-	//  7 L_B_B
+	@Test
+	public void testReading_L_N_D() {
+	}
+
+	// L_B_B
 	@Test
 	public void testWriting_L_B_B() {
+		
+		final int numSamples = 10;
+		final long t0_L = (long) 13.0;
+		final long dt_L = (long) 37.0;
+		
+		final byte scalingOffset_B = (byte) 1.2;
+		final byte scalingFactor_B = (byte) 24.3;
+		
+		final byte[] values = new byte[numSamples];
+		for (int i=0; i<numSamples; ++i) {
+			values[i] = (byte) (scalingOffset_B + i*scalingFactor_B);
+		}
+		
+		int fileSize = BinaryTimeseries.fileOffset(Byte.BYTES, numSamples);
+		final byte[] targetArr = new byte[fileSize];
+		final ByteBuffer target = ByteBuffer.wrap(targetArr);
+		BinaryTimeseries.writeEndianessCheckValue(target);
+		BinaryTimeseries.writeTimebase(target, t0_L, dt_L);
+		BinaryTimeseries.writeScaling(target, scalingOffset_B, scalingFactor_B);
+		BinaryTimeseries.writeReservedDummy(target);
+		BinaryTimeseries.writeData(target, values);
+		
 		final byte[] referenceBTS_L_B_B = new byte[] {
 			(byte) 0x00, (byte) 0x01, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -1065,9 +1136,15 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0A,
 			(byte) 0x01, (byte) 0x19, (byte) 0x31, (byte) 0x49, (byte) 0x61, (byte) 0x79, (byte) 0x91, (byte) 0xA9,
 			(byte) 0xC1, (byte) 0xD9 };
+		
+		assertArrayEquals(referenceBTS_L_B_B, targetArr);
 	}
 
-	//  8 L_B_S
+	@Test
+	public void testReading_L_B_B() {
+	}
+
+	// L_B_S
 	@Test
 	public void testWriting_L_B_S() {
 		final byte[] referenceBTS_L_B_S = new byte[] {
@@ -1084,7 +1161,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0xD9 };
 	}
 
-	//  9 L_B_I
+	@Test
+	public void testReading_L_B_S() {
+	}
+
+	// L_B_I
 	@Test
 	public void testWriting_L_B_I() {
 		final byte[] referenceBTS_L_B_I = new byte[] {
@@ -1103,7 +1184,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
 	}
 
-	// 10 L_B_L
+	@Test
+	public void testReading_L_B_I() {
+	}
+
+	// L_B_L
 	@Test
 	public void testWriting_L_B_L() {
 		final byte[] referenceBTS_L_B_L = new byte[] {
@@ -1127,7 +1212,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
 	}
 
-	// 11 L_B_F
+	@Test
+	public void testReading_L_B_L() {
+	}
+
+	// L_B_F
 	@Test
 	public void testWriting_L_B_F() {
 		final byte[] referenceBTS_L_B_F = new byte[] {
@@ -1146,7 +1235,11 @@ public class ApiTests {
 			(byte) 0x43, (byte) 0x41, (byte) 0x00, (byte) 0x00, (byte) 0x43, (byte) 0x59, (byte) 0x00, (byte) 0x00 };
 	}
 
-	// 12 L_B_D
+	@Test
+	public void testReading_L_B_F() {
+	}
+
+	// L_B_D
 	@Test
 	public void testWriting_L_B_D() {
 		final byte[] referenceBTS_L_B_D = new byte[] {
@@ -1170,7 +1263,11 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x6B, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
 	}
 
-	// 13 L_S_B
+	@Test
+	public void testReading_L_B_D() {
+	}
+
+	// L_S_B
 	@Test
 	public void testWriting_L_S_B() {
 		final byte[] referenceBTS_L_S_B = new byte[] {
@@ -1186,7 +1283,11 @@ public class ApiTests {
 			(byte) 0xC1, (byte) 0xD9 };
 	}
 
-	// 14 L_S_S
+	@Test
+	public void testReading_L_S_B() {
+	}
+
+	// L_S_S
 	@Test
 	public void testWriting_L_S_S() {
 		final byte[] referenceBTS_L_S_S = new byte[] {
@@ -1203,7 +1304,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0xD9 };
 	}
 
-	// 15 L_S_I
+	@Test
+	public void testReading_L_S_S() {
+	}
+
+	// L_S_I
 	@Test
 	public void testWriting_L_S_I() {
 		final byte[] referenceBTS_L_S_I = new byte[] {
@@ -1222,7 +1327,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
 	}
 
-	// 16 L_S_L
+	@Test
+	public void testReading_L_S_I() {
+	}
+
+	// L_S_L
 	@Test
 	public void testWriting_L_S_L() {
 		final byte[] referenceBTS_L_S_L = new byte[] {
@@ -1246,7 +1355,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
 	}
 
-	// 17 L_S_F
+	@Test
+	public void testReading_L_S_L() {
+	}
+
+	// L_S_F
 	@Test
 	public void testWriting_L_S_F() {
 		final byte[] referenceBTS_L_S_F = new byte[] {
@@ -1265,7 +1378,11 @@ public class ApiTests {
 			(byte) 0x43, (byte) 0x41, (byte) 0x00, (byte) 0x00, (byte) 0x43, (byte) 0x59, (byte) 0x00, (byte) 0x00 };
 	}
 
-	// 18 L_S_D
+	@Test
+	public void testReading_L_S_F() {
+	}
+
+	// L_S_D
 	@Test
 	public void testWriting_L_S_D() {
 		final byte[] referenceBTS_L_S_D = new byte[] {
@@ -1289,7 +1406,11 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x6B, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
 	}
 
-	// 19 L_I_B
+	@Test
+	public void testReading_L_S_D() {
+	}
+
+	// L_I_B
 	@Test
 	public void testWriting_L_I_B() {
 		final byte[] referenceBTS_L_I_B = new byte[] {
@@ -1305,7 +1426,11 @@ public class ApiTests {
 			(byte) 0xC1, (byte) 0xD9 };
 	}
 
-	// 20 L_I_S
+	@Test
+	public void testReading_L_I_B() {
+	}
+
+	// L_I_S
 	@Test
 	public void testWriting_L_I_S() {
 		final byte[] referenceBTS_L_I_S = new byte[] {
@@ -1322,7 +1447,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0xD9 };
 	}
 
-	// 21 L_I_I
+	@Test
+	public void testReading_L_I_S() {
+	}
+
+	// L_I_I
 	@Test
 	public void testWriting_L_I_I() {
 		final byte[] referenceBTS_L_I_I = new byte[] {
@@ -1341,7 +1470,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
 	}
 
-	// 22 L_I_L
+	@Test
+	public void testReading_L_I_I() {
+	}
+
+	// L_I_L
 	@Test
 	public void testWriting_L_I_L() {
 		final byte[] referenceBTS_L_I_L = new byte[] {
@@ -1365,7 +1498,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
 	}
 
-	// 23 L_I_F
+	@Test
+	public void testReading_L_I_L() {
+	}
+
+	// L_I_F
 	@Test
 	public void testWriting_L_I_F() {
 		final byte[] referenceBTS_L_I_F = new byte[] {
@@ -1384,7 +1521,11 @@ public class ApiTests {
 			(byte) 0x43, (byte) 0x41, (byte) 0x00, (byte) 0x00, (byte) 0x43, (byte) 0x59, (byte) 0x00, (byte) 0x00 };
 	}
 
-	// 24 L_I_D
+	@Test
+	public void testReading_L_I_F() {
+	}
+
+	// L_I_D
 	@Test
 	public void testWriting_L_I_D() {
 		final byte[] referenceBTS_L_I_D = new byte[] {
@@ -1408,7 +1549,11 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x6B, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
 	}
 
-	// 25 L_L_B
+	@Test
+	public void testReading_L_I_D() {
+	}
+
+	// L_L_B
 	@Test
 	public void testWriting_L_L_B() {
 		final byte[] referenceBTS_L_L_B = new byte[] {
@@ -1424,7 +1569,11 @@ public class ApiTests {
 			(byte) 0xC1, (byte) 0xD9 };
 	}
 
-	// 26 L_L_S
+	@Test
+	public void testReading_L_L_B() {
+	}
+
+	// L_L_S
 	@Test
 	public void testWriting_L_L_S() {
 		final byte[] referenceBTS_L_L_S = new byte[] {
@@ -1441,7 +1590,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0xD9 };
 	}
 
-	// 27 L_L_I
+	@Test
+	public void testReading_L_L_S() {
+	}
+
+	// L_L_I
 	@Test
 	public void testWriting_L_L_I() {
 		final byte[] referenceBTS_L_L_I = new byte[] {
@@ -1460,7 +1613,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
 	}
 
-	// 28 L_L_L
+	@Test
+	public void testReading_L_L_I() {
+	}
+
+	// L_L_L
 	@Test
 	public void testWriting_L_L_L() {
 		final byte[] referenceBTS_L_L_L = new byte[] {
@@ -1484,7 +1641,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
 	}
 
-	// 29 L_L_F
+	@Test
+	public void testReading_L_L_L() {
+	}
+
+	// L_L_F
 	@Test
 	public void testWriting_L_L_F() {
 		final byte[] referenceBTS_L_L_F = new byte[] {
@@ -1503,7 +1664,11 @@ public class ApiTests {
 			(byte) 0x43, (byte) 0x41, (byte) 0x00, (byte) 0x00, (byte) 0x43, (byte) 0x59, (byte) 0x00, (byte) 0x00 };
 	}
 
-	// 30 L_L_D
+	@Test
+	public void testReading_L_L_F() {
+	}
+
+	// L_L_D
 	@Test
 	public void testWriting_L_L_D() {
 		final byte[] referenceBTS_L_L_D = new byte[] {
@@ -1527,7 +1692,11 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x6B, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
 	}
 
-	// 31 L_F_B
+	@Test
+	public void testReading_L_L_D() {
+	}
+
+	// L_F_B
 	@Test
 	public void testWriting_L_F_B() {
 		final byte[] referenceBTS_L_F_B = new byte[] {
@@ -1543,7 +1712,11 @@ public class ApiTests {
 			(byte) 0xC3, (byte) 0xDB };
 	}
 
-	// 32 L_F_S
+	@Test
+	public void testReading_L_F_B() {
+	}
+
+	// L_F_S
 	@Test
 	public void testWriting_L_F_S() {
 		final byte[] referenceBTS_L_F_S = new byte[] {
@@ -1560,7 +1733,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0xC3, (byte) 0x00, (byte) 0xDB };
 	}
 
-	// 33 L_F_I
+	@Test
+	public void testReading_L_F_S() {
+	}
+
+	// L_F_I
 	@Test
 	public void testWriting_L_F_I() {
 		final byte[] referenceBTS_L_F_I = new byte[] {
@@ -1579,7 +1756,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC3, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xDB };
 	}
 
-	// 34 L_F_L
+	@Test
+	public void testReading_L_F_I() {
+	}
+
+	// L_F_L
 	@Test
 	public void testWriting_L_F_L() {
 		final byte[] referenceBTS_L_F_L = new byte[] {
@@ -1603,7 +1784,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xDB };
 	}
 
-	// 35 L_F_F
+	@Test
+	public void testReading_L_F_L() {
+	}
+
+	// L_F_F
 	@Test
 	public void testWriting_L_F_F() {
 		final byte[] referenceBTS_L_F_F = new byte[] {
@@ -1622,7 +1807,11 @@ public class ApiTests {
 			(byte) 0x43, (byte) 0x43, (byte) 0x99, (byte) 0x99, (byte) 0x43, (byte) 0x5B, (byte) 0xE6, (byte) 0x66 };
 	}
 
-	// 36 L_F_D
+	@Test
+	public void testReading_L_F_F() {
+	}
+
+	// L_F_D
 	@Test
 	public void testWriting_L_F_D() {
 		final byte[] referenceBTS_L_F_D = new byte[] {
@@ -1646,7 +1835,11 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x6B, (byte) 0x7C, (byte) 0xCC, (byte) 0xC0, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
 	}
 
-	// 37 L_D_B
+	@Test
+	public void testReading_L_F_D() {
+	}
+
+	// L_D_B
 	@Test
 	public void testWriting_L_D_B() {
 		final byte[] referenceBTS_L_D_B = new byte[] {
@@ -1662,7 +1855,11 @@ public class ApiTests {
 			(byte) 0xC3, (byte) 0xDB };
 	}
 
-	// 38 L_D_S
+	@Test
+	public void testReading_L_D_B() {
+	}
+
+	// L_D_S
 	@Test
 	public void testWriting_L_D_S() {
 		final byte[] referenceBTS_L_D_S = new byte[] {
@@ -1679,7 +1876,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0xC3, (byte) 0x00, (byte) 0xDB };
 	}
 
-	// 39 L_D_I
+	@Test
+	public void testReading_L_D_S() {
+	}
+
+	// L_D_I
 	@Test
 	public void testWriting_L_D_I() {
 		final byte[] referenceBTS_L_D_I = new byte[] {
@@ -1698,7 +1899,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC3, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xDB };
 	}
 
-	// 40 L_D_L
+	@Test
+	public void testReading_L_D_I() {
+	}
+
+	// L_D_L
 	@Test
 	public void testWriting_L_D_L() {
 		final byte[] referenceBTS_L_D_L = new byte[] {
@@ -1722,7 +1927,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xDB };
 	}
 
-	// 41 L_D_F
+	@Test
+	public void testReading_L_D_L() {
+	}
+
+	// L_D_F
 	@Test
 	public void testWriting_L_D_F() {
 		final byte[] referenceBTS_L_D_F = new byte[] {
@@ -1741,7 +1950,11 @@ public class ApiTests {
 			(byte) 0x43, (byte) 0x43, (byte) 0x99, (byte) 0x9A, (byte) 0x43, (byte) 0x5B, (byte) 0xE6, (byte) 0x66 };
 	}
 
-	// 42 L_D_D
+	@Test
+	public void testReading_L_D_F() {
+	}
+
+	// L_D_D
 	@Test
 	public void testWriting_L_D_D() {
 		final byte[] referenceBTS_L_D_D = new byte[] {
@@ -1765,12 +1978,16 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x6B, (byte) 0x7C, (byte) 0xCC, (byte) 0xCC, (byte) 0xCC, (byte) 0xCC, (byte) 0xCD };
 	}
 
-	// 43 D_N_B
+	@Test
+	public void testReading_L_D_D() {
+	}
+
+	// D_N_B
 	@Test
 	public void testBuiltTimebase_D() {
 		final int numSamples = 10;
-		final double t0_D = 13.0;
-		final double dt_D = 37.0;
+		final double t0_D = (double) 13.0;
+		final double dt_D = (double) 37.0;
 		final int numSamplesSubset = 5;
 		final int sourceOffset = 2;
 		final int targetOffset = 0;
@@ -1796,17 +2013,17 @@ public class ApiTests {
 
 	@Test
 	public void testFirstIndexInside_D() {
-		final double t0_D  = 13.0;
-		final double dt_D  = 37.0;
-		final double t_l_D = 80.0;
+		final double t0_D  = (double) 13.0;
+		final double dt_D  = (double) 37.0;
+		final double t_l_D = (double) 80.0;
 		assertEquals(2, BinaryTimeseries.firstIndexInside(t0_D, dt_D, t_l_D));
 	}
 
 	@Test
 	public void testLastIndexInside_D() {
-		final double t0_D  = 13.0;
-		final double dt_D  = 37.0;
-		final double t_u_D = 300.0;
+		final double t0_D  = (double) 13.0;
+		final double dt_D  = (double) 37.0;
+		final double t_u_D = (double) 300.0;
 		assertEquals(7, BinaryTimeseries.lastIndexInside(t0_D, dt_D, t_u_D));
 	}
 
@@ -1825,7 +2042,11 @@ public class ApiTests {
 			(byte) 0x08, (byte) 0x09 };
 	}
 
-	// 44 D_N_S
+	@Test
+	public void testReading_D_N_B() {
+	}
+
+	// D_N_S
 	@Test
 	public void testWriting_D_N_S() {
 		final byte[] referenceBTS_D_N_S = new byte[] {
@@ -1842,7 +2063,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x08, (byte) 0x00, (byte) 0x09 };
 	}
 
-	// 45 D_N_I
+	@Test
+	public void testReading_D_N_S() {
+	}
+
+	// D_N_I
 	@Test
 	public void testWriting_D_N_I() {
 		final byte[] referenceBTS_D_N_I = new byte[] {
@@ -1861,7 +2086,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x08, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x09 };
 	}
 
-	// 46 D_N_L
+	@Test
+	public void testReading_D_N_I() {
+	}
+
+	// D_N_L
 	@Test
 	public void testWriting_D_N_L() {
 		final byte[] referenceBTS_D_N_L = new byte[] {
@@ -1885,7 +2114,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x09 };
 	}
 
-	// 47 D_N_F
+	@Test
+	public void testReading_D_N_L() {
+	}
+
+	// D_N_F
 	@Test
 	public void testWriting_D_N_F() {
 		final byte[] referenceBTS_D_N_F = new byte[] {
@@ -1904,7 +2137,11 @@ public class ApiTests {
 			(byte) 0x41, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x41, (byte) 0x10, (byte) 0x00, (byte) 0x00 };
 	}
 
-	// 48 D_N_D
+	@Test
+	public void testReading_D_N_F() {
+	}
+
+	// D_N_D
 	@Test
 	public void testWriting_D_N_D() {
 		final byte[] referenceBTS_D_N_D = new byte[] {
@@ -1928,7 +2165,11 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x22, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
 	}
 
-	// 49 D_B_B
+	@Test
+	public void testReading_D_N_D() {
+	}
+
+	// D_B_B
 	@Test
 	public void testWriting_D_B_B() {
 		final byte[] referenceBTS_D_B_B = new byte[] {
@@ -1944,7 +2185,11 @@ public class ApiTests {
 			(byte) 0xC1, (byte) 0xD9 };
 	}
 
-	// 50 D_B_S
+	@Test
+	public void testReading_D_B_B() {
+	}
+
+	// D_B_S
 	@Test
 	public void testWriting_D_B_S() {
 		final byte[] referenceBTS_D_B_S = new byte[] {
@@ -1961,7 +2206,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0xD9 };
 	}
 
-	// 51 D_B_I
+	@Test
+	public void testReading_D_B_S() {
+	}
+
+	// D_B_I
 	@Test
 	public void testWriting_D_B_I() {
 		final byte[] referenceBTS_D_B_I = new byte[] {
@@ -1980,7 +2229,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
 	}
 
-	// 52 D_B_L
+	@Test
+	public void testReading_D_B_I() {
+	}
+
+	// D_B_L
 	@Test
 	public void testWriting_D_B_L() {
 		final byte[] referenceBTS_D_B_L = new byte[] {
@@ -2004,7 +2257,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
 	}
 
-	// 53 D_B_F
+	@Test
+	public void testReading_D_B_L() {
+	}
+
+	// D_B_F
 	@Test
 	public void testWriting_D_B_F() {
 		final byte[] referenceBTS_D_B_F = new byte[] {
@@ -2023,7 +2280,11 @@ public class ApiTests {
 			(byte) 0x43, (byte) 0x41, (byte) 0x00, (byte) 0x00, (byte) 0x43, (byte) 0x59, (byte) 0x00, (byte) 0x00 };
 	}
 
-	// 54 D_B_D
+	@Test
+	public void testReading_D_B_F() {
+	}
+
+	// D_B_D
 	@Test
 	public void testWriting_D_B_D() {
 		final byte[] referenceBTS_D_B_D = new byte[] {
@@ -2047,7 +2308,11 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x6B, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
 	}
 
-	// 55 D_S_B
+	@Test
+	public void testReading_D_B_D() {
+	}
+
+	// D_S_B
 	@Test
 	public void testWriting_D_S_B() {
 		final byte[] referenceBTS_D_S_B = new byte[] {
@@ -2063,7 +2328,11 @@ public class ApiTests {
 			(byte) 0xC1, (byte) 0xD9 };
 	}
 
-	// 56 D_S_S
+	@Test
+	public void testReading_D_S_B() {
+	}
+
+	// D_S_S
 	@Test
 	public void testWriting_D_S_S() {
 		final byte[] referenceBTS_D_S_S = new byte[] {
@@ -2080,7 +2349,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0xD9 };
 	}
 
-	// 57 D_S_I
+	@Test
+	public void testReading_D_S_S() {
+	}
+
+	// D_S_I
 	@Test
 	public void testWriting_D_S_I() {
 		final byte[] referenceBTS_D_S_I = new byte[] {
@@ -2099,7 +2372,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
 	}
 
-	// 58 D_S_L
+	@Test
+	public void testReading_D_S_I() {
+	}
+
+	// D_S_L
 	@Test
 	public void testWriting_D_S_L() {
 		final byte[] referenceBTS_D_S_L = new byte[] {
@@ -2123,7 +2400,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
 	}
 
-	// 59 D_S_F
+	@Test
+	public void testReading_D_S_L() {
+	}
+
+	// D_S_F
 	@Test
 	public void testWriting_D_S_F() {
 		final byte[] referenceBTS_D_S_F = new byte[] {
@@ -2142,7 +2423,11 @@ public class ApiTests {
 			(byte) 0x43, (byte) 0x41, (byte) 0x00, (byte) 0x00, (byte) 0x43, (byte) 0x59, (byte) 0x00, (byte) 0x00 };
 	}
 
-	// 60 D_S_D
+	@Test
+	public void testReading_D_S_F() {
+	}
+
+	// D_S_D
 	@Test
 	public void testWriting_D_S_D() {
 		final byte[] referenceBTS_D_S_D = new byte[] {
@@ -2166,7 +2451,11 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x6B, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
 	}
 
-	// 61 D_I_B
+	@Test
+	public void testReading_D_S_D() {
+	}
+
+	// D_I_B
 	@Test
 	public void testWriting_D_I_B() {
 		final byte[] referenceBTS_D_I_B = new byte[] {
@@ -2182,7 +2471,11 @@ public class ApiTests {
 			(byte) 0xC1, (byte) 0xD9 };
 	}
 
-	// 62 D_I_S
+	@Test
+	public void testReading_D_I_B() {
+	}
+
+	// D_I_S
 	@Test
 	public void testWriting_D_I_S() {
 		final byte[] referenceBTS_D_I_S = new byte[] {
@@ -2199,7 +2492,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0xD9 };
 	}
 
-	// 63 D_I_I
+	@Test
+	public void testReading_D_I_S() {
+	}
+
+	// D_I_I
 	@Test
 	public void testWriting_D_I_I() {
 		final byte[] referenceBTS_D_I_I = new byte[] {
@@ -2218,7 +2515,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
 	}
 
-	// 64 D_I_L
+	@Test
+	public void testReading_D_I_I() {
+	}
+
+	// D_I_L
 	@Test
 	public void testWriting_D_I_L() {
 		final byte[] referenceBTS_D_I_L = new byte[] {
@@ -2242,7 +2543,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
 	}
 
-	// 65 D_I_F
+	@Test
+	public void testReading_D_I_L() {
+	}
+
+	// D_I_F
 	@Test
 	public void testWriting_D_I_F() {
 		final byte[] referenceBTS_D_I_F = new byte[] {
@@ -2261,7 +2566,11 @@ public class ApiTests {
 			(byte) 0x43, (byte) 0x41, (byte) 0x00, (byte) 0x00, (byte) 0x43, (byte) 0x59, (byte) 0x00, (byte) 0x00 };
 	}
 
-	// 66 D_I_D
+	@Test
+	public void testReading_D_I_F() {
+	}
+
+	// D_I_D
 	@Test
 	public void testWriting_D_I_D() {
 		final byte[] referenceBTS_D_I_D = new byte[] {
@@ -2285,7 +2594,11 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x6B, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
 	}
 
-	// 67 D_L_B
+	@Test
+	public void testReading_D_I_D() {
+	}
+
+	// D_L_B
 	@Test
 	public void testWriting_D_L_B() {
 		final byte[] referenceBTS_D_L_B = new byte[] {
@@ -2301,7 +2614,11 @@ public class ApiTests {
 			(byte) 0xC1, (byte) 0xD9 };
 	}
 
-	// 68 D_L_S
+	@Test
+	public void testReading_D_L_B() {
+	}
+
+	// D_L_S
 	@Test
 	public void testWriting_D_L_S() {
 		final byte[] referenceBTS_D_L_S = new byte[] {
@@ -2318,7 +2635,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0xD9 };
 	}
 
-	// 69 D_L_I
+	@Test
+	public void testReading_D_L_S() {
+	}
+
+	// D_L_I
 	@Test
 	public void testWriting_D_L_I() {
 		final byte[] referenceBTS_D_L_I = new byte[] {
@@ -2337,7 +2658,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC1, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
 	}
 
-	// 70 D_L_L
+	@Test
+	public void testReading_D_L_I() {
+	}
+
+	// D_L_L
 	@Test
 	public void testWriting_D_L_L() {
 		final byte[] referenceBTS_D_L_L = new byte[] {
@@ -2361,7 +2686,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xD9 };
 	}
 
-	// 71 D_L_F
+	@Test
+	public void testReading_D_L_L() {
+	}
+
+	// D_L_F
 	@Test
 	public void testWriting_D_L_F() {
 		final byte[] referenceBTS_D_L_F = new byte[] {
@@ -2380,7 +2709,11 @@ public class ApiTests {
 			(byte) 0x43, (byte) 0x41, (byte) 0x00, (byte) 0x00, (byte) 0x43, (byte) 0x59, (byte) 0x00, (byte) 0x00 };
 	}
 
-	// 72 D_L_D
+	@Test
+	public void testReading_D_L_F() {
+	}
+
+	// D_L_D
 	@Test
 	public void testWriting_D_L_D() {
 		final byte[] referenceBTS_D_L_D = new byte[] {
@@ -2404,7 +2737,11 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x6B, (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
 	}
 
-	// 73 D_F_B
+	@Test
+	public void testReading_D_L_D() {
+	}
+
+	// D_F_B
 	@Test
 	public void testWriting_D_F_B() {
 		final byte[] referenceBTS_D_F_B = new byte[] {
@@ -2420,7 +2757,11 @@ public class ApiTests {
 			(byte) 0xC3, (byte) 0xDB };
 	}
 
-	// 74 D_F_S
+	@Test
+	public void testReading_D_F_B() {
+	}
+
+	// D_F_S
 	@Test
 	public void testWriting_D_F_S() {
 		final byte[] referenceBTS_D_F_S = new byte[] {
@@ -2437,7 +2778,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0xC3, (byte) 0x00, (byte) 0xDB };
 	}
 
-	// 75 D_F_I
+	@Test
+	public void testReading_D_F_S() {
+	}
+
+	// D_F_I
 	@Test
 	public void testWriting_D_F_I() {
 		final byte[] referenceBTS_D_F_I = new byte[] {
@@ -2456,7 +2801,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC3, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xDB };
 	}
 
-	// 76 D_F_L
+	@Test
+	public void testReading_D_F_I() {
+	}
+
+	// D_F_L
 	@Test
 	public void testWriting_D_F_L() {
 		final byte[] referenceBTS_D_F_L = new byte[] {
@@ -2480,7 +2829,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xDB };
 	}
 
-	// 77 D_F_F
+	@Test
+	public void testReading_D_F_L() {
+	}
+
+	// D_F_F
 	@Test
 	public void testWriting_D_F_F() {
 		final byte[] referenceBTS_D_F_F = new byte[] {
@@ -2499,7 +2852,11 @@ public class ApiTests {
 			(byte) 0x43, (byte) 0x43, (byte) 0x99, (byte) 0x99, (byte) 0x43, (byte) 0x5B, (byte) 0xE6, (byte) 0x66 };
 	}
 
-	// 78 D_F_D
+	@Test
+	public void testReading_D_F_F() {
+	}
+
+	// D_F_D
 	@Test
 	public void testWriting_D_F_D() {
 		final byte[] referenceBTS_D_F_D = new byte[] {
@@ -2523,7 +2880,11 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x6B, (byte) 0x7C, (byte) 0xCC, (byte) 0xC0, (byte) 0x00, (byte) 0x00, (byte) 0x00 };
 	}
 
-	// 79 D_D_B
+	@Test
+	public void testReading_D_F_D() {
+	}
+
+	// D_D_B
 	@Test
 	public void testWriting_D_D_B() {
 		final byte[] referenceBTS_D_D_B = new byte[] {
@@ -2539,7 +2900,11 @@ public class ApiTests {
 			(byte) 0xC3, (byte) 0xDB };
 	}
 
-	// 80 D_D_S
+	@Test
+	public void testReading_D_D_B() {
+	}
+
+	// D_D_S
 	@Test
 	public void testWriting_D_D_S() {
 		final byte[] referenceBTS_D_D_S = new byte[] {
@@ -2556,7 +2921,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0xC3, (byte) 0x00, (byte) 0xDB };
 	}
 
-	// 81 D_D_I
+	@Test
+	public void testReading_D_D_S() {
+	}
+
+	// D_D_I
 	@Test
 	public void testWriting_D_D_I() {
 		final byte[] referenceBTS_D_D_I = new byte[] {
@@ -2575,7 +2944,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xC3, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xDB };
 	}
 
-	// 82 D_D_L
+	@Test
+	public void testReading_D_D_I() {
+	}
+
+	// D_D_L
 	@Test
 	public void testWriting_D_D_L() {
 		final byte[] referenceBTS_D_D_L = new byte[] {
@@ -2599,7 +2972,11 @@ public class ApiTests {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xDB };
 	}
 
-	// 83 D_D_F
+	@Test
+	public void testReading_D_D_L() {
+	}
+
+	// D_D_F
 	@Test
 	public void testWriting_D_D_F() {
 		final byte[] referenceBTS_D_D_F = new byte[] {
@@ -2618,7 +2995,11 @@ public class ApiTests {
 			(byte) 0x43, (byte) 0x43, (byte) 0x99, (byte) 0x9A, (byte) 0x43, (byte) 0x5B, (byte) 0xE6, (byte) 0x66 };
 	}
 
-	// 84 D_D_D
+	@Test
+	public void testReading_D_D_F() {
+	}
+
+	// D_D_D
 	@Test
 	public void testWriting_D_D_D() {
 		final byte[] referenceBTS_D_D_D = new byte[] {
@@ -2642,7 +3023,12 @@ public class ApiTests {
 			(byte) 0x40, (byte) 0x6B, (byte) 0x7C, (byte) 0xCC, (byte) 0xCC, (byte) 0xCC, (byte) 0xCC, (byte) 0xCD };
 	}
 
-	// total number of tests: 84
+	@Test
+	public void testReading_D_D_D() {
+	}
+
+
+
 
 
 
