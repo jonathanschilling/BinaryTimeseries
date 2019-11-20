@@ -1663,29 +1663,62 @@ public class BinaryTimeseries {
 				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
-				final short[] target = new short[numSamples];
+				
+				final int numToRead;
+				if (lastDataIndex == -1) {
+					numToRead = numSamples - firstDataIndex;
+				} else {
+					numToRead = lastDataIndex - firstDataIndex + 1;
+				}
+				final int currentPosition = source.position();
+				
+				final short[] target = new short[numToRead];
 				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Byte.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.get());
 					}
 				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Short.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getShort());
 					}
 				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Integer.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getInt());
 					}
 				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Long.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getLong());
 					}
 				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Float.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getFloat());
 					}
 				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Double.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getDouble());
 					}
 				} else {
@@ -1699,29 +1732,62 @@ public class BinaryTimeseries {
 				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
-				final short[] target = new short[numSamples];
+				
+				final int numToRead;
+				if (lastDataIndex == -1) {
+					numToRead = numSamples - firstDataIndex;
+				} else {
+					numToRead = lastDataIndex - firstDataIndex + 1;
+				}
+				final int currentPosition = source.position();
+				
+				final short[] target = new short[numToRead];
 				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Byte.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.get());
 					}
 				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Short.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getShort());
 					}
 				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Integer.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getInt());
 					}
 				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Long.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getLong());
 					}
 				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Float.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getFloat());
 					}
 				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Double.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getDouble());
 					}
 				} else {
@@ -1734,29 +1800,62 @@ public class BinaryTimeseries {
 				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
-				final short[] target = new short[numSamples];
+				
+				final int numToRead;
+				if (lastDataIndex == -1) {
+					numToRead = numSamples - firstDataIndex;
+				} else {
+					numToRead = lastDataIndex - firstDataIndex + 1;
+				}
+				final int currentPosition = source.position();
+				
+				final short[] target = new short[numToRead];
 				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Byte.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.get());
 					}
 				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Short.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getShort());
 					}
 				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Integer.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getInt());
 					}
 				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Long.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getLong());
 					}
 				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Float.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getFloat());
 					}
 				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Double.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getDouble());
 					}
 				} else {
@@ -1769,29 +1868,62 @@ public class BinaryTimeseries {
 				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
-				final short[] target = new short[numSamples];
+
+				final int numToRead;
+				if (lastDataIndex == -1) {
+					numToRead = numSamples - firstDataIndex;
+				} else {
+					numToRead = lastDataIndex - firstDataIndex + 1;
+				}
+				final int currentPosition = source.position();
+				
+				final short[] target = new short[numToRead];
 				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Byte.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.get());
 					}
 				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Short.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getShort());
 					}
 				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Integer.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getInt());
 					}
 				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Long.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getLong());
 					}
 				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Float.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getFloat());
 					}
 				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Double.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getDouble());
 					}
 				} else {
@@ -1804,29 +1936,62 @@ public class BinaryTimeseries {
 				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
-				final short[] target = new short[numSamples];
+
+				final int numToRead;
+				if (lastDataIndex == -1) {
+					numToRead = numSamples - firstDataIndex;
+				} else {
+					numToRead = lastDataIndex - firstDataIndex + 1;
+				}
+				final int currentPosition = source.position();
+				
+				final short[] target = new short[numToRead];
 				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Byte.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.get());
 					}
 				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Short.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getShort());
 					}
 				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Integer.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getInt());
 					}
 				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Long.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getLong());
 					}
 				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Float.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getFloat());
 					}
 				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Double.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getDouble());
 					}
 				} else {
@@ -1839,29 +2004,62 @@ public class BinaryTimeseries {
 				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
-				final short[] target = new short[numSamples];
+
+				final int numToRead;
+				if (lastDataIndex == -1) {
+					numToRead = numSamples - firstDataIndex;
+				} else {
+					numToRead = lastDataIndex - firstDataIndex + 1;
+				}
+				final int currentPosition = source.position();
+				
+				final short[] target = new short[numToRead];
 				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Byte.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.get());
 					}
 				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Short.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getShort());
 					}
 				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Integer.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getInt());
 					}
 				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Long.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getLong());
 					}
 				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Float.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getFloat());
 					}
 				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Double.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (short) (scalingOffset + scalingFactor * source.getDouble());
 					}
 				} else {
@@ -1877,29 +2075,62 @@ public class BinaryTimeseries {
 			readReservedDummy(source);
 			final byte data_dtype = readDataType(source);
 			final int numSamples = readNumSamples(source);
-			final short[] target = new short[numSamples];
+
+			final int numToRead;
+			if (lastDataIndex == -1) {
+				numToRead = numSamples - firstDataIndex;
+			} else {
+				numToRead = lastDataIndex - firstDataIndex + 1;
+			}
+			final int currentPosition = source.position();
+			
+			final short[] target = new short[numToRead];
 			if (data_dtype == DTYPE_BYTE) {
-				for (int i=0; i<numSamples; ++i) {
+				if (firstDataIndex != 0) {
+					final int bytesToSkip = Byte.BYTES * firstDataIndex;
+					source.position(currentPosition + bytesToSkip);
+				}
+				for (int i=0; i<numToRead; ++i) {
 					target[i] = source.get();
 				}
 			} else if (data_dtype == DTYPE_SHORT) {
-				for (int i=0; i<numSamples; ++i) {
+				if (firstDataIndex != 0) {
+					final int bytesToSkip = Short.BYTES * firstDataIndex;
+					source.position(currentPosition + bytesToSkip);
+				}
+				for (int i=0; i<numToRead; ++i) {
 					target[i] = (short) source.getShort();
 				}
 			} else if (data_dtype == DTYPE_INT) {
-				for (int i=0; i<numSamples; ++i) {
+				if (firstDataIndex != 0) {
+					final int bytesToSkip = Integer.BYTES * firstDataIndex;
+					source.position(currentPosition + bytesToSkip);
+				}
+				for (int i=0; i<numToRead; ++i) {
 					target[i] = (short) source.getInt();
 				}
 			} else if (data_dtype == DTYPE_LONG) {
-				for (int i=0; i<numSamples; ++i) {
+				if (firstDataIndex != 0) {
+					final int bytesToSkip = Long.BYTES * firstDataIndex;
+					source.position(currentPosition + bytesToSkip);
+				}
+				for (int i=0; i<numToRead; ++i) {
 					target[i] = (short) source.getLong();
 				}
 			} else if (data_dtype == DTYPE_FLOAT) {
-				for (int i=0; i<numSamples; ++i) {
+				if (firstDataIndex != 0) {
+					final int bytesToSkip = Float.BYTES * firstDataIndex;
+					source.position(currentPosition + bytesToSkip);
+				}
+				for (int i=0; i<numToRead; ++i) {
 					target[i] = (short) source.getFloat();
 				}
 			} else if (data_dtype == DTYPE_DOUBLE) {
-				for (int i=0; i<numSamples; ++i) {
+				if (firstDataIndex != 0) {
+					final int bytesToSkip = Double.BYTES * firstDataIndex;
+					source.position(currentPosition + bytesToSkip);
+				}
+				for (int i=0; i<numToRead; ++i) {
 					target[i] = (short) source.getDouble();
 				}
 			} else {
@@ -1941,29 +2172,62 @@ public class BinaryTimeseries {
 				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
-				final int[] target = new int[numSamples];
+				
+				final int numToRead;
+				if (lastDataIndex == -1) {
+					numToRead = numSamples - firstDataIndex;
+				} else {
+					numToRead = lastDataIndex - firstDataIndex + 1;
+				}
+				final int currentPosition = source.position();
+				
+				final int[] target = new int[numToRead];
 				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Byte.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.get());
 					}
 				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Short.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getShort());
 					}
 				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Integer.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getInt());
 					}
 				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Long.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getLong());
 					}
 				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Float.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getFloat());
 					}
 				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Double.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getDouble());
 					}
 				} else {
@@ -1977,29 +2241,62 @@ public class BinaryTimeseries {
 				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
-				final int[] target = new int[numSamples];
+				
+				final int numToRead;
+				if (lastDataIndex == -1) {
+					numToRead = numSamples - firstDataIndex;
+				} else {
+					numToRead = lastDataIndex - firstDataIndex + 1;
+				}
+				final int currentPosition = source.position();
+				
+				final int[] target = new int[numToRead];
 				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Byte.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.get());
 					}
 				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Short.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getShort());
 					}
 				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Integer.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getInt());
 					}
 				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Long.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getLong());
 					}
 				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Float.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getFloat());
 					}
 				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Double.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getDouble());
 					}
 				} else {
@@ -2012,29 +2309,62 @@ public class BinaryTimeseries {
 				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
-				final int[] target = new int[numSamples];
+				
+				final int numToRead;
+				if (lastDataIndex == -1) {
+					numToRead = numSamples - firstDataIndex;
+				} else {
+					numToRead = lastDataIndex - firstDataIndex + 1;
+				}
+				final int currentPosition = source.position();
+				
+				final int[] target = new int[numToRead];
 				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Byte.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.get());
 					}
 				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Short.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getShort());
 					}
 				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Integer.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getInt());
 					}
 				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Long.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getLong());
 					}
 				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Float.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getFloat());
 					}
 				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Double.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getDouble());
 					}
 				} else {
@@ -2047,29 +2377,62 @@ public class BinaryTimeseries {
 				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
-				final int[] target = new int[numSamples];
+				
+				final int numToRead;
+				if (lastDataIndex == -1) {
+					numToRead = numSamples - firstDataIndex;
+				} else {
+					numToRead = lastDataIndex - firstDataIndex + 1;
+				}
+				final int currentPosition = source.position();
+				
+				final int[] target = new int[numToRead];
 				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Byte.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.get());
 					}
 				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Short.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getShort());
 					}
 				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Integer.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getInt());
 					}
 				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Long.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getLong());
 					}
 				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Float.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getFloat());
 					}
 				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Double.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getDouble());
 					}
 				} else {
@@ -2082,29 +2445,62 @@ public class BinaryTimeseries {
 				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
-				final int[] target = new int[numSamples];
+				
+				final int numToRead;
+				if (lastDataIndex == -1) {
+					numToRead = numSamples - firstDataIndex;
+				} else {
+					numToRead = lastDataIndex - firstDataIndex + 1;
+				}
+				final int currentPosition = source.position();
+				
+				final int[] target = new int[numToRead];
 				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Byte.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.get());
 					}
 				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Short.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getShort());
 					}
 				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Integer.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getInt());
 					}
 				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Long.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getLong());
 					}
 				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Float.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getFloat());
 					}
 				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Double.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getDouble());
 					}
 				} else {
@@ -2117,29 +2513,62 @@ public class BinaryTimeseries {
 				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
-				final int[] target = new int[numSamples];
+				
+				final int numToRead;
+				if (lastDataIndex == -1) {
+					numToRead = numSamples - firstDataIndex;
+				} else {
+					numToRead = lastDataIndex - firstDataIndex + 1;
+				}
+				final int currentPosition = source.position();
+				
+				final int[] target = new int[numToRead];
 				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Byte.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.get());
 					}
 				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Short.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getShort());
 					}
 				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Integer.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getInt());
 					}
 				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Long.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getLong());
 					}
 				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Float.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getFloat());
 					}
 				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Double.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (int) (scalingOffset + scalingFactor * source.getDouble());
 					}
 				} else {
@@ -2155,29 +2584,62 @@ public class BinaryTimeseries {
 			readReservedDummy(source);
 			final byte data_dtype = readDataType(source);
 			final int numSamples = readNumSamples(source);
-			final int[] target = new int[numSamples];
+			
+			final int numToRead;
+			if (lastDataIndex == -1) {
+				numToRead = numSamples - firstDataIndex;
+			} else {
+				numToRead = lastDataIndex - firstDataIndex + 1;
+			}
+			final int currentPosition = source.position();
+			
+			final int[] target = new int[numToRead];
 			if (data_dtype == DTYPE_BYTE) {
-				for (int i=0; i<numSamples; ++i) {
+				if (firstDataIndex != 0) {
+					final int bytesToSkip = Byte.BYTES * firstDataIndex;
+					source.position(currentPosition + bytesToSkip);
+				}
+				for (int i=0; i<numToRead; ++i) {
 					target[i] = source.get();
 				}
 			} else if (data_dtype == DTYPE_SHORT) {
-				for (int i=0; i<numSamples; ++i) {
+				if (firstDataIndex != 0) {
+					final int bytesToSkip = Short.BYTES * firstDataIndex;
+					source.position(currentPosition + bytesToSkip);
+				}
+				for (int i=0; i<numToRead; ++i) {
 					target[i] = (int) source.getShort();
 				}
 			} else if (data_dtype == DTYPE_INT) {
-				for (int i=0; i<numSamples; ++i) {
+				if (firstDataIndex != 0) {
+					final int bytesToSkip = Integer.BYTES * firstDataIndex;
+					source.position(currentPosition + bytesToSkip);
+				}
+				for (int i=0; i<numToRead; ++i) {
 					target[i] = (int) source.getInt();
 				}
 			} else if (data_dtype == DTYPE_LONG) {
-				for (int i=0; i<numSamples; ++i) {
+				if (firstDataIndex != 0) {
+					final int bytesToSkip = Long.BYTES * firstDataIndex;
+					source.position(currentPosition + bytesToSkip);
+				}
+				for (int i=0; i<numToRead; ++i) {
 					target[i] = (int) source.getLong();
 				}
 			} else if (data_dtype == DTYPE_FLOAT) {
-				for (int i=0; i<numSamples; ++i) {
+				if (firstDataIndex != 0) {
+					final int bytesToSkip = Float.BYTES * firstDataIndex;
+					source.position(currentPosition + bytesToSkip);
+				}
+				for (int i=0; i<numToRead; ++i) {
 					target[i] = (int) source.getFloat();
 				}
 			} else if (data_dtype == DTYPE_DOUBLE) {
-				for (int i=0; i<numSamples; ++i) {
+				if (firstDataIndex != 0) {
+					final int bytesToSkip = Double.BYTES * firstDataIndex;
+					source.position(currentPosition + bytesToSkip);
+				}
+				for (int i=0; i<numToRead; ++i) {
 					target[i] = (int) source.getDouble();
 				}
 			} else {
@@ -2219,29 +2681,62 @@ public class BinaryTimeseries {
 				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
-				final long[] target = new long[numSamples];
+
+				final int numToRead;
+				if (lastDataIndex == -1) {
+					numToRead = numSamples - firstDataIndex;
+				} else {
+					numToRead = lastDataIndex - firstDataIndex + 1;
+				}
+				final int currentPosition = source.position();
+				
+				final long[] target = new long[numToRead];
 				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Byte.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.get());
 					}
 				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Short.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getShort());
 					}
 				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Integer.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getInt());
 					}
 				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Long.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getLong());
 					}
 				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Float.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getFloat());
 					}
 				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Double.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getDouble());
 					}
 				} else {
@@ -2255,29 +2750,62 @@ public class BinaryTimeseries {
 				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
-				final long[] target = new long[numSamples];
+
+				final int numToRead;
+				if (lastDataIndex == -1) {
+					numToRead = numSamples - firstDataIndex;
+				} else {
+					numToRead = lastDataIndex - firstDataIndex + 1;
+				}
+				final int currentPosition = source.position();
+				
+				final long[] target = new long[numToRead];
 				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Byte.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.get());
 					}
 				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Short.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getShort());
 					}
 				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Integer.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getInt());
 					}
 				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Long.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getLong());
 					}
 				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Float.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getFloat());
 					}
 				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Double.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getDouble());
 					}
 				} else {
@@ -2290,29 +2818,62 @@ public class BinaryTimeseries {
 				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
-				final long[] target = new long[numSamples];
+
+				final int numToRead;
+				if (lastDataIndex == -1) {
+					numToRead = numSamples - firstDataIndex;
+				} else {
+					numToRead = lastDataIndex - firstDataIndex + 1;
+				}
+				final int currentPosition = source.position();
+				
+				final long[] target = new long[numToRead];
 				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Byte.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.get());
 					}
 				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Short.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getShort());
 					}
 				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Integer.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getInt());
 					}
 				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Long.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getLong());
 					}
 				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Float.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getFloat());
 					}
 				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Double.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getDouble());
 					}
 				} else {
@@ -2325,29 +2886,62 @@ public class BinaryTimeseries {
 				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
-				final long[] target = new long[numSamples];
+
+				final int numToRead;
+				if (lastDataIndex == -1) {
+					numToRead = numSamples - firstDataIndex;
+				} else {
+					numToRead = lastDataIndex - firstDataIndex + 1;
+				}
+				final int currentPosition = source.position();
+				
+				final long[] target = new long[numToRead];
 				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Byte.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.get());
 					}
 				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Short.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getShort());
 					}
 				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Integer.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getInt());
 					}
 				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Long.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getLong());
 					}
 				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Float.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getFloat());
 					}
 				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Double.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getDouble());
 					}
 				} else {
@@ -2360,29 +2954,62 @@ public class BinaryTimeseries {
 				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
-				final long[] target = new long[numSamples];
+
+				final int numToRead;
+				if (lastDataIndex == -1) {
+					numToRead = numSamples - firstDataIndex;
+				} else {
+					numToRead = lastDataIndex - firstDataIndex + 1;
+				}
+				final int currentPosition = source.position();
+				
+				final long[] target = new long[numToRead];
 				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Byte.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.get());
 					}
 				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Short.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getShort());
 					}
 				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Integer.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getInt());
 					}
 				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Long.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getLong());
 					}
 				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Float.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getFloat());
 					}
 				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Double.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getDouble());
 					}
 				} else {
@@ -2395,29 +3022,62 @@ public class BinaryTimeseries {
 				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
-				final long[] target = new long[numSamples];
+
+				final int numToRead;
+				if (lastDataIndex == -1) {
+					numToRead = numSamples - firstDataIndex;
+				} else {
+					numToRead = lastDataIndex - firstDataIndex + 1;
+				}
+				final int currentPosition = source.position();
+				
+				final long[] target = new long[numToRead];
 				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Byte.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.get());
 					}
 				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Short.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getShort());
 					}
 				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Integer.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getInt());
 					}
 				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Long.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getLong());
 					}
 				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Float.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getFloat());
 					}
 				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Double.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (long) (scalingOffset + scalingFactor * source.getDouble());
 					}
 				} else {
@@ -2433,29 +3093,62 @@ public class BinaryTimeseries {
 			readReservedDummy(source);
 			final byte data_dtype = readDataType(source);
 			final int numSamples = readNumSamples(source);
-			final long[] target = new long[numSamples];
+
+			final int numToRead;
+			if (lastDataIndex == -1) {
+				numToRead = numSamples - firstDataIndex;
+			} else {
+				numToRead = lastDataIndex - firstDataIndex + 1;
+			}
+			final int currentPosition = source.position();
+			
+			final long[] target = new long[numToRead];
 			if (data_dtype == DTYPE_BYTE) {
-				for (int i=0; i<numSamples; ++i) {
+				if (firstDataIndex != 0) {
+					final int bytesToSkip = Byte.BYTES * firstDataIndex;
+					source.position(currentPosition + bytesToSkip);
+				}
+				for (int i=0; i<numToRead; ++i) {
 					target[i] = source.get();
 				}
 			} else if (data_dtype == DTYPE_SHORT) {
-				for (int i=0; i<numSamples; ++i) {
+				if (firstDataIndex != 0) {
+					final int bytesToSkip = Short.BYTES * firstDataIndex;
+					source.position(currentPosition + bytesToSkip);
+				}
+				for (int i=0; i<numToRead; ++i) {
 					target[i] = (long) source.getShort();
 				}
 			} else if (data_dtype == DTYPE_INT) {
-				for (int i=0; i<numSamples; ++i) {
+				if (firstDataIndex != 0) {
+					final int bytesToSkip = Integer.BYTES * firstDataIndex;
+					source.position(currentPosition + bytesToSkip);
+				}
+				for (int i=0; i<numToRead; ++i) {
 					target[i] = (long) source.getInt();
 				}
 			} else if (data_dtype == DTYPE_LONG) {
-				for (int i=0; i<numSamples; ++i) {
+				if (firstDataIndex != 0) {
+					final int bytesToSkip = Long.BYTES * firstDataIndex;
+					source.position(currentPosition + bytesToSkip);
+				}
+				for (int i=0; i<numToRead; ++i) {
 					target[i] = (long) source.getLong();
 				}
 			} else if (data_dtype == DTYPE_FLOAT) {
-				for (int i=0; i<numSamples; ++i) {
+				if (firstDataIndex != 0) {
+					final int bytesToSkip = Float.BYTES * firstDataIndex;
+					source.position(currentPosition + bytesToSkip);
+				}
+				for (int i=0; i<numToRead; ++i) {
 					target[i] = (long) source.getFloat();
 				}
 			} else if (data_dtype == DTYPE_DOUBLE) {
-				for (int i=0; i<numSamples; ++i) {
+				if (firstDataIndex != 0) {
+					final int bytesToSkip = Double.BYTES * firstDataIndex;
+					source.position(currentPosition + bytesToSkip);
+				}
+				for (int i=0; i<numToRead; ++i) {
 					target[i] = (long) source.getDouble();
 				}
 			} else {
@@ -2497,29 +3190,62 @@ public class BinaryTimeseries {
 				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
-				final float[] target = new float[numSamples];
+
+				final int numToRead;
+				if (lastDataIndex == -1) {
+					numToRead = numSamples - firstDataIndex;
+				} else {
+					numToRead = lastDataIndex - firstDataIndex + 1;
+				}
+				final int currentPosition = source.position();
+				
+				final float[] target = new float[numToRead];
 				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Byte.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.get());
 					}
 				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Short.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getShort());
 					}
 				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Integer.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getInt());
 					}
 				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Long.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getLong());
 					}
 				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Float.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getFloat());
 					}
 				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Double.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getDouble());
 					}
 				} else {
@@ -2533,29 +3259,62 @@ public class BinaryTimeseries {
 				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
-				final float[] target = new float[numSamples];
+
+				final int numToRead;
+				if (lastDataIndex == -1) {
+					numToRead = numSamples - firstDataIndex;
+				} else {
+					numToRead = lastDataIndex - firstDataIndex + 1;
+				}
+				final int currentPosition = source.position();
+				
+				final float[] target = new float[numToRead];
 				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Byte.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.get());
 					}
 				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Short.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getShort());
 					}
 				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Integer.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getInt());
 					}
 				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Long.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getLong());
 					}
 				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Float.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getFloat());
 					}
 				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Double.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getDouble());
 					}
 				} else {
@@ -2568,29 +3327,62 @@ public class BinaryTimeseries {
 				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
-				final float[] target = new float[numSamples];
+
+				final int numToRead;
+				if (lastDataIndex == -1) {
+					numToRead = numSamples - firstDataIndex;
+				} else {
+					numToRead = lastDataIndex - firstDataIndex + 1;
+				}
+				final int currentPosition = source.position();
+				
+				final float[] target = new float[numToRead];
 				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Byte.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.get());
 					}
 				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Short.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getShort());
 					}
 				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Integer.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getInt());
 					}
 				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Long.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getLong());
 					}
 				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Float.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getFloat());
 					}
 				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Double.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getDouble());
 					}
 				} else {
@@ -2603,29 +3395,62 @@ public class BinaryTimeseries {
 				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
-				final float[] target = new float[numSamples];
+
+				final int numToRead;
+				if (lastDataIndex == -1) {
+					numToRead = numSamples - firstDataIndex;
+				} else {
+					numToRead = lastDataIndex - firstDataIndex + 1;
+				}
+				final int currentPosition = source.position();
+				
+				final float[] target = new float[numToRead];
 				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Byte.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.get());
 					}
 				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Short.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getShort());
 					}
 				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Integer.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getInt());
 					}
 				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Long.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getLong());
 					}
 				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Float.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getFloat());
 					}
 				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Double.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getDouble());
 					}
 				} else {
@@ -2638,29 +3463,62 @@ public class BinaryTimeseries {
 				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
-				final float[] target = new float[numSamples];
+
+				final int numToRead;
+				if (lastDataIndex == -1) {
+					numToRead = numSamples - firstDataIndex;
+				} else {
+					numToRead = lastDataIndex - firstDataIndex + 1;
+				}
+				final int currentPosition = source.position();
+				
+				final float[] target = new float[numToRead];
 				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Byte.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.get());
 					}
 				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Short.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getShort());
 					}
 				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Integer.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getInt());
 					}
 				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Long.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getLong());
 					}
 				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Float.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getFloat());
 					}
 				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Double.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getDouble());
 					}
 				} else {
@@ -2673,29 +3531,62 @@ public class BinaryTimeseries {
 				readReservedDummy(source);
 				final byte data_dtype = readDataType(source);
 				final int numSamples = readNumSamples(source);
-				final float[] target = new float[numSamples];
+
+				final int numToRead;
+				if (lastDataIndex == -1) {
+					numToRead = numSamples - firstDataIndex;
+				} else {
+					numToRead = lastDataIndex - firstDataIndex + 1;
+				}
+				final int currentPosition = source.position();
+				
+				final float[] target = new float[numToRead];
 				if (data_dtype == DTYPE_BYTE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Byte.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.get());
 					}
 				} else if (data_dtype == DTYPE_SHORT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Short.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getShort());
 					}
 				} else if (data_dtype == DTYPE_INT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Integer.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getInt());
 					}
 				} else if (data_dtype == DTYPE_LONG) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Long.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getLong());
 					}
 				} else if (data_dtype == DTYPE_FLOAT) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Float.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getFloat());
 					}
 				} else if (data_dtype == DTYPE_DOUBLE) {
-					for (int i=0; i<numSamples; ++i) {
+					if (firstDataIndex != 0) {
+						final int bytesToSkip = Double.BYTES * firstDataIndex;
+						source.position(currentPosition + bytesToSkip);
+					}
+					for (int i=0; i<numToRead; ++i) {
 						target[i] = (float) (scalingOffset + scalingFactor * source.getDouble());
 					}
 				} else {
@@ -2711,29 +3602,62 @@ public class BinaryTimeseries {
 			readReservedDummy(source);
 			final byte data_dtype = readDataType(source);
 			final int numSamples = readNumSamples(source);
-			final float[] target = new float[numSamples];
+
+			final int numToRead;
+			if (lastDataIndex == -1) {
+				numToRead = numSamples - firstDataIndex;
+			} else {
+				numToRead = lastDataIndex - firstDataIndex + 1;
+			}
+			final int currentPosition = source.position();
+			
+			final float[] target = new float[numToRead];
 			if (data_dtype == DTYPE_BYTE) {
-				for (int i=0; i<numSamples; ++i) {
+				if (firstDataIndex != 0) {
+					final int bytesToSkip = Byte.BYTES * firstDataIndex;
+					source.position(currentPosition + bytesToSkip);
+				}
+				for (int i=0; i<numToRead; ++i) {
 					target[i] = source.get();
 				}
 			} else if (data_dtype == DTYPE_SHORT) {
-				for (int i=0; i<numSamples; ++i) {
+				if (firstDataIndex != 0) {
+					final int bytesToSkip = Short.BYTES * firstDataIndex;
+					source.position(currentPosition + bytesToSkip);
+				}
+				for (int i=0; i<numToRead; ++i) {
 					target[i] = (float) source.getShort();
 				}
 			} else if (data_dtype == DTYPE_INT) {
-				for (int i=0; i<numSamples; ++i) {
+				if (firstDataIndex != 0) {
+					final int bytesToSkip = Integer.BYTES * firstDataIndex;
+					source.position(currentPosition + bytesToSkip);
+				}
+				for (int i=0; i<numToRead; ++i) {
 					target[i] = (float) source.getInt();
 				}
 			} else if (data_dtype == DTYPE_LONG) {
-				for (int i=0; i<numSamples; ++i) {
+				if (firstDataIndex != 0) {
+					final int bytesToSkip = Long.BYTES * firstDataIndex;
+					source.position(currentPosition + bytesToSkip);
+				}
+				for (int i=0; i<numToRead; ++i) {
 					target[i] = (float) source.getLong();
 				}
 			} else if (data_dtype == DTYPE_FLOAT) {
-				for (int i=0; i<numSamples; ++i) {
+				if (firstDataIndex != 0) {
+					final int bytesToSkip = Float.BYTES * firstDataIndex;
+					source.position(currentPosition + bytesToSkip);
+				}
+				for (int i=0; i<numToRead; ++i) {
 					target[i] = (float) source.getFloat();
 				}
 			} else if (data_dtype == DTYPE_DOUBLE) {
-				for (int i=0; i<numSamples; ++i) {
+				if (firstDataIndex != 0) {
+					final int bytesToSkip = Double.BYTES * firstDataIndex;
+					source.position(currentPosition + bytesToSkip);
+				}
+				for (int i=0; i<numToRead; ++i) {
 					target[i] = (float) source.getDouble();
 				}
 			} else {
