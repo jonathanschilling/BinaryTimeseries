@@ -23,7 +23,8 @@ import org.junit.jupiter.api.Test;
 public class RealWorldTests {
 
 	/**
-	 * Test the writing and reading of a whole timeseries with {@code long} timestamps and {@code short} raw data values.
+	 * Test the writing and reading of a whole timeseries with {@code long}
+	 * timestamps and {@code short} raw data values.
 	 */
 	@Test
 	public void testReadWrite_tL_dS_all() {
@@ -34,32 +35,33 @@ public class RealWorldTests {
 		long f, t0, dt;
 		int filesize;
 
-		tmpFile = Paths.get(System.getProperty("java.io.tmpdir")+File.separator+"tmp.ts");
-		System.out.println("using '"+tmpFile+"' for testing BinaryTimeseries");
+		tmpFile = Paths.get(System.getProperty("java.io.tmpdir") + File.separator + "tmp.ts");
+		System.out.println("using '" + tmpFile + "' for testing BinaryTimeseries");
 
 		// generate test data
-		t0 = -99_000_000L;        // -99 ms
-		f  =   2_000_000L;        //   2 MHz
-		numValues = (int) (10*f); //  10 periods of data in total
+		t0 = -99_000_000L; // -99 ms
+		f = 2_000_000L; // 2 MHz
+		numValues = (int) (10 * f); // 10 periods of data in total
 		values = new short[numValues];
 		dt = 1_000_000_000L / f;
 
-		for (int i=0; i<numValues; ++i) {
-			values[i] = (short) (i%Short.MAX_VALUE);
+		for (int i = 0; i < numValues; ++i) {
+			values[i] = (short) (i % Short.MAX_VALUE);
 		}
 
-		filesize = 64+numValues*2;
-		System.out.println("size of temporary file is " + filesize/(1024*1024)+" MB");
+		filesize = 64 + numValues * 2;
+		System.out.println("size of temporary file is " + filesize / (1024 * 1024) + " MB");
 
 		assertEquals(filesize, BinaryTimeseries.fileOffset(Short.BYTES, numValues));
-		
+
 		// write
 		try (RandomAccessFile memoryFile = new RandomAccessFile(tmpFile.toFile(), "rw")) {
-			MappedByteBuffer mappedByteBuffer = memoryFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, filesize);
-			
+			MappedByteBuffer mappedByteBuffer = memoryFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 0,
+					filesize);
+
 			long start = -System.nanoTime();
-			BinaryTimeseries.write(mappedByteBuffer, t0, dt, values);	
-			System.out.println("writing took " + (int)(Math.round((start+System.nanoTime())/1e3))+" us");
+			BinaryTimeseries.write(mappedByteBuffer, t0, dt, values);
+			System.out.println("writing took " + (int) (Math.round((start + System.nanoTime()) / 1e3)) + " us");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -69,13 +71,13 @@ public class RealWorldTests {
 			MappedByteBuffer mappedByteBuffer = memoryFile.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, filesize);
 
 			long[] _t0_dt = new long[2];
-			
+
 			// test that explanation of header values works
 			byte[] header = new byte[64];
 			mappedByteBuffer.get(header);
 			System.out.println(BinaryTimeseries.explainHeader(header));
 			mappedByteBuffer.position(0);
-			
+
 			long start = -System.nanoTime();
 			assertEquals(0, mappedByteBuffer.position());
 			assertEquals(true, BinaryTimeseries.readEndianessOk(mappedByteBuffer));
@@ -85,7 +87,7 @@ public class RealWorldTests {
 			_t0_dt[1] = BinaryTimeseries.readTimeDt_long(mappedByteBuffer);
 			assertEquals(19, mappedByteBuffer.position());
 			final short[] _values = BinaryTimeseries.readData_short(mappedByteBuffer);
-			System.out.println("reading took " + (int)(Math.round((start+System.nanoTime())/1e3))+" us");
+			System.out.println("reading took " + (int) (Math.round((start + System.nanoTime()) / 1e3)) + " us");
 
 			// check
 			assertEquals(t0, _t0_dt[0]);
@@ -108,7 +110,8 @@ public class RealWorldTests {
 	}
 
 	/**
-	 * Test the writing of a whole and reading of part of a timeseries with {@code long} timestamps and {@code short} raw data values.
+	 * Test the writing of a whole and reading of part of a timeseries with
+	 * {@code long} timestamps and {@code short} raw data values.
 	 */
 	@Test
 	public void testReadWrite_tL_dS_range() {
@@ -119,53 +122,54 @@ public class RealWorldTests {
 		long f, t0, dt;
 		int filesize;
 
-		tmpFile = Paths.get(System.getProperty("java.io.tmpdir")+File.separator+"tmp.ts");
-		System.out.println("using '"+tmpFile+"' for testing BinaryTimeseries");
+		tmpFile = Paths.get(System.getProperty("java.io.tmpdir") + File.separator + "tmp.ts");
+		System.out.println("using '" + tmpFile + "' for testing BinaryTimeseries");
 
 		// generate test data
-		t0 = -99_000_000L;        // -99 ms
-		f  =   2_000_000L;        //   2 MHz
-		numValues = (int) (10*f); //  10 periods of data in total
+		t0 = -99_000_000L; // -99 ms
+		f = 2_000_000L; // 2 MHz
+		numValues = (int) (10 * f); // 10 periods of data in total
 		values = new short[numValues];
 		dt = 1_000_000_000L / f;
 
-		for (int i=0; i<numValues; ++i) {
-			values[i] = (short) (i%Short.MAX_VALUE);
+		for (int i = 0; i < numValues; ++i) {
+			values[i] = (short) (i % Short.MAX_VALUE);
 		}
 
-		filesize = 64+numValues*2;
-		System.out.println("size of temporary file is " + filesize/(1024*1024)+" MB");
+		filesize = 64 + numValues * 2;
+		System.out.println("size of temporary file is " + filesize / (1024 * 1024) + " MB");
 
 		assertEquals(filesize, BinaryTimeseries.fileOffset(Short.BYTES, numValues));
-		
+
 		// write
 		try (RandomAccessFile memoryFile = new RandomAccessFile(tmpFile.toFile(), "rw")) {
-			MappedByteBuffer mappedByteBuffer = memoryFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 0, filesize);
+			MappedByteBuffer mappedByteBuffer = memoryFile.getChannel().map(FileChannel.MapMode.READ_WRITE, 0,
+					filesize);
 
 			long start = -System.nanoTime();
 			BinaryTimeseries.write(mappedByteBuffer, t0, dt, values);
-			System.out.println("writing took " + (int)(Math.round((start+System.nanoTime())/1e3))+" us");
+			System.out.println("writing took " + (int) (Math.round((start + System.nanoTime()) / 1e3)) + " us");
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		// subset of data to read is from 7th to 8th period
-		long from = 7*f;
-		long upto = 8*f;
+		long from = 7 * f;
+		long upto = 8 * f;
 
 		// read
 		try (RandomAccessFile memoryFile = new RandomAccessFile(tmpFile.toFile(), "r")) {
 			MappedByteBuffer mappedByteBuffer = memoryFile.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, filesize);
-			
+
 			// test that explanation of header values works
 			byte[] header = new byte[64];
 			mappedByteBuffer.get(header);
 			System.out.println(BinaryTimeseries.explainHeader(header));
 			mappedByteBuffer.position(0);
-			
+
 			long start = -System.nanoTime();
-			
+
 			// target for reading
 			assertEquals(0, mappedByteBuffer.position());
 			assertEquals(true, BinaryTimeseries.readEndianessOk(mappedByteBuffer));
@@ -178,12 +182,12 @@ public class RealWorldTests {
 			final long _dt = BinaryTimeseries.readTimeDt_long(mappedByteBuffer);
 			assertEquals(19, mappedByteBuffer.position());
 			assertEquals(dt, _dt);
-			
+
 			int fromIdx = BinaryTimeseries.firstIndexInside(_t0, _dt, from);
 			int uptoIdx = BinaryTimeseries.lastIndexInside(_t0, _dt, upto);
-			
-			short[] _values = new short[uptoIdx-fromIdx+1];
-			
+
+			short[] _values = new short[uptoIdx - fromIdx + 1];
+
 			assertEquals(BinaryTimeseries.DTYPE_NONE, BinaryTimeseries.readScalingType(mappedByteBuffer));
 			assertEquals(20, mappedByteBuffer.position());
 			BinaryTimeseries.readScalingDisabled(mappedByteBuffer);
@@ -195,17 +199,17 @@ public class RealWorldTests {
 			assertEquals(numValues, BinaryTimeseries.readNumSamples(mappedByteBuffer));
 			assertEquals(64, mappedByteBuffer.position());
 			mappedByteBuffer.position(BinaryTimeseries.fileOffset(Short.BYTES, fromIdx));
-			BinaryTimeseries.readRawData(mappedByteBuffer, _values, 0, uptoIdx-fromIdx+1);
-			System.out.println("reading of subset took " + (int)(Math.round((start+System.nanoTime())/1e3))+" us");
+			BinaryTimeseries.readRawData(mappedByteBuffer, _values, 0, uptoIdx - fromIdx + 1);
+			System.out
+			.println("reading of subset took " + (int) (Math.round((start + System.nanoTime()) / 1e3)) + " us");
 
 			// check
-			short[] testSubsetValues = new short[uptoIdx-fromIdx+1];
-			System.arraycopy(values, fromIdx, testSubsetValues, 0, uptoIdx-fromIdx+1);
+			short[] testSubsetValues = new short[uptoIdx - fromIdx + 1];
+			System.arraycopy(values, fromIdx, testSubsetValues, 0, uptoIdx - fromIdx + 1);
 			assertArrayEquals(testSubsetValues, _values);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 
 		// clean up in the end
 		if (Files.exists(tmpFile)) {
