@@ -501,95 +501,90 @@ public class ApiTests {
 
 					// now that the writing routines are verified, check the reading routines
 
-					writeTestCode += "		// reading\n"
-							+ "		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_" + testId + ");\n"
-							+ "		assertEquals(0, source.position());\n"
-							+ "		assertEquals(true, BinaryTimeseries.readEndianessOk(source));\n"
-							+ "		assertEquals(2, source.position());\n" + "		assertEquals(" + time_dtype
-							+ ", BinaryTimeseries.readTimeType(source));\n"
-							+ "		assertEquals(3, source.position());\n" + "		assertEquals(t0_" + tT
-							+ ", BinaryTimeseries.readTimeT0_" + jtT + "(source));\n"
-							+ "		assertEquals(11, source.position());\n" + "		assertEquals(dt_" + tT
-							+ ", BinaryTimeseries.readTimeDt_" + jtT + "(source));\n"
-							+ "		assertEquals(19, source.position());\n" + "		assertEquals(" + scaling_dtype
-							+ ", BinaryTimeseries.readScalingType(source));\n"
-							+ "		assertEquals(20, source.position());\n";
+					writeTestCode += "		// reading\n" +
+							"		final ByteBuffer source = ByteBuffer.wrap(referenceBTS_"+testId+");\n" +
+							"		assertEquals(0, source.position());\n" +
+							"		assertEquals(true, BinaryTimeseries.readEndianessOk(source));\n" +
+							"		assertEquals(2, source.position());\n" +
+							"		assertEquals("+time_dtype+", BinaryTimeseries.readTimeType(source));\n" +
+							"		assertEquals(3, source.position());\n" +
+							"		assertEquals(t0_"+tT+", BinaryTimeseries.readTimeT0_"+jtT+"(source));\n" +
+							"		assertEquals(11, source.position());\n" +
+							"		assertEquals(dt_"+tT+", BinaryTimeseries.readTimeDt_"+jtT+"(source));\n" +
+							"		assertEquals(19, source.position());\n" +
+							"		assertEquals("+scaling_dtype+", BinaryTimeseries.readScalingType(source));\n" +
+							"		assertEquals(20, source.position());\n";
 					if (scaling_dtype == BinaryTimeseries.DTYPE_NONE) {
 						writeTestCode += "		BinaryTimeseries.readScalingDisabled(source);\n";
 					} else {
-						writeTestCode += "		assertEquals(scalingOffset_" + tS
-								+ ", BinaryTimeseries.readScalingOffset_" + jtS + "(source));\n"
-								+ "		assertEquals(28, source.position());\n" + "		assertEquals(scalingFactor_"
-								+ tS + ", BinaryTimeseries.readScalingFactor_" + jtS + "(source));\n"
-								+ "		assertEquals(36, source.position());\n";
+						writeTestCode += "		assertEquals(scalingOffset_"+tS+", BinaryTimeseries.readScalingOffset_"+jtS+"(source));\n" +
+								"		assertEquals(28, source.position());\n" +
+								"		assertEquals(scalingFactor_"+tS+", BinaryTimeseries.readScalingFactor_"+jtS+"(source));\n" +
+								"		assertEquals(36, source.position());\n";
 					}
-					writeTestCode += "		assertEquals(36, source.position());\n"
-							+ "		BinaryTimeseries.readReservedDummy(source);\n"
-							+ "		assertEquals(59, source.position());\n" + "		assertEquals(" + data_dtype
-							+ ", BinaryTimeseries.readDataType(source));\n"
-							+ "		assertEquals(60, source.position());\n"
-							+ "		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));\n"
-							+ "		assertEquals(64, source.position());\n" + "		final " + jtD + "[] rawData = new "
-							+ jtD + "[numSamples];\n"
-							+ "		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);\n"
-							+ "		assertEquals(fileSize, source.position());\n"
-							+ "		assertArrayEquals(values, rawData);\n";
+					writeTestCode += "		assertEquals(36, source.position());\n" +
+							"		BinaryTimeseries.readReservedDummy(source);\n" +
+							"		assertEquals(59, source.position());\n" +
+							"		assertEquals("+data_dtype+", BinaryTimeseries.readDataType(source));\n" +
+							"		assertEquals(60, source.position());\n" +
+							"		assertEquals(numSamples, BinaryTimeseries.readNumSamples(source));\n" +
+							"		assertEquals(64, source.position());\n" +
+							"		final "+jtD+"[] rawData = new "+jtD+"[numSamples];\n" +
+							"		BinaryTimeseries.readRawData(source, rawData, 0, numSamples);\n" +
+							"		assertEquals(fileSize, source.position());\n" +
+							"		assertArrayEquals(values, rawData);\n";
 
 					// test reading of data into a given array type --> readData_byte...
-					writeTestCode += "		// read and scale into given primitive array\n"
-							+ "		final   byte[] referenceData_byte   = new   byte[numSamples];\n"
-							+ "		final  short[] referenceData_short  = new  short[numSamples];\n"
-							+ "		final    int[] referenceData_int    = new    int[numSamples];\n"
-							+ "		final   long[] referenceData_long   = new   long[numSamples];\n"
-							+ "		final  float[] referenceData_float  = new  float[numSamples];\n"
-							+ "		final double[] referenceData_double = new double[numSamples];\n"
-							+ "		for (int i=0; i<numSamples; ++i) {\n";
+					writeTestCode += "		// read and scale into given primitive array\n" +
+							"		final   byte[] referenceData_byte   = new   byte[numSamples];\n" +
+							"		final  short[] referenceData_short  = new  short[numSamples];\n" +
+							"		final    int[] referenceData_int    = new    int[numSamples];\n" +
+							"		final   long[] referenceData_long   = new   long[numSamples];\n" +
+							"		final  float[] referenceData_float  = new  float[numSamples];\n" +
+							"		final double[] referenceData_double = new double[numSamples];\n" +
+							"		for (int i=0; i<numSamples; ++i) {\n";
+
 					if (scaling_dtype == BinaryTimeseries.DTYPE_NONE) {
-						writeTestCode += "			referenceData_byte  [i] = (byte  )i;\n"
-								+ "			referenceData_short [i] = (short )i;\n"
-								+ "			referenceData_int   [i] = (int   )i;\n"
-								+ "			referenceData_long  [i] = (long  )i;\n"
-								+ "			referenceData_float [i] = (float )i;\n"
-								+ "			referenceData_double[i] = (double)i;\n";
+						writeTestCode += 
+								"			referenceData_byte  [i] = (byte  )i;\n" +
+								"			referenceData_short [i] = (short )i;\n" +
+								"			referenceData_int   [i] = (int   )i;\n" +
+								"			referenceData_long  [i] = (long  )i;\n" +
+								"			referenceData_float [i] = (float )i;\n" +
+								"			referenceData_double[i] = (double)i;\n";
 					} else {
-						writeTestCode += "			final " + jtD + " referenceValue = (" + jtD + ") (scalingOffset_"
-								+ tS + " + i*scalingFactor_" + tS + ");\n"
-								+ "			referenceData_byte  [i] = (byte  )(scalingOffset_" + tS
-								+ " + referenceValue*scalingFactor_" + tS + ");\n"
-								+ "			referenceData_short [i] = (short )(scalingOffset_" + tS
-								+ " + referenceValue*scalingFactor_" + tS + ");\n"
-								+ "			referenceData_int   [i] = (int   )(scalingOffset_" + tS
-								+ " + referenceValue*scalingFactor_" + tS + ");\n"
-								+ "			referenceData_long  [i] = (long  )(scalingOffset_" + tS
-								+ " + referenceValue*scalingFactor_" + tS + ");\n"
-								+ "			referenceData_float [i] = (float )(scalingOffset_" + tS
-								+ " + referenceValue*scalingFactor_" + tS + ");\n"
-								+ "			referenceData_double[i] = (double)(scalingOffset_" + tS
-								+ " + referenceValue*scalingFactor_" + tS + ");\n";
+						writeTestCode += "			final "+jtD+" referenceValue = ("+jtD+") (scalingOffset_"+tS+" + i*scalingFactor_"+tS+");\n" +
+								"			referenceData_byte  [i] = (byte  )(scalingOffset_"+tS+" + referenceValue*scalingFactor_"+tS+");\n" +
+								"			referenceData_short [i] = (short )(scalingOffset_"+tS+" + referenceValue*scalingFactor_"+tS+");\n" +
+								"			referenceData_int   [i] = (int   )(scalingOffset_"+tS+" + referenceValue*scalingFactor_"+tS+");\n" +
+								"			referenceData_long  [i] = (long  )(scalingOffset_"+tS+" + referenceValue*scalingFactor_"+tS+");\n" +
+								"			referenceData_float [i] = (float )(scalingOffset_"+tS+" + referenceValue*scalingFactor_"+tS+");\n" +
+								"			referenceData_double[i] = (double)(scalingOffset_"+tS+" + referenceValue*scalingFactor_"+tS+");\n";
 					}
-					writeTestCode += "		}\n" + "		source.position(19);\n"
-							+ "		final byte[] data_byte = BinaryTimeseries.readData_byte(source);\n"
-							+ "		assertEquals(fileSize, source.position());\n"
-							+ "		assertArrayEquals(referenceData_byte, data_byte);\n"
-							+ "		source.position(19);\n"
-							+ "		final short[] data_short = BinaryTimeseries.readData_short(source);\n"
-							+ "		assertEquals(fileSize, source.position());\n"
-							+ "		assertArrayEquals(referenceData_short, data_short);\n"
-							+ "		source.position(19);\n"
-							+ "		final int[] data_int = BinaryTimeseries.readData_int(source);\n"
-							+ "		assertEquals(fileSize, source.position());\n"
-							+ "		assertArrayEquals(referenceData_int, data_int);\n" + "		source.position(19);\n"
-							+ "		final long[] data_long = BinaryTimeseries.readData_long(source);\n"
-							+ "		assertEquals(fileSize, source.position());\n"
-							+ "		assertArrayEquals(referenceData_long, data_long);\n"
-							+ "		source.position(19);\n"
-							+ "		final float[] data_float = BinaryTimeseries.readData_float(source);\n"
-							+ "		assertEquals(fileSize, source.position());\n"
-							+ "		assertArrayEquals(referenceData_float, data_float);\n"
-							+ "		source.position(19);\n"
-							+ "		final double[] data_double = BinaryTimeseries.readData_double(source);\n"
-							+ "		assertEquals(fileSize, source.position());\n"
-							+ "		assertArrayEquals(referenceData_double, data_double);\n";
+					writeTestCode += "		}\n" +
+							"		source.position(19);\n" +
+							"		final byte[] data_byte = BinaryTimeseries.readData_byte(source);\n" +
+							"		assertEquals(fileSize, source.position());\n" +
+							"		assertArrayEquals(referenceData_byte, data_byte);\n" +
+							"		source.position(19);\n" +
+							"		final short[] data_short = BinaryTimeseries.readData_short(source);\n" +
+							"		assertEquals(fileSize, source.position());\n" +
+							"		assertArrayEquals(referenceData_short, data_short);\n" +
+							"		source.position(19);\n" +
+							"		final int[] data_int = BinaryTimeseries.readData_int(source);\n" +
+							"		assertEquals(fileSize, source.position());\n" +
+							"		assertArrayEquals(referenceData_int, data_int);\n" + "		source.position(19);\n" +
+							"		final long[] data_long = BinaryTimeseries.readData_long(source);\n" +
+							"		assertEquals(fileSize, source.position());\n" +
+							"		assertArrayEquals(referenceData_long, data_long);\n" +
+							"		source.position(19);\n" +
+							"		final float[] data_float = BinaryTimeseries.readData_float(source);\n" +
+							"		assertEquals(fileSize, source.position());\n" +
+							"		assertArrayEquals(referenceData_float, data_float);\n" +
+							"		source.position(19);\n" +
+							"		final double[] data_double = BinaryTimeseries.readData_double(source);\n" +
+							"		assertEquals(fileSize, source.position());\n" +
+							"		assertArrayEquals(referenceData_double, data_double);\n";
 
 					writeTestCode += "	}\n";
 					System.out.println(writeTestCode);
@@ -640,9 +635,6 @@ public class ApiTests {
 		header = new byte[64];
 		explanation = BinaryTimeseries.explainHeader(header);
 		assertEquals("  0   2 reads 0x00 => invalid endianess check value: 0", explanation);
-
-		// final ByteBuffer buf = ByteBuffer.wrap(header);
-
 	}
 
 	/**
@@ -651,18 +643,38 @@ public class ApiTests {
 	@Test
 	public void testBuildBinaryTimeseries() {
 
-		final byte[] time_dtypes = new byte[] { BinaryTimeseries.DTYPE_LONG, BinaryTimeseries.DTYPE_DOUBLE };
+		final byte[] time_dtypes = new byte[] {
+				BinaryTimeseries.DTYPE_LONG,
+				BinaryTimeseries.DTYPE_DOUBLE
+		};
 
-		final byte[] scaling_dtypes = new byte[] { BinaryTimeseries.DTYPE_NONE, BinaryTimeseries.DTYPE_BYTE,
-				BinaryTimeseries.DTYPE_SHORT, BinaryTimeseries.DTYPE_INT, BinaryTimeseries.DTYPE_LONG,
-				BinaryTimeseries.DTYPE_FLOAT, BinaryTimeseries.DTYPE_DOUBLE };
+		final byte[] scaling_dtypes = new byte[] {
+				BinaryTimeseries.DTYPE_NONE,
+				BinaryTimeseries.DTYPE_BYTE,
+				BinaryTimeseries.DTYPE_SHORT,
+				BinaryTimeseries.DTYPE_INT,
+				BinaryTimeseries.DTYPE_LONG,
+				BinaryTimeseries.DTYPE_FLOAT,
+				BinaryTimeseries.DTYPE_DOUBLE
+		};
 
-		final byte[] data_dtypes = new byte[] { BinaryTimeseries.DTYPE_BYTE, BinaryTimeseries.DTYPE_SHORT,
-				BinaryTimeseries.DTYPE_INT, BinaryTimeseries.DTYPE_LONG, BinaryTimeseries.DTYPE_FLOAT,
-				BinaryTimeseries.DTYPE_DOUBLE };
+		final byte[] data_dtypes = new byte[] {
+				BinaryTimeseries.DTYPE_BYTE,
+				BinaryTimeseries.DTYPE_SHORT,
+				BinaryTimeseries.DTYPE_INT,
+				BinaryTimeseries.DTYPE_LONG,
+				BinaryTimeseries.DTYPE_FLOAT,
+				BinaryTimeseries.DTYPE_DOUBLE
+		};
 
-		final int[] data_sizes = new int[] { Byte.BYTES, Short.BYTES, Integer.BYTES, Long.BYTES, Float.BYTES,
-				Double.BYTES };
+		final int[] data_sizes = new int[] {
+				Byte.BYTES,
+				Short.BYTES,
+				Integer.BYTES,
+				Long.BYTES,
+				Float.BYTES,
+				Double.BYTES
+		};
 
 		for (int time_dtype_idx = 0; time_dtype_idx < time_dtypes.length; ++time_dtype_idx) {
 			final byte time_dtype = time_dtypes[time_dtype_idx];
@@ -697,17 +709,17 @@ public class ApiTests {
 					final double scalingFactor_D = (double) 24.3;
 
 					// time series:
-					// idx | time | value
-					// 0 | 13.0 | 1.2
-					// 1 | 50.0 | 25.5
-					// 2 | 87.0 | 49.8
-					// 3 | 124.0 | 74.1
-					// 4 | 161.0 | 98.4
-					// 5 | 198.0 | 122.7
-					// 6 | 235.0 | 147.0
-					// 7 | 272.0 | 171.3
-					// 8 | 309.0 | 195.6
-					// 9 | 346.0 | 219.9
+					// idx |  time | value
+					//   0 |  13.0 |   1.2
+					//   1 |  50.0 |  25.5
+					//   2 |  87.0 |  49.8
+					//   3 | 124.0 |  74.1
+					//   4 | 161.0 |  98.4
+					//   5 | 198.0 | 122.7
+					//   6 | 235.0 | 147.0
+					//   7 | 272.0 | 171.3
+					//   8 | 309.0 | 195.6
+					//   9 | 346.0 | 219.9
 
 					// compute file size from reserved number of header bytes, sample size and
 					// number of samples
