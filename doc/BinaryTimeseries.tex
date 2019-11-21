@@ -42,16 +42,16 @@ The data values $y_i$ are stored as raw values $\hat{y}_i$, optionally with an o
 \end{gather}
 The number of samples is limited by the maximum value of the (signed 32-bit) \texttt{int} type, which is
 \begin{equation}
-  2^{31} = 2\,147\,483\,648 \approx 2.1 \cdot 10^9 \quad .
+  2^{31} - 1 = 2\,147\,483\,647 \approx 2.1 \cdot 10^9 \quad .
 \end{equation}
-In case of raw \texttt{double} values, the corresponding maximum file size is $(64 + 8 \cdot 2\,147\,483\,648)\,\mathrm{bytes} \approx 16\,\mathrm{GB}$,
+In case of raw \texttt{double} values, the corresponding maximum file size is $(64 + 8 \cdot 2\,147\,483\,647)\,\mathrm{bytes} \approx 16\,\mathrm{GB}$,
 where 64~bytes are reserved for the file header information.
 
 Suppose an ADC samples at a given frequency $f$. Then, the sampling interval $\Delta t = f^{-1}$.
-Using this time series file format, a maximum of $2^{31}$ samples can be stored, which then corresponds to a
+Using this time series file format, a maximum of $2^{31}-1$ samples can be stored, which then corresponds to a
 total duration $T_\mathrm{max}$ of
 \begin{equation}
-  T_\mathrm{max} = 2^{31} \cdot \Delta t \quad .
+  T_\mathrm{max} = (2^{31}-1) \cdot \Delta t \quad .
 \end{equation}
 For a $f = 1\,\mathrm{Mhz}$ sampling rate, $\Delta t = 1\,\mu\mathrm{s}$ and $T_\mathrm{max} \approx 2147\,\mathrm{s}$.
 
