@@ -65,7 +65,7 @@ The latest release is available on Maven Central:
 <dependency>
 	<groupId>de.labathome</groupId>
 	<artifactId>BinaryTimeseries</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 </dependency>
 ```
 

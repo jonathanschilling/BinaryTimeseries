@@ -133,7 +133,7 @@ The contents of the files are structured as shown in Tab.~\ref{tab:structure}.
 
 The first field at offset 0 in the file is a \texttt{short}, which is always 1.
 It should be read using a \texttt{readShort()} or similar function, which implicitly assumes the system's endianess.
-Then it should be checked if the returned value is $1$ or $-128$.
+Then it should be checked if the returned value is $1$ or $256$.
 In the latter case, the endianess of the reading method is wrong and needs to be flipped in order to proceed.
 
 The next field at offset 2 defines the data type of the time axis definition values $t_0$ and $\Delta t$.
@@ -221,7 +221,7 @@ The Java version is also available on Maven~Central:
 <dependency>
   <groupId>de.labathome</groupId>
   <artifactId>BinaryTimeseries</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 </dependency>
 \end{verbatim}
 The Python version is planned to be released on \texttt{PyPI}.\\

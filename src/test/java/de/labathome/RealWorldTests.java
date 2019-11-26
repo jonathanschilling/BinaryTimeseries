@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
  * 
  * @author Jonathan Schilling (jonathan.schilling@mail.de)
  * @version 1.0.0 first published version
+ * @version 1.0.1 fixed wrong endianess value
  */
 public class RealWorldTests {
 
@@ -35,7 +36,7 @@ public class RealWorldTests {
 		long f, t0, dt;
 		int filesize;
 
-		tmpFile = Paths.get(System.getProperty("java.io.tmpdir") + File.separator + "tmp.ts");
+		tmpFile = Paths.get(System.getProperty("java.io.tmpdir") + File.separator + "tmp.bts");
 		System.out.println("using '" + tmpFile + "' for testing BinaryTimeseries");
 
 		// generate test data
@@ -68,7 +69,7 @@ public class RealWorldTests {
 
 		// read
 		try (RandomAccessFile memoryFile = new RandomAccessFile(tmpFile.toFile(), "r")) {
-			MappedByteBuffer mappedByteBuffer = memoryFile.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, filesize);
+			MappedByteBuffer mappedByteBuffer = memoryFile.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, memoryFile.length());
 
 			long[] _t0_dt = new long[2];
 
@@ -122,7 +123,7 @@ public class RealWorldTests {
 		long f, t0, dt;
 		int filesize;
 
-		tmpFile = Paths.get(System.getProperty("java.io.tmpdir") + File.separator + "tmp.ts");
+		tmpFile = Paths.get(System.getProperty("java.io.tmpdir") + File.separator + "tmp.bts");
 		System.out.println("using '" + tmpFile + "' for testing BinaryTimeseries");
 
 		// generate test data
@@ -160,7 +161,7 @@ public class RealWorldTests {
 
 		// read
 		try (RandomAccessFile memoryFile = new RandomAccessFile(tmpFile.toFile(), "r")) {
-			MappedByteBuffer mappedByteBuffer = memoryFile.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, filesize);
+			MappedByteBuffer mappedByteBuffer = memoryFile.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, memoryFile.length());
 
 			// test that explanation of header values works
 			byte[] header = new byte[64];
