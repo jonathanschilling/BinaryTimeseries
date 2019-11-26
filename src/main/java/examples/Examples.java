@@ -168,7 +168,7 @@ public class Examples {
 	/**
 	 * In this example, a synthetic sine signal is computed and saved to a BinaryTimeseries file, java.io.tmpdir/example2.bts .
 	 * The signal is read back and compared against the original time series.
-	 * This example uses the scaling feature, where the raw signal values are discretized as if an ideal SAR ADC
+	 * This example uses the scaling feature, where the raw signal values are discretized as if an ideal ADC
 	 * (16 Bit, -1...1 V input range, 1kHz sampling frequency) would measure them and stored as {@code short} values with the correct scale and offset values.
 	 */
 	public static void Example2() {
