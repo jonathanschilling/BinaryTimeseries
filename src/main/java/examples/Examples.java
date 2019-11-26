@@ -24,7 +24,7 @@ import de.labathome.BinaryTimeseries;
 public class Examples {
 
 	public static void main(String[] args) {
-		//Example1();
+		Example1();
 		Example2();
 	}
 
@@ -169,7 +169,7 @@ public class Examples {
 	 * In this example, a synthetic sine signal is computed and saved to a BinaryTimeseries file, java.io.tmpdir/example2.bts .
 	 * The signal is read back and compared against the original time series.
 	 * This example uses the scaling feature, where the raw signal values are discretized as if an ideal SAR ADC
-	 * (16 Bit, 0...1 V input range, 1kHz sampling frequency) would measure them and stored as {@code short} values with the correct scale and offset values.
+	 * (16 Bit, -1...1 V input range, 1kHz sampling frequency) would measure them and stored as {@code short} values with the correct scale and offset values.
 	 */
 	public static void Example2() {
 		
@@ -201,7 +201,7 @@ public class Examples {
 			double t = t0 + i*dt;
 			double U = U_Signal * Math.sin(2.0*Math.PI*f_Signal*t + phi_Signal);
 
-			// simulate ADC (e.g. AD7980)
+			// simulate ADC
 			short adcValue = (short) (32768 + Math.round((U-minInput)/U_LSB));
 			
 			signal[i] = adcValue;
@@ -229,7 +229,6 @@ public class Examples {
 			
 			// This is where the actual writing happens
 			BinaryTimeseries.write(mappedByteBuffer, t0, dt, signal, 0.0, U_LSB);
-			
 			
 			System.out.println("writing took " + (int) (Math.round((wrintingStart + System.nanoTime()) / 1e3)) + " us");
 		} catch (Exception e) {
@@ -318,9 +317,7 @@ public class Examples {
 				throw new RuntimeException("readback signal mismatch at t="+t+" signal(t)="+(signal[i]*U_LSB)+" signal_readback(t)="+signal_readback[i]);
 			}
 		}
-		
-		
 	}
 	
-
+	
 }
