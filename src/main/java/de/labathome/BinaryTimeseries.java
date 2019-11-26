@@ -558,7 +558,7 @@ public class BinaryTimeseries {
 	/**
 	 * Write a 1 as {@code short} to the {@code target} file. This is used to check
 	 * if correct endianess is used in reading; wrong endianess would lead to
-	 * reading this as -128.
+	 * reading this as 256.
 	 * 
 	 * @param target buffer into which to write the time series data
 	 */
@@ -926,7 +926,7 @@ public class BinaryTimeseries {
 		} else if (firstShort == 256) {
 			return false;
 		} else {
-			throw new RuntimeException("first short read from source was neither 1 nor -128 but " + firstShort);
+			throw new RuntimeException("first short read from source was neither 1 nor 256 but " + firstShort);
 		}
 	}
 
