@@ -12,6 +12,7 @@ import java.nio.ByteBuffer;
  * 
  * @author Jonathan Schilling (jonathan.schilling@mail.de)
  * @version 1.0.0 first published version
+ * @version 1.0.1 fixed wrong endianess value
  */
 public class BinaryTimeseries {
 
@@ -261,7 +262,7 @@ public class BinaryTimeseries {
 				source.position() - previousPosition, firstShort);
 		if (firstShort == 1) {
 			headerExplanation += " => correct endianess\n";
-		} else if (firstShort == -128) {
+		} else if (firstShort == 256) {
 			headerExplanation += " => incorrect endianess";
 			return headerExplanation;
 		} else {
@@ -557,7 +558,7 @@ public class BinaryTimeseries {
 	/**
 	 * Write a 1 as {@code short} to the {@code target} file. This is used to check
 	 * if correct endianess is used in reading; wrong endianess would lead to
-	 * reading this as -128.
+	 * reading this as 256.
 	 * 
 	 * @param target buffer into which to write the time series data
 	 */
@@ -914,18 +915,18 @@ public class BinaryTimeseries {
 	 * if it was correctly read as 1.
 	 * 
 	 * @param source buffer from which to read
-	 * @return true if the read value was 1, false if if was -128 (indicating wrong
+	 * @return true if the read value was 1, false if if was 256 (indicating wrong
 	 *         endianess of {@code source}
-	 * @throws RuntimeException in any case something else than 1 or -128 was read
+	 * @throws RuntimeException in any case something else than 1 or 256 was read
 	 */
 	public static final boolean readEndianessOk(final ByteBuffer source) {
 		final short firstShort = source.getShort();
 		if (firstShort == 1) {
 			return true;
-		} else if (firstShort == -128) {
+		} else if (firstShort == 256) {
 			return false;
 		} else {
-			throw new RuntimeException("first short read from source was neither 1 nor -128 but " + firstShort);
+			throw new RuntimeException("first short read from source was neither 1 nor 256 but " + firstShort);
 		}
 	}
 
