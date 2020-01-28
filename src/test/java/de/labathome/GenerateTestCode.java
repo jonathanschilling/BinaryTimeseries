@@ -372,7 +372,7 @@ public class GenerateTestCode {
 							final String testId = tT + "_" + tS + "_" + tD;
 
 							System.out.println(testId);
-							pw.println("    def test_" + testId+"(self):");
+							pw.println("    def test_read_" + testId+"(self):");
 
 							pw.println("        raw_data = np.zeros([10], dtype="+ptD+")");
 							pw.println(		"        for i in range(10):\n" + 
@@ -649,7 +649,7 @@ public class GenerateTestCode {
 				}
 
 				pw.println("if __name__ == '__main__':\n" + 
-						"    unittest.main()\n");
+						"    unittest.main()");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

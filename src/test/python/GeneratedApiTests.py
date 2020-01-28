@@ -11,7 +11,7 @@ o = 1.2
 s = 24.3
 class GeneratedApiTests(unittest.TestCase):
 
-    def test_L_N_B(self):
+    def test_read_L_N_B(self):
         raw_data = np.zeros([10], dtype=np.int8)
         for i in range(10):
             raw_data[i] = np.int8(o+i*s)
@@ -24,7 +24,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_dtype_data(), 1)
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
-    def test_L_N_S(self):
+    def test_read_L_N_S(self):
         raw_data = np.zeros([10], dtype=np.int16)
         for i in range(10):
             raw_data[i] = np.int16(o+i*s)
@@ -37,7 +37,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_dtype_data(), 2)
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
-    def test_L_N_I(self):
+    def test_read_L_N_I(self):
         raw_data = np.zeros([10], dtype=np.int32)
         for i in range(10):
             raw_data[i] = np.int32(o+i*s)
@@ -50,7 +50,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_dtype_data(), 3)
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
-    def test_L_N_L(self):
+    def test_read_L_N_L(self):
         raw_data = np.zeros([10], dtype=np.int64)
         for i in range(10):
             raw_data[i] = np.int64(o+i*s)
@@ -63,7 +63,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_dtype_data(), 4)
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
-    def test_L_N_F(self):
+    def test_read_L_N_F(self):
         raw_data = np.zeros([10], dtype=np.float32)
         for i in range(10):
             raw_data[i] = np.float32(o+i*s)
@@ -76,7 +76,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_dtype_data(), 5)
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
-    def test_L_N_D(self):
+    def test_read_L_N_D(self):
         raw_data = np.zeros([10], dtype=np.float64)
         for i in range(10):
             raw_data[i] = np.float64(o+i*s)
@@ -89,7 +89,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_dtype_data(), 6)
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
-    def test_L_B_B(self):
+    def test_read_L_B_B(self):
         raw_data = np.zeros([10], dtype=np.int8)
         for i in range(10):
             raw_data[i] = np.int8(o+i*s)
@@ -106,7 +106,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_B_S(self):
+    def test_read_L_B_S(self):
         raw_data = np.zeros([10], dtype=np.int16)
         for i in range(10):
             raw_data[i] = np.int16(o+i*s)
@@ -123,7 +123,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_B_I(self):
+    def test_read_L_B_I(self):
         raw_data = np.zeros([10], dtype=np.int32)
         for i in range(10):
             raw_data[i] = np.int32(o+i*s)
@@ -140,7 +140,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_B_L(self):
+    def test_read_L_B_L(self):
         raw_data = np.zeros([10], dtype=np.int64)
         for i in range(10):
             raw_data[i] = np.int64(o+i*s)
@@ -157,7 +157,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_B_F(self):
+    def test_read_L_B_F(self):
         raw_data = np.zeros([10], dtype=np.float32)
         for i in range(10):
             raw_data[i] = np.float32(o+i*s)
@@ -174,7 +174,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_B_D(self):
+    def test_read_L_B_D(self):
         raw_data = np.zeros([10], dtype=np.float64)
         for i in range(10):
             raw_data[i] = np.float64(o+i*s)
@@ -191,7 +191,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_S_B(self):
+    def test_read_L_S_B(self):
         raw_data = np.zeros([10], dtype=np.int8)
         for i in range(10):
             raw_data[i] = np.int8(o+i*s)
@@ -208,7 +208,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_S_S(self):
+    def test_read_L_S_S(self):
         raw_data = np.zeros([10], dtype=np.int16)
         for i in range(10):
             raw_data[i] = np.int16(o+i*s)
@@ -225,7 +225,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_S_I(self):
+    def test_read_L_S_I(self):
         raw_data = np.zeros([10], dtype=np.int32)
         for i in range(10):
             raw_data[i] = np.int32(o+i*s)
@@ -242,7 +242,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_S_L(self):
+    def test_read_L_S_L(self):
         raw_data = np.zeros([10], dtype=np.int64)
         for i in range(10):
             raw_data[i] = np.int64(o+i*s)
@@ -259,7 +259,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_S_F(self):
+    def test_read_L_S_F(self):
         raw_data = np.zeros([10], dtype=np.float32)
         for i in range(10):
             raw_data[i] = np.float32(o+i*s)
@@ -276,7 +276,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_S_D(self):
+    def test_read_L_S_D(self):
         raw_data = np.zeros([10], dtype=np.float64)
         for i in range(10):
             raw_data[i] = np.float64(o+i*s)
@@ -293,7 +293,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_I_B(self):
+    def test_read_L_I_B(self):
         raw_data = np.zeros([10], dtype=np.int8)
         for i in range(10):
             raw_data[i] = np.int8(o+i*s)
@@ -310,7 +310,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_I_S(self):
+    def test_read_L_I_S(self):
         raw_data = np.zeros([10], dtype=np.int16)
         for i in range(10):
             raw_data[i] = np.int16(o+i*s)
@@ -327,7 +327,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_I_I(self):
+    def test_read_L_I_I(self):
         raw_data = np.zeros([10], dtype=np.int32)
         for i in range(10):
             raw_data[i] = np.int32(o+i*s)
@@ -344,7 +344,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_I_L(self):
+    def test_read_L_I_L(self):
         raw_data = np.zeros([10], dtype=np.int64)
         for i in range(10):
             raw_data[i] = np.int64(o+i*s)
@@ -361,7 +361,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_I_F(self):
+    def test_read_L_I_F(self):
         raw_data = np.zeros([10], dtype=np.float32)
         for i in range(10):
             raw_data[i] = np.float32(o+i*s)
@@ -378,7 +378,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_I_D(self):
+    def test_read_L_I_D(self):
         raw_data = np.zeros([10], dtype=np.float64)
         for i in range(10):
             raw_data[i] = np.float64(o+i*s)
@@ -395,7 +395,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_L_B(self):
+    def test_read_L_L_B(self):
         raw_data = np.zeros([10], dtype=np.int8)
         for i in range(10):
             raw_data[i] = np.int8(o+i*s)
@@ -412,7 +412,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_L_S(self):
+    def test_read_L_L_S(self):
         raw_data = np.zeros([10], dtype=np.int16)
         for i in range(10):
             raw_data[i] = np.int16(o+i*s)
@@ -429,7 +429,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_L_I(self):
+    def test_read_L_L_I(self):
         raw_data = np.zeros([10], dtype=np.int32)
         for i in range(10):
             raw_data[i] = np.int32(o+i*s)
@@ -446,7 +446,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_L_L(self):
+    def test_read_L_L_L(self):
         raw_data = np.zeros([10], dtype=np.int64)
         for i in range(10):
             raw_data[i] = np.int64(o+i*s)
@@ -463,7 +463,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_L_F(self):
+    def test_read_L_L_F(self):
         raw_data = np.zeros([10], dtype=np.float32)
         for i in range(10):
             raw_data[i] = np.float32(o+i*s)
@@ -480,7 +480,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_L_D(self):
+    def test_read_L_L_D(self):
         raw_data = np.zeros([10], dtype=np.float64)
         for i in range(10):
             raw_data[i] = np.float64(o+i*s)
@@ -497,7 +497,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_F_B(self):
+    def test_read_L_F_B(self):
         raw_data = np.zeros([10], dtype=np.int8)
         for i in range(10):
             raw_data[i] = np.int8(o+i*s)
@@ -514,7 +514,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_F_S(self):
+    def test_read_L_F_S(self):
         raw_data = np.zeros([10], dtype=np.int16)
         for i in range(10):
             raw_data[i] = np.int16(o+i*s)
@@ -531,7 +531,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_F_I(self):
+    def test_read_L_F_I(self):
         raw_data = np.zeros([10], dtype=np.int32)
         for i in range(10):
             raw_data[i] = np.int32(o+i*s)
@@ -548,7 +548,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_F_L(self):
+    def test_read_L_F_L(self):
         raw_data = np.zeros([10], dtype=np.int64)
         for i in range(10):
             raw_data[i] = np.int64(o+i*s)
@@ -565,7 +565,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_F_F(self):
+    def test_read_L_F_F(self):
         raw_data = np.zeros([10], dtype=np.float32)
         for i in range(10):
             raw_data[i] = np.float32(o+i*s)
@@ -582,7 +582,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_F_D(self):
+    def test_read_L_F_D(self):
         raw_data = np.zeros([10], dtype=np.float64)
         for i in range(10):
             raw_data[i] = np.float64(o+i*s)
@@ -599,7 +599,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_D_B(self):
+    def test_read_L_D_B(self):
         raw_data = np.zeros([10], dtype=np.int8)
         for i in range(10):
             raw_data[i] = np.int8(o+i*s)
@@ -616,7 +616,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_D_S(self):
+    def test_read_L_D_S(self):
         raw_data = np.zeros([10], dtype=np.int16)
         for i in range(10):
             raw_data[i] = np.int16(o+i*s)
@@ -633,7 +633,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_D_I(self):
+    def test_read_L_D_I(self):
         raw_data = np.zeros([10], dtype=np.int32)
         for i in range(10):
             raw_data[i] = np.int32(o+i*s)
@@ -650,7 +650,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_D_L(self):
+    def test_read_L_D_L(self):
         raw_data = np.zeros([10], dtype=np.int64)
         for i in range(10):
             raw_data[i] = np.int64(o+i*s)
@@ -667,7 +667,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_D_F(self):
+    def test_read_L_D_F(self):
         raw_data = np.zeros([10], dtype=np.float32)
         for i in range(10):
             raw_data[i] = np.float32(o+i*s)
@@ -684,7 +684,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_L_D_D(self):
+    def test_read_L_D_D(self):
         raw_data = np.zeros([10], dtype=np.float64)
         for i in range(10):
             raw_data[i] = np.float64(o+i*s)
@@ -701,7 +701,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_N_B(self):
+    def test_read_D_N_B(self):
         raw_data = np.zeros([10], dtype=np.int8)
         for i in range(10):
             raw_data[i] = np.int8(o+i*s)
@@ -714,7 +714,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_dtype_data(), 1)
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
-    def test_D_N_S(self):
+    def test_read_D_N_S(self):
         raw_data = np.zeros([10], dtype=np.int16)
         for i in range(10):
             raw_data[i] = np.int16(o+i*s)
@@ -727,7 +727,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_dtype_data(), 2)
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
-    def test_D_N_I(self):
+    def test_read_D_N_I(self):
         raw_data = np.zeros([10], dtype=np.int32)
         for i in range(10):
             raw_data[i] = np.int32(o+i*s)
@@ -740,7 +740,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_dtype_data(), 3)
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
-    def test_D_N_L(self):
+    def test_read_D_N_L(self):
         raw_data = np.zeros([10], dtype=np.int64)
         for i in range(10):
             raw_data[i] = np.int64(o+i*s)
@@ -753,7 +753,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_dtype_data(), 4)
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
-    def test_D_N_F(self):
+    def test_read_D_N_F(self):
         raw_data = np.zeros([10], dtype=np.float32)
         for i in range(10):
             raw_data[i] = np.float32(o+i*s)
@@ -766,7 +766,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_dtype_data(), 5)
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
-    def test_D_N_D(self):
+    def test_read_D_N_D(self):
         raw_data = np.zeros([10], dtype=np.float64)
         for i in range(10):
             raw_data[i] = np.float64(o+i*s)
@@ -779,7 +779,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_dtype_data(), 6)
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
-    def test_D_B_B(self):
+    def test_read_D_B_B(self):
         raw_data = np.zeros([10], dtype=np.int8)
         for i in range(10):
             raw_data[i] = np.int8(o+i*s)
@@ -796,7 +796,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_B_S(self):
+    def test_read_D_B_S(self):
         raw_data = np.zeros([10], dtype=np.int16)
         for i in range(10):
             raw_data[i] = np.int16(o+i*s)
@@ -813,7 +813,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_B_I(self):
+    def test_read_D_B_I(self):
         raw_data = np.zeros([10], dtype=np.int32)
         for i in range(10):
             raw_data[i] = np.int32(o+i*s)
@@ -830,7 +830,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_B_L(self):
+    def test_read_D_B_L(self):
         raw_data = np.zeros([10], dtype=np.int64)
         for i in range(10):
             raw_data[i] = np.int64(o+i*s)
@@ -847,7 +847,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_B_F(self):
+    def test_read_D_B_F(self):
         raw_data = np.zeros([10], dtype=np.float32)
         for i in range(10):
             raw_data[i] = np.float32(o+i*s)
@@ -864,7 +864,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_B_D(self):
+    def test_read_D_B_D(self):
         raw_data = np.zeros([10], dtype=np.float64)
         for i in range(10):
             raw_data[i] = np.float64(o+i*s)
@@ -881,7 +881,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_S_B(self):
+    def test_read_D_S_B(self):
         raw_data = np.zeros([10], dtype=np.int8)
         for i in range(10):
             raw_data[i] = np.int8(o+i*s)
@@ -898,7 +898,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_S_S(self):
+    def test_read_D_S_S(self):
         raw_data = np.zeros([10], dtype=np.int16)
         for i in range(10):
             raw_data[i] = np.int16(o+i*s)
@@ -915,7 +915,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_S_I(self):
+    def test_read_D_S_I(self):
         raw_data = np.zeros([10], dtype=np.int32)
         for i in range(10):
             raw_data[i] = np.int32(o+i*s)
@@ -932,7 +932,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_S_L(self):
+    def test_read_D_S_L(self):
         raw_data = np.zeros([10], dtype=np.int64)
         for i in range(10):
             raw_data[i] = np.int64(o+i*s)
@@ -949,7 +949,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_S_F(self):
+    def test_read_D_S_F(self):
         raw_data = np.zeros([10], dtype=np.float32)
         for i in range(10):
             raw_data[i] = np.float32(o+i*s)
@@ -966,7 +966,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_S_D(self):
+    def test_read_D_S_D(self):
         raw_data = np.zeros([10], dtype=np.float64)
         for i in range(10):
             raw_data[i] = np.float64(o+i*s)
@@ -983,7 +983,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_I_B(self):
+    def test_read_D_I_B(self):
         raw_data = np.zeros([10], dtype=np.int8)
         for i in range(10):
             raw_data[i] = np.int8(o+i*s)
@@ -1000,7 +1000,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_I_S(self):
+    def test_read_D_I_S(self):
         raw_data = np.zeros([10], dtype=np.int16)
         for i in range(10):
             raw_data[i] = np.int16(o+i*s)
@@ -1017,7 +1017,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_I_I(self):
+    def test_read_D_I_I(self):
         raw_data = np.zeros([10], dtype=np.int32)
         for i in range(10):
             raw_data[i] = np.int32(o+i*s)
@@ -1034,7 +1034,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_I_L(self):
+    def test_read_D_I_L(self):
         raw_data = np.zeros([10], dtype=np.int64)
         for i in range(10):
             raw_data[i] = np.int64(o+i*s)
@@ -1051,7 +1051,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_I_F(self):
+    def test_read_D_I_F(self):
         raw_data = np.zeros([10], dtype=np.float32)
         for i in range(10):
             raw_data[i] = np.float32(o+i*s)
@@ -1068,7 +1068,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_I_D(self):
+    def test_read_D_I_D(self):
         raw_data = np.zeros([10], dtype=np.float64)
         for i in range(10):
             raw_data[i] = np.float64(o+i*s)
@@ -1085,7 +1085,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_L_B(self):
+    def test_read_D_L_B(self):
         raw_data = np.zeros([10], dtype=np.int8)
         for i in range(10):
             raw_data[i] = np.int8(o+i*s)
@@ -1102,7 +1102,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_L_S(self):
+    def test_read_D_L_S(self):
         raw_data = np.zeros([10], dtype=np.int16)
         for i in range(10):
             raw_data[i] = np.int16(o+i*s)
@@ -1119,7 +1119,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_L_I(self):
+    def test_read_D_L_I(self):
         raw_data = np.zeros([10], dtype=np.int32)
         for i in range(10):
             raw_data[i] = np.int32(o+i*s)
@@ -1136,7 +1136,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_L_L(self):
+    def test_read_D_L_L(self):
         raw_data = np.zeros([10], dtype=np.int64)
         for i in range(10):
             raw_data[i] = np.int64(o+i*s)
@@ -1153,7 +1153,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_L_F(self):
+    def test_read_D_L_F(self):
         raw_data = np.zeros([10], dtype=np.float32)
         for i in range(10):
             raw_data[i] = np.float32(o+i*s)
@@ -1170,7 +1170,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_L_D(self):
+    def test_read_D_L_D(self):
         raw_data = np.zeros([10], dtype=np.float64)
         for i in range(10):
             raw_data[i] = np.float64(o+i*s)
@@ -1187,7 +1187,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_F_B(self):
+    def test_read_D_F_B(self):
         raw_data = np.zeros([10], dtype=np.int8)
         for i in range(10):
             raw_data[i] = np.int8(o+i*s)
@@ -1204,7 +1204,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_F_S(self):
+    def test_read_D_F_S(self):
         raw_data = np.zeros([10], dtype=np.int16)
         for i in range(10):
             raw_data[i] = np.int16(o+i*s)
@@ -1221,7 +1221,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_F_I(self):
+    def test_read_D_F_I(self):
         raw_data = np.zeros([10], dtype=np.int32)
         for i in range(10):
             raw_data[i] = np.int32(o+i*s)
@@ -1238,7 +1238,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_F_L(self):
+    def test_read_D_F_L(self):
         raw_data = np.zeros([10], dtype=np.int64)
         for i in range(10):
             raw_data[i] = np.int64(o+i*s)
@@ -1255,7 +1255,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_F_F(self):
+    def test_read_D_F_F(self):
         raw_data = np.zeros([10], dtype=np.float32)
         for i in range(10):
             raw_data[i] = np.float32(o+i*s)
@@ -1272,7 +1272,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_F_D(self):
+    def test_read_D_F_D(self):
         raw_data = np.zeros([10], dtype=np.float64)
         for i in range(10):
             raw_data[i] = np.float64(o+i*s)
@@ -1289,7 +1289,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_D_B(self):
+    def test_read_D_D_B(self):
         raw_data = np.zeros([10], dtype=np.int8)
         for i in range(10):
             raw_data[i] = np.int8(o+i*s)
@@ -1306,7 +1306,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_D_S(self):
+    def test_read_D_D_S(self):
         raw_data = np.zeros([10], dtype=np.int16)
         for i in range(10):
             raw_data[i] = np.int16(o+i*s)
@@ -1323,7 +1323,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_D_I(self):
+    def test_read_D_D_I(self):
         raw_data = np.zeros([10], dtype=np.int32)
         for i in range(10):
             raw_data[i] = np.int32(o+i*s)
@@ -1340,7 +1340,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_D_L(self):
+    def test_read_D_D_L(self):
         raw_data = np.zeros([10], dtype=np.int64)
         for i in range(10):
             raw_data[i] = np.int64(o+i*s)
@@ -1357,7 +1357,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_D_F(self):
+    def test_read_D_D_F(self):
         raw_data = np.zeros([10], dtype=np.float32)
         for i in range(10):
             raw_data[i] = np.float32(o+i*s)
@@ -1374,7 +1374,7 @@ class GeneratedApiTests(unittest.TestCase):
                 self.assertEqual(bts.get_num_samples(), 10)
                 self.assertTrue(np.allclose(bts.get_raw(), raw_data))
                 self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))
-    def test_D_D_D(self):
+    def test_read_D_D_D(self):
         raw_data = np.zeros([10], dtype=np.float64)
         for i in range(10):
             raw_data[i] = np.float64(o+i*s)
