@@ -105,17 +105,17 @@ public class GenerateTestData {
 		final double scalingFactor_D = (double) scalingFactor;
 
 		// time series:
-		// idx |  time | value
-		//  0  |  13.0 |   1.2
-		//  1  |  50.0 |  25.5
-		//  2  |  87.0 |  49.8
-		//  3  | 124.0 |  74.1
-		//  4  | 161.0 |  98.4
-		//  5  | 198.0 | 122.7
-		//  6  | 235.0 | 147.0
-		//  7  | 272.0 | 171.3
-		//  8  | 309.0 | 195.6
-		//  9  | 346.0 | 219.9
+		// idx |  time | raw value (=offset+scale*(t-t0))
+		//  0  |  13.0 |   1.2                           
+		//  1  |  50.0 |  25.5                           
+		//  2  |  87.0 |  49.8                           
+		//  3  | 124.0 |  74.1                           
+		//  4  | 161.0 |  98.4                           
+		//  5  | 198.0 | 122.7                           
+		//  6  | 235.0 | 147.0                           
+		//  7  | 272.0 | 171.3                           
+		//  8  | 309.0 | 195.6                           
+		//  9  | 346.0 | 219.9                           
 
 		// The following three nested loops go over all combinations of time type,
 		// scaling type and data type and generate the test time series for each
@@ -243,121 +243,37 @@ public class GenerateTestData {
 					if (data_dtype == BinaryTimeseries.DTYPE_BYTE) {
 						byte sample = 0;
 						for (int i = 0; i < numSamples; ++i) {
-							if (scaling_dtype == BinaryTimeseries.DTYPE_NONE) {
-								sample = (byte) i;
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_BYTE) {
-								sample = (byte) (scalingOffset_B + i * scalingFactor_B);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_SHORT) {
-								sample = (byte) (scalingOffset_S + i * scalingFactor_S);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_INT) {
-								sample = (byte) (scalingOffset_I + i * scalingFactor_I);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_LONG) {
-								sample = (byte) (scalingOffset_L + i * scalingFactor_L);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_FLOAT) {
-								sample = (byte) (scalingOffset_F + i * scalingFactor_F);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_DOUBLE) {
-								sample = (byte) (scalingOffset_D + i * scalingFactor_D);
-							}
+							sample = (byte) (scalingOffset + i * scalingFactor);
 							referenceTarget.put(sample);
 						}
 					} else if (data_dtype == BinaryTimeseries.DTYPE_SHORT) {
 						short sample = 0;
 						for (int i = 0; i < numSamples; ++i) {
-							if (scaling_dtype == BinaryTimeseries.DTYPE_NONE) {
-								sample = (short) i;
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_BYTE) {
-								sample = (short) (scalingOffset_B + i * scalingFactor_B);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_SHORT) {
-								sample = (short) (scalingOffset_S + i * scalingFactor_S);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_INT) {
-								sample = (short) (scalingOffset_I + i * scalingFactor_I);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_LONG) {
-								sample = (short) (scalingOffset_L + i * scalingFactor_L);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_FLOAT) {
-								sample = (short) (scalingOffset_F + i * scalingFactor_F);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_DOUBLE) {
-								sample = (short) (scalingOffset_D + i * scalingFactor_D);
-							}
+							sample = (short) (scalingOffset + i * scalingFactor);
 							referenceTarget.putShort(sample);
 						}
 					} else if (data_dtype == BinaryTimeseries.DTYPE_INT) {
 						int sample = 0;
 						for (int i = 0; i < numSamples; ++i) {
-							if (scaling_dtype == BinaryTimeseries.DTYPE_NONE) {
-								sample = (int) i;
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_BYTE) {
-								sample = (int) (scalingOffset_B + i * scalingFactor_B);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_SHORT) {
-								sample = (int) (scalingOffset_S + i * scalingFactor_S);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_INT) {
-								sample = (int) (scalingOffset_I + i * scalingFactor_I);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_LONG) {
-								sample = (int) (scalingOffset_L + i * scalingFactor_L);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_FLOAT) {
-								sample = (int) (scalingOffset_F + i * scalingFactor_F);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_DOUBLE) {
-								sample = (int) (scalingOffset_D + i * scalingFactor_D);
-							}
+							sample = (int) (scalingOffset + i * scalingFactor);
 							referenceTarget.putInt(sample);
 						}
 					} else if (data_dtype == BinaryTimeseries.DTYPE_LONG) {
 						long sample = 0;
 						for (int i = 0; i < numSamples; ++i) {
-							if (scaling_dtype == BinaryTimeseries.DTYPE_NONE) {
-								sample = (long) i;
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_BYTE) {
-								sample = (long) (scalingOffset_B + i * scalingFactor_B);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_SHORT) {
-								sample = (long) (scalingOffset_S + i * scalingFactor_S);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_INT) {
-								sample = (long) (scalingOffset_I + i * scalingFactor_I);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_LONG) {
-								sample = (long) (scalingOffset_L + i * scalingFactor_L);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_FLOAT) {
-								sample = (long) (scalingOffset_F + i * scalingFactor_F);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_DOUBLE) {
-								sample = (long) (scalingOffset_D + i * scalingFactor_D);
-							}
+							sample = (long) (scalingOffset + i * scalingFactor);
 							referenceTarget.putLong(sample);
 						}
 					} else if (data_dtype == BinaryTimeseries.DTYPE_FLOAT) {
 						float sample = (float) 0.0;
 						for (int i = 0; i < numSamples; ++i) {
-							if (scaling_dtype == BinaryTimeseries.DTYPE_NONE) {
-								sample = (float) i;
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_BYTE) {
-								sample = (float) (scalingOffset_B + i * scalingFactor_B);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_SHORT) {
-								sample = (float) (scalingOffset_S + i * scalingFactor_S);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_INT) {
-								sample = (float) (scalingOffset_I + i * scalingFactor_I);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_LONG) {
-								sample = (float) (scalingOffset_L + i * scalingFactor_L);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_FLOAT) {
-								sample = (float) (scalingOffset_F + i * scalingFactor_F);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_DOUBLE) {
-								sample = (float) (scalingOffset_D + i * scalingFactor_D);
-							}
+							sample = (float) (scalingOffset + i * scalingFactor);
 							referenceTarget.putFloat(sample);
 						}
 					} else if (data_dtype == BinaryTimeseries.DTYPE_DOUBLE) {
 						double sample = 0.0;
 						for (int i = 0; i < numSamples; ++i) {
-							if (scaling_dtype == BinaryTimeseries.DTYPE_NONE) {
-								sample = (double) i;
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_BYTE) {
-								sample = (double) (scalingOffset_B + i * scalingFactor_B);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_SHORT) {
-								sample = (double) (scalingOffset_S + i * scalingFactor_S);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_INT) {
-								sample = (double) (scalingOffset_I + i * scalingFactor_I);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_LONG) {
-								sample = (double) (scalingOffset_L + i * scalingFactor_L);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_FLOAT) {
-								sample = (double) (scalingOffset_F + i * scalingFactor_F);
-							} else if (scaling_dtype == BinaryTimeseries.DTYPE_DOUBLE) {
-								sample = (double) (scalingOffset_D + i * scalingFactor_D);
-							}
+							sample = (double) (scalingOffset + i * scalingFactor);
 							referenceTarget.putDouble(sample);
 						}
 					}

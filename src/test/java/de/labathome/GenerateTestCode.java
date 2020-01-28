@@ -3,9 +3,6 @@ package de.labathome;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.RandomAccessFile;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,11 +20,6 @@ public class GenerateTestCode {
 	public static void main(String[] args) {
 		generateJavaTestCode();
 	}
-
-
-
-
-
 
 	/**
 	 * generate the tests in Java and write them to GeneratedApiTests.java
@@ -95,7 +87,7 @@ public class GenerateTestCode {
 		final String scalingFactorStr = "24.3";
 
 		// time series:
-		// idx |  time | value
+		// idx |  time | raw data value (before clipping to raw type)
 		//  0  |  13.0 |   1.2
 		//  1  |  50.0 |  25.5
 		//  2  |  87.0 |  49.8
@@ -124,10 +116,10 @@ public class GenerateTestCode {
 						"import static org.junit.jupiter.api.Assertions.assertArrayEquals;\n" + 
 						"import static org.junit.jupiter.api.Assertions.assertEquals;\n" + 
 						"\n" + 
-						"import java.io.RandomAccessFile;" +
-						"import java.nio.ByteBuffer;" +
-						"import java.nio.MappedByteBuffer;" +
-						"import java.nio.channels.FileChannel;" + 
+						"import java.io.RandomAccessFile;\n" +
+						"import java.nio.ByteBuffer;\n" +
+						"import java.nio.MappedByteBuffer;\n" +
+						"import java.nio.channels.FileChannel;\n" + 
 						"\n" + 
 						"import org.junit.jupiter.api.Test;\n" + 
 						"\n" + 
@@ -247,13 +239,15 @@ public class GenerateTestCode {
 
 
 							writeTestCode += "		final "+jtT+" t0_"+tT+" = ("+jtT+") "+t0Str+";\n";
-
 							writeTestCode += "		final "+jtT+" dt_"+tT+" = ("+jtT+") "+dtStr+";\n";
 
+							writeTestCode += "		final double scalingOffset = "+scalingOffsetStr+";\n";
+							writeTestCode += "		final double scalingFactor = "+scalingFactorStr+";\n";
+							
 							// scaling offset
 							if (scaling_dtype != BinaryTimeseries.DTYPE_NONE) {
-								writeTestCode += "		final "+jtS+" scalingOffset_"+tS+" = ("+jtS+") "+scalingOffsetStr+";\n";
-								writeTestCode += "		final "+jtS+" scalingFactor_"+tS+" = ("+jtS+") "+scalingFactorStr+";\n";
+								writeTestCode += "		final "+jtS+" scalingOffset_"+tS+" = ("+jtS+") scalingOffset;\n";
+								writeTestCode += "		final "+jtS+" scalingFactor_"+tS+" = ("+jtS+") scalingFactor;\n";
 							}
 
 							writeTestCode += "		final int numSamples = "+numSamplesStr+";\n";
@@ -261,11 +255,7 @@ public class GenerateTestCode {
 
 							writeTestCode += "		final "+jtD+"[] values = new "+jtD+"[numSamples];\n" +
 									"		for (int i=0; i<numSamples; ++i) {\n";
-							if (scaling_dtype == BinaryTimeseries.DTYPE_NONE) {
-								writeTestCode += "			values[i] = ("+jtD+") i;\n";
-							} else {
-								writeTestCode += "			values[i] = ("+jtD+") (scalingOffset_"+tS+" + i*scalingFactor_"+tS+");\n";
-							}
+							writeTestCode += "			values[i] = ("+jtD+") (scalingOffset + i*scalingFactor);\n";
 							writeTestCode += "		}\n" +
 									"		//writing\n" +
 									"		int fileSize = BinaryTimeseries.fileOffset("+data_size+", numSamples);\n" +
@@ -363,17 +353,17 @@ public class GenerateTestCode {
 									"		final double[] referenceData_double = new double[numSamples];\n" +
 									"		for (int i=0; i<numSamples; ++i) {\n";
 
+							writeTestCode += "			final "+jtD+" referenceValue = ("+jtD+") (scalingOffset + i*scalingFactor);\n";
 							if (scaling_dtype == BinaryTimeseries.DTYPE_NONE) {
-								writeTestCode += 
-										"			referenceData_byte  [i] = (byte  )i;\n" +
-												"			referenceData_short [i] = (short )i;\n" +
-												"			referenceData_int   [i] = (int   )i;\n" +
-												"			referenceData_long  [i] = (long  )i;\n" +
-												"			referenceData_float [i] = (float )i;\n" +
-												"			referenceData_double[i] = (double)i;\n";
+								writeTestCode += "			referenceData_byte  [i] = (byte  ) referenceValue;\n" +
+												"			referenceData_short [i] = (short ) referenceValue;\n" +
+												"			referenceData_int   [i] = (int   ) referenceValue;\n" +
+												"			referenceData_long  [i] = (long  ) referenceValue;\n" +
+												"			referenceData_float [i] = (float ) referenceValue;\n" +
+												"			referenceData_double[i] = (double) referenceValue;\n";
 							} else {
-								writeTestCode += "			final "+jtD+" referenceValue = ("+jtD+") (scalingOffset_"+tS+" + i*scalingFactor_"+tS+");\n" +
-										"			referenceData_byte  [i] = (byte  )(scalingOffset_"+tS+" + referenceValue*scalingFactor_"+tS+");\n" +
+								//writeTestCode += "			final "+jtD+" referenceValue = ("+jtD+") (scalingOffset + i*scalingFactor);\n" +
+								writeTestCode += "			referenceData_byte  [i] = (byte  )(scalingOffset_"+tS+" + referenceValue*scalingFactor_"+tS+");\n" +
 										"			referenceData_short [i] = (short )(scalingOffset_"+tS+" + referenceValue*scalingFactor_"+tS+");\n" +
 										"			referenceData_int   [i] = (int   )(scalingOffset_"+tS+" + referenceValue*scalingFactor_"+tS+");\n" +
 										"			referenceData_long  [i] = (long  )(scalingOffset_"+tS+" + referenceValue*scalingFactor_"+tS+");\n" +

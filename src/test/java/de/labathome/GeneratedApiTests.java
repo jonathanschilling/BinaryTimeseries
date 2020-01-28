@@ -3,7 +3,11 @@ package de.labathome;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.RandomAccessFile;import java.nio.ByteBuffer;import java.nio.MappedByteBuffer;import java.nio.channels.FileChannel;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+
 import org.junit.jupiter.api.Test;
 
 class GeneratedApiTests {
@@ -61,10 +65,12 @@ class GeneratedApiTests {
 	public void testReadWrite_L_N_B() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
 		final int numSamples = 10;
 		final byte[] values = new byte[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (byte) i;
+			values[i] = (byte) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(1, numSamples);
@@ -128,12 +134,13 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			referenceData_byte  [i] = (byte  )i;
-			referenceData_short [i] = (short )i;
-			referenceData_int   [i] = (int   )i;
-			referenceData_long  [i] = (long  )i;
-			referenceData_float [i] = (float )i;
-			referenceData_double[i] = (double)i;
+			final byte referenceValue = (byte) (scalingOffset + i*scalingFactor);
+			referenceData_byte  [i] = (byte  ) referenceValue;
+			referenceData_short [i] = (short ) referenceValue;
+			referenceData_int   [i] = (int   ) referenceValue;
+			referenceData_long  [i] = (long  ) referenceValue;
+			referenceData_float [i] = (float ) referenceValue;
+			referenceData_double[i] = (double) referenceValue;
 		}
 		source.position(19);
 		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
@@ -171,10 +178,12 @@ class GeneratedApiTests {
 	public void testReadWrite_L_N_S() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
 		final int numSamples = 10;
 		final short[] values = new short[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (short) i;
+			values[i] = (short) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(2, numSamples);
@@ -238,12 +247,13 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			referenceData_byte  [i] = (byte  )i;
-			referenceData_short [i] = (short )i;
-			referenceData_int   [i] = (int   )i;
-			referenceData_long  [i] = (long  )i;
-			referenceData_float [i] = (float )i;
-			referenceData_double[i] = (double)i;
+			final short referenceValue = (short) (scalingOffset + i*scalingFactor);
+			referenceData_byte  [i] = (byte  ) referenceValue;
+			referenceData_short [i] = (short ) referenceValue;
+			referenceData_int   [i] = (int   ) referenceValue;
+			referenceData_long  [i] = (long  ) referenceValue;
+			referenceData_float [i] = (float ) referenceValue;
+			referenceData_double[i] = (double) referenceValue;
 		}
 		source.position(19);
 		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
@@ -281,10 +291,12 @@ class GeneratedApiTests {
 	public void testReadWrite_L_N_I() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
 		final int numSamples = 10;
 		final int[] values = new int[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (int) i;
+			values[i] = (int) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
@@ -348,12 +360,13 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			referenceData_byte  [i] = (byte  )i;
-			referenceData_short [i] = (short )i;
-			referenceData_int   [i] = (int   )i;
-			referenceData_long  [i] = (long  )i;
-			referenceData_float [i] = (float )i;
-			referenceData_double[i] = (double)i;
+			final int referenceValue = (int) (scalingOffset + i*scalingFactor);
+			referenceData_byte  [i] = (byte  ) referenceValue;
+			referenceData_short [i] = (short ) referenceValue;
+			referenceData_int   [i] = (int   ) referenceValue;
+			referenceData_long  [i] = (long  ) referenceValue;
+			referenceData_float [i] = (float ) referenceValue;
+			referenceData_double[i] = (double) referenceValue;
 		}
 		source.position(19);
 		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
@@ -391,10 +404,12 @@ class GeneratedApiTests {
 	public void testReadWrite_L_N_L() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
 		final int numSamples = 10;
 		final long[] values = new long[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (long) i;
+			values[i] = (long) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
@@ -458,12 +473,13 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			referenceData_byte  [i] = (byte  )i;
-			referenceData_short [i] = (short )i;
-			referenceData_int   [i] = (int   )i;
-			referenceData_long  [i] = (long  )i;
-			referenceData_float [i] = (float )i;
-			referenceData_double[i] = (double)i;
+			final long referenceValue = (long) (scalingOffset + i*scalingFactor);
+			referenceData_byte  [i] = (byte  ) referenceValue;
+			referenceData_short [i] = (short ) referenceValue;
+			referenceData_int   [i] = (int   ) referenceValue;
+			referenceData_long  [i] = (long  ) referenceValue;
+			referenceData_float [i] = (float ) referenceValue;
+			referenceData_double[i] = (double) referenceValue;
 		}
 		source.position(19);
 		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
@@ -501,10 +517,12 @@ class GeneratedApiTests {
 	public void testReadWrite_L_N_F() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
 		final int numSamples = 10;
 		final float[] values = new float[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (float) i;
+			values[i] = (float) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
@@ -568,12 +586,13 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			referenceData_byte  [i] = (byte  )i;
-			referenceData_short [i] = (short )i;
-			referenceData_int   [i] = (int   )i;
-			referenceData_long  [i] = (long  )i;
-			referenceData_float [i] = (float )i;
-			referenceData_double[i] = (double)i;
+			final float referenceValue = (float) (scalingOffset + i*scalingFactor);
+			referenceData_byte  [i] = (byte  ) referenceValue;
+			referenceData_short [i] = (short ) referenceValue;
+			referenceData_int   [i] = (int   ) referenceValue;
+			referenceData_long  [i] = (long  ) referenceValue;
+			referenceData_float [i] = (float ) referenceValue;
+			referenceData_double[i] = (double) referenceValue;
 		}
 		source.position(19);
 		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
@@ -611,10 +630,12 @@ class GeneratedApiTests {
 	public void testReadWrite_L_N_D() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
 		final int numSamples = 10;
 		final double[] values = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (double) i;
+			values[i] = (double) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
@@ -678,12 +699,13 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			referenceData_byte  [i] = (byte  )i;
-			referenceData_short [i] = (short )i;
-			referenceData_int   [i] = (int   )i;
-			referenceData_long  [i] = (long  )i;
-			referenceData_float [i] = (float )i;
-			referenceData_double[i] = (double)i;
+			final double referenceValue = (double) (scalingOffset + i*scalingFactor);
+			referenceData_byte  [i] = (byte  ) referenceValue;
+			referenceData_short [i] = (short ) referenceValue;
+			referenceData_int   [i] = (int   ) referenceValue;
+			referenceData_long  [i] = (long  ) referenceValue;
+			referenceData_float [i] = (float ) referenceValue;
+			referenceData_double[i] = (double) referenceValue;
 		}
 		source.position(19);
 		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
@@ -716,12 +738,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_B_B() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final byte scalingOffset_B = (byte) 1.2;
-		final byte scalingFactor_B = (byte) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final byte scalingOffset_B = (byte) scalingOffset;
+		final byte scalingFactor_B = (byte) scalingFactor;
 		final int numSamples = 10;
 		final byte[] values = new byte[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (byte) (scalingOffset_B + i*scalingFactor_B);
+			values[i] = (byte) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(1, numSamples);
@@ -788,7 +812,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final byte referenceValue = (byte) (scalingOffset_B + i*scalingFactor_B);
+			final byte referenceValue = (byte) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_B + referenceValue*scalingFactor_B);
 			referenceData_short [i] = (short )(scalingOffset_B + referenceValue*scalingFactor_B);
 			referenceData_int   [i] = (int   )(scalingOffset_B + referenceValue*scalingFactor_B);
@@ -827,12 +851,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_B_S() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final byte scalingOffset_B = (byte) 1.2;
-		final byte scalingFactor_B = (byte) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final byte scalingOffset_B = (byte) scalingOffset;
+		final byte scalingFactor_B = (byte) scalingFactor;
 		final int numSamples = 10;
 		final short[] values = new short[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (short) (scalingOffset_B + i*scalingFactor_B);
+			values[i] = (short) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(2, numSamples);
@@ -899,7 +925,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final short referenceValue = (short) (scalingOffset_B + i*scalingFactor_B);
+			final short referenceValue = (short) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_B + referenceValue*scalingFactor_B);
 			referenceData_short [i] = (short )(scalingOffset_B + referenceValue*scalingFactor_B);
 			referenceData_int   [i] = (int   )(scalingOffset_B + referenceValue*scalingFactor_B);
@@ -938,12 +964,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_B_I() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final byte scalingOffset_B = (byte) 1.2;
-		final byte scalingFactor_B = (byte) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final byte scalingOffset_B = (byte) scalingOffset;
+		final byte scalingFactor_B = (byte) scalingFactor;
 		final int numSamples = 10;
 		final int[] values = new int[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (int) (scalingOffset_B + i*scalingFactor_B);
+			values[i] = (int) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
@@ -1010,7 +1038,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final int referenceValue = (int) (scalingOffset_B + i*scalingFactor_B);
+			final int referenceValue = (int) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_B + referenceValue*scalingFactor_B);
 			referenceData_short [i] = (short )(scalingOffset_B + referenceValue*scalingFactor_B);
 			referenceData_int   [i] = (int   )(scalingOffset_B + referenceValue*scalingFactor_B);
@@ -1049,12 +1077,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_B_L() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final byte scalingOffset_B = (byte) 1.2;
-		final byte scalingFactor_B = (byte) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final byte scalingOffset_B = (byte) scalingOffset;
+		final byte scalingFactor_B = (byte) scalingFactor;
 		final int numSamples = 10;
 		final long[] values = new long[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (long) (scalingOffset_B + i*scalingFactor_B);
+			values[i] = (long) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
@@ -1121,7 +1151,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final long referenceValue = (long) (scalingOffset_B + i*scalingFactor_B);
+			final long referenceValue = (long) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_B + referenceValue*scalingFactor_B);
 			referenceData_short [i] = (short )(scalingOffset_B + referenceValue*scalingFactor_B);
 			referenceData_int   [i] = (int   )(scalingOffset_B + referenceValue*scalingFactor_B);
@@ -1160,12 +1190,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_B_F() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final byte scalingOffset_B = (byte) 1.2;
-		final byte scalingFactor_B = (byte) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final byte scalingOffset_B = (byte) scalingOffset;
+		final byte scalingFactor_B = (byte) scalingFactor;
 		final int numSamples = 10;
 		final float[] values = new float[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (float) (scalingOffset_B + i*scalingFactor_B);
+			values[i] = (float) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
@@ -1232,7 +1264,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final float referenceValue = (float) (scalingOffset_B + i*scalingFactor_B);
+			final float referenceValue = (float) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_B + referenceValue*scalingFactor_B);
 			referenceData_short [i] = (short )(scalingOffset_B + referenceValue*scalingFactor_B);
 			referenceData_int   [i] = (int   )(scalingOffset_B + referenceValue*scalingFactor_B);
@@ -1271,12 +1303,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_B_D() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final byte scalingOffset_B = (byte) 1.2;
-		final byte scalingFactor_B = (byte) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final byte scalingOffset_B = (byte) scalingOffset;
+		final byte scalingFactor_B = (byte) scalingFactor;
 		final int numSamples = 10;
 		final double[] values = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (double) (scalingOffset_B + i*scalingFactor_B);
+			values[i] = (double) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
@@ -1343,7 +1377,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final double referenceValue = (double) (scalingOffset_B + i*scalingFactor_B);
+			final double referenceValue = (double) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_B + referenceValue*scalingFactor_B);
 			referenceData_short [i] = (short )(scalingOffset_B + referenceValue*scalingFactor_B);
 			referenceData_int   [i] = (int   )(scalingOffset_B + referenceValue*scalingFactor_B);
@@ -1382,12 +1416,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_S_B() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final short scalingOffset_S = (short) 1.2;
-		final short scalingFactor_S = (short) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final short scalingOffset_S = (short) scalingOffset;
+		final short scalingFactor_S = (short) scalingFactor;
 		final int numSamples = 10;
 		final byte[] values = new byte[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (byte) (scalingOffset_S + i*scalingFactor_S);
+			values[i] = (byte) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(1, numSamples);
@@ -1454,7 +1490,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final byte referenceValue = (byte) (scalingOffset_S + i*scalingFactor_S);
+			final byte referenceValue = (byte) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_S + referenceValue*scalingFactor_S);
 			referenceData_short [i] = (short )(scalingOffset_S + referenceValue*scalingFactor_S);
 			referenceData_int   [i] = (int   )(scalingOffset_S + referenceValue*scalingFactor_S);
@@ -1493,12 +1529,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_S_S() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final short scalingOffset_S = (short) 1.2;
-		final short scalingFactor_S = (short) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final short scalingOffset_S = (short) scalingOffset;
+		final short scalingFactor_S = (short) scalingFactor;
 		final int numSamples = 10;
 		final short[] values = new short[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (short) (scalingOffset_S + i*scalingFactor_S);
+			values[i] = (short) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(2, numSamples);
@@ -1565,7 +1603,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final short referenceValue = (short) (scalingOffset_S + i*scalingFactor_S);
+			final short referenceValue = (short) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_S + referenceValue*scalingFactor_S);
 			referenceData_short [i] = (short )(scalingOffset_S + referenceValue*scalingFactor_S);
 			referenceData_int   [i] = (int   )(scalingOffset_S + referenceValue*scalingFactor_S);
@@ -1604,12 +1642,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_S_I() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final short scalingOffset_S = (short) 1.2;
-		final short scalingFactor_S = (short) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final short scalingOffset_S = (short) scalingOffset;
+		final short scalingFactor_S = (short) scalingFactor;
 		final int numSamples = 10;
 		final int[] values = new int[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (int) (scalingOffset_S + i*scalingFactor_S);
+			values[i] = (int) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
@@ -1676,7 +1716,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final int referenceValue = (int) (scalingOffset_S + i*scalingFactor_S);
+			final int referenceValue = (int) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_S + referenceValue*scalingFactor_S);
 			referenceData_short [i] = (short )(scalingOffset_S + referenceValue*scalingFactor_S);
 			referenceData_int   [i] = (int   )(scalingOffset_S + referenceValue*scalingFactor_S);
@@ -1715,12 +1755,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_S_L() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final short scalingOffset_S = (short) 1.2;
-		final short scalingFactor_S = (short) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final short scalingOffset_S = (short) scalingOffset;
+		final short scalingFactor_S = (short) scalingFactor;
 		final int numSamples = 10;
 		final long[] values = new long[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (long) (scalingOffset_S + i*scalingFactor_S);
+			values[i] = (long) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
@@ -1787,7 +1829,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final long referenceValue = (long) (scalingOffset_S + i*scalingFactor_S);
+			final long referenceValue = (long) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_S + referenceValue*scalingFactor_S);
 			referenceData_short [i] = (short )(scalingOffset_S + referenceValue*scalingFactor_S);
 			referenceData_int   [i] = (int   )(scalingOffset_S + referenceValue*scalingFactor_S);
@@ -1826,12 +1868,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_S_F() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final short scalingOffset_S = (short) 1.2;
-		final short scalingFactor_S = (short) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final short scalingOffset_S = (short) scalingOffset;
+		final short scalingFactor_S = (short) scalingFactor;
 		final int numSamples = 10;
 		final float[] values = new float[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (float) (scalingOffset_S + i*scalingFactor_S);
+			values[i] = (float) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
@@ -1898,7 +1942,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final float referenceValue = (float) (scalingOffset_S + i*scalingFactor_S);
+			final float referenceValue = (float) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_S + referenceValue*scalingFactor_S);
 			referenceData_short [i] = (short )(scalingOffset_S + referenceValue*scalingFactor_S);
 			referenceData_int   [i] = (int   )(scalingOffset_S + referenceValue*scalingFactor_S);
@@ -1937,12 +1981,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_S_D() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final short scalingOffset_S = (short) 1.2;
-		final short scalingFactor_S = (short) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final short scalingOffset_S = (short) scalingOffset;
+		final short scalingFactor_S = (short) scalingFactor;
 		final int numSamples = 10;
 		final double[] values = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (double) (scalingOffset_S + i*scalingFactor_S);
+			values[i] = (double) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
@@ -2009,7 +2055,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final double referenceValue = (double) (scalingOffset_S + i*scalingFactor_S);
+			final double referenceValue = (double) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_S + referenceValue*scalingFactor_S);
 			referenceData_short [i] = (short )(scalingOffset_S + referenceValue*scalingFactor_S);
 			referenceData_int   [i] = (int   )(scalingOffset_S + referenceValue*scalingFactor_S);
@@ -2048,12 +2094,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_I_B() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final int scalingOffset_I = (int) 1.2;
-		final int scalingFactor_I = (int) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final int scalingOffset_I = (int) scalingOffset;
+		final int scalingFactor_I = (int) scalingFactor;
 		final int numSamples = 10;
 		final byte[] values = new byte[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (byte) (scalingOffset_I + i*scalingFactor_I);
+			values[i] = (byte) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(1, numSamples);
@@ -2120,7 +2168,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final byte referenceValue = (byte) (scalingOffset_I + i*scalingFactor_I);
+			final byte referenceValue = (byte) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_I + referenceValue*scalingFactor_I);
 			referenceData_short [i] = (short )(scalingOffset_I + referenceValue*scalingFactor_I);
 			referenceData_int   [i] = (int   )(scalingOffset_I + referenceValue*scalingFactor_I);
@@ -2159,12 +2207,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_I_S() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final int scalingOffset_I = (int) 1.2;
-		final int scalingFactor_I = (int) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final int scalingOffset_I = (int) scalingOffset;
+		final int scalingFactor_I = (int) scalingFactor;
 		final int numSamples = 10;
 		final short[] values = new short[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (short) (scalingOffset_I + i*scalingFactor_I);
+			values[i] = (short) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(2, numSamples);
@@ -2231,7 +2281,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final short referenceValue = (short) (scalingOffset_I + i*scalingFactor_I);
+			final short referenceValue = (short) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_I + referenceValue*scalingFactor_I);
 			referenceData_short [i] = (short )(scalingOffset_I + referenceValue*scalingFactor_I);
 			referenceData_int   [i] = (int   )(scalingOffset_I + referenceValue*scalingFactor_I);
@@ -2270,12 +2320,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_I_I() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final int scalingOffset_I = (int) 1.2;
-		final int scalingFactor_I = (int) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final int scalingOffset_I = (int) scalingOffset;
+		final int scalingFactor_I = (int) scalingFactor;
 		final int numSamples = 10;
 		final int[] values = new int[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (int) (scalingOffset_I + i*scalingFactor_I);
+			values[i] = (int) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
@@ -2342,7 +2394,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final int referenceValue = (int) (scalingOffset_I + i*scalingFactor_I);
+			final int referenceValue = (int) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_I + referenceValue*scalingFactor_I);
 			referenceData_short [i] = (short )(scalingOffset_I + referenceValue*scalingFactor_I);
 			referenceData_int   [i] = (int   )(scalingOffset_I + referenceValue*scalingFactor_I);
@@ -2381,12 +2433,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_I_L() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final int scalingOffset_I = (int) 1.2;
-		final int scalingFactor_I = (int) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final int scalingOffset_I = (int) scalingOffset;
+		final int scalingFactor_I = (int) scalingFactor;
 		final int numSamples = 10;
 		final long[] values = new long[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (long) (scalingOffset_I + i*scalingFactor_I);
+			values[i] = (long) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
@@ -2453,7 +2507,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final long referenceValue = (long) (scalingOffset_I + i*scalingFactor_I);
+			final long referenceValue = (long) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_I + referenceValue*scalingFactor_I);
 			referenceData_short [i] = (short )(scalingOffset_I + referenceValue*scalingFactor_I);
 			referenceData_int   [i] = (int   )(scalingOffset_I + referenceValue*scalingFactor_I);
@@ -2492,12 +2546,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_I_F() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final int scalingOffset_I = (int) 1.2;
-		final int scalingFactor_I = (int) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final int scalingOffset_I = (int) scalingOffset;
+		final int scalingFactor_I = (int) scalingFactor;
 		final int numSamples = 10;
 		final float[] values = new float[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (float) (scalingOffset_I + i*scalingFactor_I);
+			values[i] = (float) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
@@ -2564,7 +2620,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final float referenceValue = (float) (scalingOffset_I + i*scalingFactor_I);
+			final float referenceValue = (float) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_I + referenceValue*scalingFactor_I);
 			referenceData_short [i] = (short )(scalingOffset_I + referenceValue*scalingFactor_I);
 			referenceData_int   [i] = (int   )(scalingOffset_I + referenceValue*scalingFactor_I);
@@ -2603,12 +2659,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_I_D() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final int scalingOffset_I = (int) 1.2;
-		final int scalingFactor_I = (int) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final int scalingOffset_I = (int) scalingOffset;
+		final int scalingFactor_I = (int) scalingFactor;
 		final int numSamples = 10;
 		final double[] values = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (double) (scalingOffset_I + i*scalingFactor_I);
+			values[i] = (double) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
@@ -2675,7 +2733,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final double referenceValue = (double) (scalingOffset_I + i*scalingFactor_I);
+			final double referenceValue = (double) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_I + referenceValue*scalingFactor_I);
 			referenceData_short [i] = (short )(scalingOffset_I + referenceValue*scalingFactor_I);
 			referenceData_int   [i] = (int   )(scalingOffset_I + referenceValue*scalingFactor_I);
@@ -2714,12 +2772,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_L_B() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final long scalingOffset_L = (long) 1.2;
-		final long scalingFactor_L = (long) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final long scalingOffset_L = (long) scalingOffset;
+		final long scalingFactor_L = (long) scalingFactor;
 		final int numSamples = 10;
 		final byte[] values = new byte[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (byte) (scalingOffset_L + i*scalingFactor_L);
+			values[i] = (byte) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(1, numSamples);
@@ -2786,7 +2846,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final byte referenceValue = (byte) (scalingOffset_L + i*scalingFactor_L);
+			final byte referenceValue = (byte) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_L + referenceValue*scalingFactor_L);
 			referenceData_short [i] = (short )(scalingOffset_L + referenceValue*scalingFactor_L);
 			referenceData_int   [i] = (int   )(scalingOffset_L + referenceValue*scalingFactor_L);
@@ -2825,12 +2885,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_L_S() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final long scalingOffset_L = (long) 1.2;
-		final long scalingFactor_L = (long) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final long scalingOffset_L = (long) scalingOffset;
+		final long scalingFactor_L = (long) scalingFactor;
 		final int numSamples = 10;
 		final short[] values = new short[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (short) (scalingOffset_L + i*scalingFactor_L);
+			values[i] = (short) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(2, numSamples);
@@ -2897,7 +2959,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final short referenceValue = (short) (scalingOffset_L + i*scalingFactor_L);
+			final short referenceValue = (short) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_L + referenceValue*scalingFactor_L);
 			referenceData_short [i] = (short )(scalingOffset_L + referenceValue*scalingFactor_L);
 			referenceData_int   [i] = (int   )(scalingOffset_L + referenceValue*scalingFactor_L);
@@ -2936,12 +2998,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_L_I() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final long scalingOffset_L = (long) 1.2;
-		final long scalingFactor_L = (long) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final long scalingOffset_L = (long) scalingOffset;
+		final long scalingFactor_L = (long) scalingFactor;
 		final int numSamples = 10;
 		final int[] values = new int[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (int) (scalingOffset_L + i*scalingFactor_L);
+			values[i] = (int) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
@@ -3008,7 +3072,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final int referenceValue = (int) (scalingOffset_L + i*scalingFactor_L);
+			final int referenceValue = (int) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_L + referenceValue*scalingFactor_L);
 			referenceData_short [i] = (short )(scalingOffset_L + referenceValue*scalingFactor_L);
 			referenceData_int   [i] = (int   )(scalingOffset_L + referenceValue*scalingFactor_L);
@@ -3047,12 +3111,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_L_L() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final long scalingOffset_L = (long) 1.2;
-		final long scalingFactor_L = (long) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final long scalingOffset_L = (long) scalingOffset;
+		final long scalingFactor_L = (long) scalingFactor;
 		final int numSamples = 10;
 		final long[] values = new long[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (long) (scalingOffset_L + i*scalingFactor_L);
+			values[i] = (long) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
@@ -3119,7 +3185,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final long referenceValue = (long) (scalingOffset_L + i*scalingFactor_L);
+			final long referenceValue = (long) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_L + referenceValue*scalingFactor_L);
 			referenceData_short [i] = (short )(scalingOffset_L + referenceValue*scalingFactor_L);
 			referenceData_int   [i] = (int   )(scalingOffset_L + referenceValue*scalingFactor_L);
@@ -3158,12 +3224,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_L_F() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final long scalingOffset_L = (long) 1.2;
-		final long scalingFactor_L = (long) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final long scalingOffset_L = (long) scalingOffset;
+		final long scalingFactor_L = (long) scalingFactor;
 		final int numSamples = 10;
 		final float[] values = new float[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (float) (scalingOffset_L + i*scalingFactor_L);
+			values[i] = (float) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
@@ -3230,7 +3298,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final float referenceValue = (float) (scalingOffset_L + i*scalingFactor_L);
+			final float referenceValue = (float) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_L + referenceValue*scalingFactor_L);
 			referenceData_short [i] = (short )(scalingOffset_L + referenceValue*scalingFactor_L);
 			referenceData_int   [i] = (int   )(scalingOffset_L + referenceValue*scalingFactor_L);
@@ -3269,12 +3337,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_L_D() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final long scalingOffset_L = (long) 1.2;
-		final long scalingFactor_L = (long) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final long scalingOffset_L = (long) scalingOffset;
+		final long scalingFactor_L = (long) scalingFactor;
 		final int numSamples = 10;
 		final double[] values = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (double) (scalingOffset_L + i*scalingFactor_L);
+			values[i] = (double) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
@@ -3341,7 +3411,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final double referenceValue = (double) (scalingOffset_L + i*scalingFactor_L);
+			final double referenceValue = (double) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_L + referenceValue*scalingFactor_L);
 			referenceData_short [i] = (short )(scalingOffset_L + referenceValue*scalingFactor_L);
 			referenceData_int   [i] = (int   )(scalingOffset_L + referenceValue*scalingFactor_L);
@@ -3380,12 +3450,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_F_B() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final float scalingOffset_F = (float) 1.2;
-		final float scalingFactor_F = (float) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final float scalingOffset_F = (float) scalingOffset;
+		final float scalingFactor_F = (float) scalingFactor;
 		final int numSamples = 10;
 		final byte[] values = new byte[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (byte) (scalingOffset_F + i*scalingFactor_F);
+			values[i] = (byte) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(1, numSamples);
@@ -3452,7 +3524,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final byte referenceValue = (byte) (scalingOffset_F + i*scalingFactor_F);
+			final byte referenceValue = (byte) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_F + referenceValue*scalingFactor_F);
 			referenceData_short [i] = (short )(scalingOffset_F + referenceValue*scalingFactor_F);
 			referenceData_int   [i] = (int   )(scalingOffset_F + referenceValue*scalingFactor_F);
@@ -3491,12 +3563,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_F_S() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final float scalingOffset_F = (float) 1.2;
-		final float scalingFactor_F = (float) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final float scalingOffset_F = (float) scalingOffset;
+		final float scalingFactor_F = (float) scalingFactor;
 		final int numSamples = 10;
 		final short[] values = new short[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (short) (scalingOffset_F + i*scalingFactor_F);
+			values[i] = (short) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(2, numSamples);
@@ -3563,7 +3637,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final short referenceValue = (short) (scalingOffset_F + i*scalingFactor_F);
+			final short referenceValue = (short) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_F + referenceValue*scalingFactor_F);
 			referenceData_short [i] = (short )(scalingOffset_F + referenceValue*scalingFactor_F);
 			referenceData_int   [i] = (int   )(scalingOffset_F + referenceValue*scalingFactor_F);
@@ -3602,12 +3676,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_F_I() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final float scalingOffset_F = (float) 1.2;
-		final float scalingFactor_F = (float) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final float scalingOffset_F = (float) scalingOffset;
+		final float scalingFactor_F = (float) scalingFactor;
 		final int numSamples = 10;
 		final int[] values = new int[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (int) (scalingOffset_F + i*scalingFactor_F);
+			values[i] = (int) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
@@ -3674,7 +3750,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final int referenceValue = (int) (scalingOffset_F + i*scalingFactor_F);
+			final int referenceValue = (int) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_F + referenceValue*scalingFactor_F);
 			referenceData_short [i] = (short )(scalingOffset_F + referenceValue*scalingFactor_F);
 			referenceData_int   [i] = (int   )(scalingOffset_F + referenceValue*scalingFactor_F);
@@ -3713,12 +3789,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_F_L() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final float scalingOffset_F = (float) 1.2;
-		final float scalingFactor_F = (float) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final float scalingOffset_F = (float) scalingOffset;
+		final float scalingFactor_F = (float) scalingFactor;
 		final int numSamples = 10;
 		final long[] values = new long[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (long) (scalingOffset_F + i*scalingFactor_F);
+			values[i] = (long) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
@@ -3785,7 +3863,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final long referenceValue = (long) (scalingOffset_F + i*scalingFactor_F);
+			final long referenceValue = (long) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_F + referenceValue*scalingFactor_F);
 			referenceData_short [i] = (short )(scalingOffset_F + referenceValue*scalingFactor_F);
 			referenceData_int   [i] = (int   )(scalingOffset_F + referenceValue*scalingFactor_F);
@@ -3824,12 +3902,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_F_F() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final float scalingOffset_F = (float) 1.2;
-		final float scalingFactor_F = (float) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final float scalingOffset_F = (float) scalingOffset;
+		final float scalingFactor_F = (float) scalingFactor;
 		final int numSamples = 10;
 		final float[] values = new float[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (float) (scalingOffset_F + i*scalingFactor_F);
+			values[i] = (float) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
@@ -3896,7 +3976,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final float referenceValue = (float) (scalingOffset_F + i*scalingFactor_F);
+			final float referenceValue = (float) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_F + referenceValue*scalingFactor_F);
 			referenceData_short [i] = (short )(scalingOffset_F + referenceValue*scalingFactor_F);
 			referenceData_int   [i] = (int   )(scalingOffset_F + referenceValue*scalingFactor_F);
@@ -3935,12 +4015,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_F_D() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final float scalingOffset_F = (float) 1.2;
-		final float scalingFactor_F = (float) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final float scalingOffset_F = (float) scalingOffset;
+		final float scalingFactor_F = (float) scalingFactor;
 		final int numSamples = 10;
 		final double[] values = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (double) (scalingOffset_F + i*scalingFactor_F);
+			values[i] = (double) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
@@ -4007,7 +4089,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final double referenceValue = (double) (scalingOffset_F + i*scalingFactor_F);
+			final double referenceValue = (double) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_F + referenceValue*scalingFactor_F);
 			referenceData_short [i] = (short )(scalingOffset_F + referenceValue*scalingFactor_F);
 			referenceData_int   [i] = (int   )(scalingOffset_F + referenceValue*scalingFactor_F);
@@ -4046,12 +4128,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_D_B() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final double scalingOffset_D = (double) 1.2;
-		final double scalingFactor_D = (double) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final double scalingOffset_D = (double) scalingOffset;
+		final double scalingFactor_D = (double) scalingFactor;
 		final int numSamples = 10;
 		final byte[] values = new byte[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (byte) (scalingOffset_D + i*scalingFactor_D);
+			values[i] = (byte) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(1, numSamples);
@@ -4118,7 +4202,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final byte referenceValue = (byte) (scalingOffset_D + i*scalingFactor_D);
+			final byte referenceValue = (byte) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_D + referenceValue*scalingFactor_D);
 			referenceData_short [i] = (short )(scalingOffset_D + referenceValue*scalingFactor_D);
 			referenceData_int   [i] = (int   )(scalingOffset_D + referenceValue*scalingFactor_D);
@@ -4157,12 +4241,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_D_S() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final double scalingOffset_D = (double) 1.2;
-		final double scalingFactor_D = (double) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final double scalingOffset_D = (double) scalingOffset;
+		final double scalingFactor_D = (double) scalingFactor;
 		final int numSamples = 10;
 		final short[] values = new short[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (short) (scalingOffset_D + i*scalingFactor_D);
+			values[i] = (short) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(2, numSamples);
@@ -4229,7 +4315,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final short referenceValue = (short) (scalingOffset_D + i*scalingFactor_D);
+			final short referenceValue = (short) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_D + referenceValue*scalingFactor_D);
 			referenceData_short [i] = (short )(scalingOffset_D + referenceValue*scalingFactor_D);
 			referenceData_int   [i] = (int   )(scalingOffset_D + referenceValue*scalingFactor_D);
@@ -4268,12 +4354,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_D_I() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final double scalingOffset_D = (double) 1.2;
-		final double scalingFactor_D = (double) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final double scalingOffset_D = (double) scalingOffset;
+		final double scalingFactor_D = (double) scalingFactor;
 		final int numSamples = 10;
 		final int[] values = new int[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (int) (scalingOffset_D + i*scalingFactor_D);
+			values[i] = (int) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
@@ -4340,7 +4428,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final int referenceValue = (int) (scalingOffset_D + i*scalingFactor_D);
+			final int referenceValue = (int) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_D + referenceValue*scalingFactor_D);
 			referenceData_short [i] = (short )(scalingOffset_D + referenceValue*scalingFactor_D);
 			referenceData_int   [i] = (int   )(scalingOffset_D + referenceValue*scalingFactor_D);
@@ -4379,12 +4467,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_D_L() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final double scalingOffset_D = (double) 1.2;
-		final double scalingFactor_D = (double) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final double scalingOffset_D = (double) scalingOffset;
+		final double scalingFactor_D = (double) scalingFactor;
 		final int numSamples = 10;
 		final long[] values = new long[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (long) (scalingOffset_D + i*scalingFactor_D);
+			values[i] = (long) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
@@ -4451,7 +4541,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final long referenceValue = (long) (scalingOffset_D + i*scalingFactor_D);
+			final long referenceValue = (long) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_D + referenceValue*scalingFactor_D);
 			referenceData_short [i] = (short )(scalingOffset_D + referenceValue*scalingFactor_D);
 			referenceData_int   [i] = (int   )(scalingOffset_D + referenceValue*scalingFactor_D);
@@ -4490,12 +4580,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_D_F() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final double scalingOffset_D = (double) 1.2;
-		final double scalingFactor_D = (double) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final double scalingOffset_D = (double) scalingOffset;
+		final double scalingFactor_D = (double) scalingFactor;
 		final int numSamples = 10;
 		final float[] values = new float[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (float) (scalingOffset_D + i*scalingFactor_D);
+			values[i] = (float) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
@@ -4562,7 +4654,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final float referenceValue = (float) (scalingOffset_D + i*scalingFactor_D);
+			final float referenceValue = (float) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_D + referenceValue*scalingFactor_D);
 			referenceData_short [i] = (short )(scalingOffset_D + referenceValue*scalingFactor_D);
 			referenceData_int   [i] = (int   )(scalingOffset_D + referenceValue*scalingFactor_D);
@@ -4601,12 +4693,14 @@ class GeneratedApiTests {
 	public void testReadWrite_L_D_D() {
 		final long t0_L = (long) 13.0;
 		final long dt_L = (long) 37.0;
-		final double scalingOffset_D = (double) 1.2;
-		final double scalingFactor_D = (double) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final double scalingOffset_D = (double) scalingOffset;
+		final double scalingFactor_D = (double) scalingFactor;
 		final int numSamples = 10;
 		final double[] values = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (double) (scalingOffset_D + i*scalingFactor_D);
+			values[i] = (double) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
@@ -4673,7 +4767,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final double referenceValue = (double) (scalingOffset_D + i*scalingFactor_D);
+			final double referenceValue = (double) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_D + referenceValue*scalingFactor_D);
 			referenceData_short [i] = (short )(scalingOffset_D + referenceValue*scalingFactor_D);
 			referenceData_int   [i] = (int   )(scalingOffset_D + referenceValue*scalingFactor_D);
@@ -4756,10 +4850,12 @@ class GeneratedApiTests {
 	public void testReadWrite_D_N_B() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
 		final int numSamples = 10;
 		final byte[] values = new byte[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (byte) i;
+			values[i] = (byte) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(1, numSamples);
@@ -4823,12 +4919,13 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			referenceData_byte  [i] = (byte  )i;
-			referenceData_short [i] = (short )i;
-			referenceData_int   [i] = (int   )i;
-			referenceData_long  [i] = (long  )i;
-			referenceData_float [i] = (float )i;
-			referenceData_double[i] = (double)i;
+			final byte referenceValue = (byte) (scalingOffset + i*scalingFactor);
+			referenceData_byte  [i] = (byte  ) referenceValue;
+			referenceData_short [i] = (short ) referenceValue;
+			referenceData_int   [i] = (int   ) referenceValue;
+			referenceData_long  [i] = (long  ) referenceValue;
+			referenceData_float [i] = (float ) referenceValue;
+			referenceData_double[i] = (double) referenceValue;
 		}
 		source.position(19);
 		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
@@ -4861,10 +4958,12 @@ class GeneratedApiTests {
 	public void testReadWrite_D_N_S() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
 		final int numSamples = 10;
 		final short[] values = new short[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (short) i;
+			values[i] = (short) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(2, numSamples);
@@ -4928,12 +5027,13 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			referenceData_byte  [i] = (byte  )i;
-			referenceData_short [i] = (short )i;
-			referenceData_int   [i] = (int   )i;
-			referenceData_long  [i] = (long  )i;
-			referenceData_float [i] = (float )i;
-			referenceData_double[i] = (double)i;
+			final short referenceValue = (short) (scalingOffset + i*scalingFactor);
+			referenceData_byte  [i] = (byte  ) referenceValue;
+			referenceData_short [i] = (short ) referenceValue;
+			referenceData_int   [i] = (int   ) referenceValue;
+			referenceData_long  [i] = (long  ) referenceValue;
+			referenceData_float [i] = (float ) referenceValue;
+			referenceData_double[i] = (double) referenceValue;
 		}
 		source.position(19);
 		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
@@ -4966,10 +5066,12 @@ class GeneratedApiTests {
 	public void testReadWrite_D_N_I() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
 		final int numSamples = 10;
 		final int[] values = new int[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (int) i;
+			values[i] = (int) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
@@ -5033,12 +5135,13 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			referenceData_byte  [i] = (byte  )i;
-			referenceData_short [i] = (short )i;
-			referenceData_int   [i] = (int   )i;
-			referenceData_long  [i] = (long  )i;
-			referenceData_float [i] = (float )i;
-			referenceData_double[i] = (double)i;
+			final int referenceValue = (int) (scalingOffset + i*scalingFactor);
+			referenceData_byte  [i] = (byte  ) referenceValue;
+			referenceData_short [i] = (short ) referenceValue;
+			referenceData_int   [i] = (int   ) referenceValue;
+			referenceData_long  [i] = (long  ) referenceValue;
+			referenceData_float [i] = (float ) referenceValue;
+			referenceData_double[i] = (double) referenceValue;
 		}
 		source.position(19);
 		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
@@ -5071,10 +5174,12 @@ class GeneratedApiTests {
 	public void testReadWrite_D_N_L() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
 		final int numSamples = 10;
 		final long[] values = new long[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (long) i;
+			values[i] = (long) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
@@ -5138,12 +5243,13 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			referenceData_byte  [i] = (byte  )i;
-			referenceData_short [i] = (short )i;
-			referenceData_int   [i] = (int   )i;
-			referenceData_long  [i] = (long  )i;
-			referenceData_float [i] = (float )i;
-			referenceData_double[i] = (double)i;
+			final long referenceValue = (long) (scalingOffset + i*scalingFactor);
+			referenceData_byte  [i] = (byte  ) referenceValue;
+			referenceData_short [i] = (short ) referenceValue;
+			referenceData_int   [i] = (int   ) referenceValue;
+			referenceData_long  [i] = (long  ) referenceValue;
+			referenceData_float [i] = (float ) referenceValue;
+			referenceData_double[i] = (double) referenceValue;
 		}
 		source.position(19);
 		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
@@ -5176,10 +5282,12 @@ class GeneratedApiTests {
 	public void testReadWrite_D_N_F() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
 		final int numSamples = 10;
 		final float[] values = new float[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (float) i;
+			values[i] = (float) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
@@ -5243,12 +5351,13 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			referenceData_byte  [i] = (byte  )i;
-			referenceData_short [i] = (short )i;
-			referenceData_int   [i] = (int   )i;
-			referenceData_long  [i] = (long  )i;
-			referenceData_float [i] = (float )i;
-			referenceData_double[i] = (double)i;
+			final float referenceValue = (float) (scalingOffset + i*scalingFactor);
+			referenceData_byte  [i] = (byte  ) referenceValue;
+			referenceData_short [i] = (short ) referenceValue;
+			referenceData_int   [i] = (int   ) referenceValue;
+			referenceData_long  [i] = (long  ) referenceValue;
+			referenceData_float [i] = (float ) referenceValue;
+			referenceData_double[i] = (double) referenceValue;
 		}
 		source.position(19);
 		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
@@ -5281,10 +5390,12 @@ class GeneratedApiTests {
 	public void testReadWrite_D_N_D() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
 		final int numSamples = 10;
 		final double[] values = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (double) i;
+			values[i] = (double) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
@@ -5348,12 +5459,13 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			referenceData_byte  [i] = (byte  )i;
-			referenceData_short [i] = (short )i;
-			referenceData_int   [i] = (int   )i;
-			referenceData_long  [i] = (long  )i;
-			referenceData_float [i] = (float )i;
-			referenceData_double[i] = (double)i;
+			final double referenceValue = (double) (scalingOffset + i*scalingFactor);
+			referenceData_byte  [i] = (byte  ) referenceValue;
+			referenceData_short [i] = (short ) referenceValue;
+			referenceData_int   [i] = (int   ) referenceValue;
+			referenceData_long  [i] = (long  ) referenceValue;
+			referenceData_float [i] = (float ) referenceValue;
+			referenceData_double[i] = (double) referenceValue;
 		}
 		source.position(19);
 		final byte[] data_byte = BinaryTimeseries.readData_byte(source);
@@ -5386,12 +5498,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_B_B() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final byte scalingOffset_B = (byte) 1.2;
-		final byte scalingFactor_B = (byte) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final byte scalingOffset_B = (byte) scalingOffset;
+		final byte scalingFactor_B = (byte) scalingFactor;
 		final int numSamples = 10;
 		final byte[] values = new byte[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (byte) (scalingOffset_B + i*scalingFactor_B);
+			values[i] = (byte) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(1, numSamples);
@@ -5458,7 +5572,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final byte referenceValue = (byte) (scalingOffset_B + i*scalingFactor_B);
+			final byte referenceValue = (byte) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_B + referenceValue*scalingFactor_B);
 			referenceData_short [i] = (short )(scalingOffset_B + referenceValue*scalingFactor_B);
 			referenceData_int   [i] = (int   )(scalingOffset_B + referenceValue*scalingFactor_B);
@@ -5497,12 +5611,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_B_S() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final byte scalingOffset_B = (byte) 1.2;
-		final byte scalingFactor_B = (byte) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final byte scalingOffset_B = (byte) scalingOffset;
+		final byte scalingFactor_B = (byte) scalingFactor;
 		final int numSamples = 10;
 		final short[] values = new short[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (short) (scalingOffset_B + i*scalingFactor_B);
+			values[i] = (short) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(2, numSamples);
@@ -5569,7 +5685,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final short referenceValue = (short) (scalingOffset_B + i*scalingFactor_B);
+			final short referenceValue = (short) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_B + referenceValue*scalingFactor_B);
 			referenceData_short [i] = (short )(scalingOffset_B + referenceValue*scalingFactor_B);
 			referenceData_int   [i] = (int   )(scalingOffset_B + referenceValue*scalingFactor_B);
@@ -5608,12 +5724,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_B_I() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final byte scalingOffset_B = (byte) 1.2;
-		final byte scalingFactor_B = (byte) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final byte scalingOffset_B = (byte) scalingOffset;
+		final byte scalingFactor_B = (byte) scalingFactor;
 		final int numSamples = 10;
 		final int[] values = new int[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (int) (scalingOffset_B + i*scalingFactor_B);
+			values[i] = (int) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
@@ -5680,7 +5798,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final int referenceValue = (int) (scalingOffset_B + i*scalingFactor_B);
+			final int referenceValue = (int) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_B + referenceValue*scalingFactor_B);
 			referenceData_short [i] = (short )(scalingOffset_B + referenceValue*scalingFactor_B);
 			referenceData_int   [i] = (int   )(scalingOffset_B + referenceValue*scalingFactor_B);
@@ -5719,12 +5837,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_B_L() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final byte scalingOffset_B = (byte) 1.2;
-		final byte scalingFactor_B = (byte) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final byte scalingOffset_B = (byte) scalingOffset;
+		final byte scalingFactor_B = (byte) scalingFactor;
 		final int numSamples = 10;
 		final long[] values = new long[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (long) (scalingOffset_B + i*scalingFactor_B);
+			values[i] = (long) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
@@ -5791,7 +5911,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final long referenceValue = (long) (scalingOffset_B + i*scalingFactor_B);
+			final long referenceValue = (long) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_B + referenceValue*scalingFactor_B);
 			referenceData_short [i] = (short )(scalingOffset_B + referenceValue*scalingFactor_B);
 			referenceData_int   [i] = (int   )(scalingOffset_B + referenceValue*scalingFactor_B);
@@ -5830,12 +5950,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_B_F() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final byte scalingOffset_B = (byte) 1.2;
-		final byte scalingFactor_B = (byte) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final byte scalingOffset_B = (byte) scalingOffset;
+		final byte scalingFactor_B = (byte) scalingFactor;
 		final int numSamples = 10;
 		final float[] values = new float[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (float) (scalingOffset_B + i*scalingFactor_B);
+			values[i] = (float) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
@@ -5902,7 +6024,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final float referenceValue = (float) (scalingOffset_B + i*scalingFactor_B);
+			final float referenceValue = (float) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_B + referenceValue*scalingFactor_B);
 			referenceData_short [i] = (short )(scalingOffset_B + referenceValue*scalingFactor_B);
 			referenceData_int   [i] = (int   )(scalingOffset_B + referenceValue*scalingFactor_B);
@@ -5941,12 +6063,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_B_D() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final byte scalingOffset_B = (byte) 1.2;
-		final byte scalingFactor_B = (byte) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final byte scalingOffset_B = (byte) scalingOffset;
+		final byte scalingFactor_B = (byte) scalingFactor;
 		final int numSamples = 10;
 		final double[] values = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (double) (scalingOffset_B + i*scalingFactor_B);
+			values[i] = (double) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
@@ -6013,7 +6137,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final double referenceValue = (double) (scalingOffset_B + i*scalingFactor_B);
+			final double referenceValue = (double) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_B + referenceValue*scalingFactor_B);
 			referenceData_short [i] = (short )(scalingOffset_B + referenceValue*scalingFactor_B);
 			referenceData_int   [i] = (int   )(scalingOffset_B + referenceValue*scalingFactor_B);
@@ -6052,12 +6176,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_S_B() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final short scalingOffset_S = (short) 1.2;
-		final short scalingFactor_S = (short) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final short scalingOffset_S = (short) scalingOffset;
+		final short scalingFactor_S = (short) scalingFactor;
 		final int numSamples = 10;
 		final byte[] values = new byte[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (byte) (scalingOffset_S + i*scalingFactor_S);
+			values[i] = (byte) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(1, numSamples);
@@ -6124,7 +6250,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final byte referenceValue = (byte) (scalingOffset_S + i*scalingFactor_S);
+			final byte referenceValue = (byte) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_S + referenceValue*scalingFactor_S);
 			referenceData_short [i] = (short )(scalingOffset_S + referenceValue*scalingFactor_S);
 			referenceData_int   [i] = (int   )(scalingOffset_S + referenceValue*scalingFactor_S);
@@ -6163,12 +6289,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_S_S() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final short scalingOffset_S = (short) 1.2;
-		final short scalingFactor_S = (short) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final short scalingOffset_S = (short) scalingOffset;
+		final short scalingFactor_S = (short) scalingFactor;
 		final int numSamples = 10;
 		final short[] values = new short[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (short) (scalingOffset_S + i*scalingFactor_S);
+			values[i] = (short) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(2, numSamples);
@@ -6235,7 +6363,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final short referenceValue = (short) (scalingOffset_S + i*scalingFactor_S);
+			final short referenceValue = (short) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_S + referenceValue*scalingFactor_S);
 			referenceData_short [i] = (short )(scalingOffset_S + referenceValue*scalingFactor_S);
 			referenceData_int   [i] = (int   )(scalingOffset_S + referenceValue*scalingFactor_S);
@@ -6274,12 +6402,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_S_I() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final short scalingOffset_S = (short) 1.2;
-		final short scalingFactor_S = (short) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final short scalingOffset_S = (short) scalingOffset;
+		final short scalingFactor_S = (short) scalingFactor;
 		final int numSamples = 10;
 		final int[] values = new int[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (int) (scalingOffset_S + i*scalingFactor_S);
+			values[i] = (int) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
@@ -6346,7 +6476,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final int referenceValue = (int) (scalingOffset_S + i*scalingFactor_S);
+			final int referenceValue = (int) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_S + referenceValue*scalingFactor_S);
 			referenceData_short [i] = (short )(scalingOffset_S + referenceValue*scalingFactor_S);
 			referenceData_int   [i] = (int   )(scalingOffset_S + referenceValue*scalingFactor_S);
@@ -6385,12 +6515,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_S_L() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final short scalingOffset_S = (short) 1.2;
-		final short scalingFactor_S = (short) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final short scalingOffset_S = (short) scalingOffset;
+		final short scalingFactor_S = (short) scalingFactor;
 		final int numSamples = 10;
 		final long[] values = new long[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (long) (scalingOffset_S + i*scalingFactor_S);
+			values[i] = (long) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
@@ -6457,7 +6589,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final long referenceValue = (long) (scalingOffset_S + i*scalingFactor_S);
+			final long referenceValue = (long) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_S + referenceValue*scalingFactor_S);
 			referenceData_short [i] = (short )(scalingOffset_S + referenceValue*scalingFactor_S);
 			referenceData_int   [i] = (int   )(scalingOffset_S + referenceValue*scalingFactor_S);
@@ -6496,12 +6628,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_S_F() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final short scalingOffset_S = (short) 1.2;
-		final short scalingFactor_S = (short) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final short scalingOffset_S = (short) scalingOffset;
+		final short scalingFactor_S = (short) scalingFactor;
 		final int numSamples = 10;
 		final float[] values = new float[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (float) (scalingOffset_S + i*scalingFactor_S);
+			values[i] = (float) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
@@ -6568,7 +6702,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final float referenceValue = (float) (scalingOffset_S + i*scalingFactor_S);
+			final float referenceValue = (float) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_S + referenceValue*scalingFactor_S);
 			referenceData_short [i] = (short )(scalingOffset_S + referenceValue*scalingFactor_S);
 			referenceData_int   [i] = (int   )(scalingOffset_S + referenceValue*scalingFactor_S);
@@ -6607,12 +6741,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_S_D() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final short scalingOffset_S = (short) 1.2;
-		final short scalingFactor_S = (short) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final short scalingOffset_S = (short) scalingOffset;
+		final short scalingFactor_S = (short) scalingFactor;
 		final int numSamples = 10;
 		final double[] values = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (double) (scalingOffset_S + i*scalingFactor_S);
+			values[i] = (double) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
@@ -6679,7 +6815,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final double referenceValue = (double) (scalingOffset_S + i*scalingFactor_S);
+			final double referenceValue = (double) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_S + referenceValue*scalingFactor_S);
 			referenceData_short [i] = (short )(scalingOffset_S + referenceValue*scalingFactor_S);
 			referenceData_int   [i] = (int   )(scalingOffset_S + referenceValue*scalingFactor_S);
@@ -6718,12 +6854,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_I_B() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final int scalingOffset_I = (int) 1.2;
-		final int scalingFactor_I = (int) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final int scalingOffset_I = (int) scalingOffset;
+		final int scalingFactor_I = (int) scalingFactor;
 		final int numSamples = 10;
 		final byte[] values = new byte[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (byte) (scalingOffset_I + i*scalingFactor_I);
+			values[i] = (byte) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(1, numSamples);
@@ -6790,7 +6928,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final byte referenceValue = (byte) (scalingOffset_I + i*scalingFactor_I);
+			final byte referenceValue = (byte) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_I + referenceValue*scalingFactor_I);
 			referenceData_short [i] = (short )(scalingOffset_I + referenceValue*scalingFactor_I);
 			referenceData_int   [i] = (int   )(scalingOffset_I + referenceValue*scalingFactor_I);
@@ -6829,12 +6967,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_I_S() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final int scalingOffset_I = (int) 1.2;
-		final int scalingFactor_I = (int) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final int scalingOffset_I = (int) scalingOffset;
+		final int scalingFactor_I = (int) scalingFactor;
 		final int numSamples = 10;
 		final short[] values = new short[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (short) (scalingOffset_I + i*scalingFactor_I);
+			values[i] = (short) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(2, numSamples);
@@ -6901,7 +7041,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final short referenceValue = (short) (scalingOffset_I + i*scalingFactor_I);
+			final short referenceValue = (short) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_I + referenceValue*scalingFactor_I);
 			referenceData_short [i] = (short )(scalingOffset_I + referenceValue*scalingFactor_I);
 			referenceData_int   [i] = (int   )(scalingOffset_I + referenceValue*scalingFactor_I);
@@ -6940,12 +7080,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_I_I() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final int scalingOffset_I = (int) 1.2;
-		final int scalingFactor_I = (int) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final int scalingOffset_I = (int) scalingOffset;
+		final int scalingFactor_I = (int) scalingFactor;
 		final int numSamples = 10;
 		final int[] values = new int[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (int) (scalingOffset_I + i*scalingFactor_I);
+			values[i] = (int) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
@@ -7012,7 +7154,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final int referenceValue = (int) (scalingOffset_I + i*scalingFactor_I);
+			final int referenceValue = (int) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_I + referenceValue*scalingFactor_I);
 			referenceData_short [i] = (short )(scalingOffset_I + referenceValue*scalingFactor_I);
 			referenceData_int   [i] = (int   )(scalingOffset_I + referenceValue*scalingFactor_I);
@@ -7051,12 +7193,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_I_L() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final int scalingOffset_I = (int) 1.2;
-		final int scalingFactor_I = (int) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final int scalingOffset_I = (int) scalingOffset;
+		final int scalingFactor_I = (int) scalingFactor;
 		final int numSamples = 10;
 		final long[] values = new long[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (long) (scalingOffset_I + i*scalingFactor_I);
+			values[i] = (long) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
@@ -7123,7 +7267,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final long referenceValue = (long) (scalingOffset_I + i*scalingFactor_I);
+			final long referenceValue = (long) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_I + referenceValue*scalingFactor_I);
 			referenceData_short [i] = (short )(scalingOffset_I + referenceValue*scalingFactor_I);
 			referenceData_int   [i] = (int   )(scalingOffset_I + referenceValue*scalingFactor_I);
@@ -7162,12 +7306,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_I_F() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final int scalingOffset_I = (int) 1.2;
-		final int scalingFactor_I = (int) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final int scalingOffset_I = (int) scalingOffset;
+		final int scalingFactor_I = (int) scalingFactor;
 		final int numSamples = 10;
 		final float[] values = new float[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (float) (scalingOffset_I + i*scalingFactor_I);
+			values[i] = (float) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
@@ -7234,7 +7380,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final float referenceValue = (float) (scalingOffset_I + i*scalingFactor_I);
+			final float referenceValue = (float) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_I + referenceValue*scalingFactor_I);
 			referenceData_short [i] = (short )(scalingOffset_I + referenceValue*scalingFactor_I);
 			referenceData_int   [i] = (int   )(scalingOffset_I + referenceValue*scalingFactor_I);
@@ -7273,12 +7419,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_I_D() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final int scalingOffset_I = (int) 1.2;
-		final int scalingFactor_I = (int) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final int scalingOffset_I = (int) scalingOffset;
+		final int scalingFactor_I = (int) scalingFactor;
 		final int numSamples = 10;
 		final double[] values = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (double) (scalingOffset_I + i*scalingFactor_I);
+			values[i] = (double) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
@@ -7345,7 +7493,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final double referenceValue = (double) (scalingOffset_I + i*scalingFactor_I);
+			final double referenceValue = (double) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_I + referenceValue*scalingFactor_I);
 			referenceData_short [i] = (short )(scalingOffset_I + referenceValue*scalingFactor_I);
 			referenceData_int   [i] = (int   )(scalingOffset_I + referenceValue*scalingFactor_I);
@@ -7384,12 +7532,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_L_B() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final long scalingOffset_L = (long) 1.2;
-		final long scalingFactor_L = (long) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final long scalingOffset_L = (long) scalingOffset;
+		final long scalingFactor_L = (long) scalingFactor;
 		final int numSamples = 10;
 		final byte[] values = new byte[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (byte) (scalingOffset_L + i*scalingFactor_L);
+			values[i] = (byte) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(1, numSamples);
@@ -7456,7 +7606,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final byte referenceValue = (byte) (scalingOffset_L + i*scalingFactor_L);
+			final byte referenceValue = (byte) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_L + referenceValue*scalingFactor_L);
 			referenceData_short [i] = (short )(scalingOffset_L + referenceValue*scalingFactor_L);
 			referenceData_int   [i] = (int   )(scalingOffset_L + referenceValue*scalingFactor_L);
@@ -7495,12 +7645,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_L_S() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final long scalingOffset_L = (long) 1.2;
-		final long scalingFactor_L = (long) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final long scalingOffset_L = (long) scalingOffset;
+		final long scalingFactor_L = (long) scalingFactor;
 		final int numSamples = 10;
 		final short[] values = new short[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (short) (scalingOffset_L + i*scalingFactor_L);
+			values[i] = (short) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(2, numSamples);
@@ -7567,7 +7719,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final short referenceValue = (short) (scalingOffset_L + i*scalingFactor_L);
+			final short referenceValue = (short) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_L + referenceValue*scalingFactor_L);
 			referenceData_short [i] = (short )(scalingOffset_L + referenceValue*scalingFactor_L);
 			referenceData_int   [i] = (int   )(scalingOffset_L + referenceValue*scalingFactor_L);
@@ -7606,12 +7758,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_L_I() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final long scalingOffset_L = (long) 1.2;
-		final long scalingFactor_L = (long) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final long scalingOffset_L = (long) scalingOffset;
+		final long scalingFactor_L = (long) scalingFactor;
 		final int numSamples = 10;
 		final int[] values = new int[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (int) (scalingOffset_L + i*scalingFactor_L);
+			values[i] = (int) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
@@ -7678,7 +7832,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final int referenceValue = (int) (scalingOffset_L + i*scalingFactor_L);
+			final int referenceValue = (int) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_L + referenceValue*scalingFactor_L);
 			referenceData_short [i] = (short )(scalingOffset_L + referenceValue*scalingFactor_L);
 			referenceData_int   [i] = (int   )(scalingOffset_L + referenceValue*scalingFactor_L);
@@ -7717,12 +7871,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_L_L() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final long scalingOffset_L = (long) 1.2;
-		final long scalingFactor_L = (long) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final long scalingOffset_L = (long) scalingOffset;
+		final long scalingFactor_L = (long) scalingFactor;
 		final int numSamples = 10;
 		final long[] values = new long[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (long) (scalingOffset_L + i*scalingFactor_L);
+			values[i] = (long) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
@@ -7789,7 +7945,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final long referenceValue = (long) (scalingOffset_L + i*scalingFactor_L);
+			final long referenceValue = (long) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_L + referenceValue*scalingFactor_L);
 			referenceData_short [i] = (short )(scalingOffset_L + referenceValue*scalingFactor_L);
 			referenceData_int   [i] = (int   )(scalingOffset_L + referenceValue*scalingFactor_L);
@@ -7828,12 +7984,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_L_F() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final long scalingOffset_L = (long) 1.2;
-		final long scalingFactor_L = (long) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final long scalingOffset_L = (long) scalingOffset;
+		final long scalingFactor_L = (long) scalingFactor;
 		final int numSamples = 10;
 		final float[] values = new float[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (float) (scalingOffset_L + i*scalingFactor_L);
+			values[i] = (float) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
@@ -7900,7 +8058,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final float referenceValue = (float) (scalingOffset_L + i*scalingFactor_L);
+			final float referenceValue = (float) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_L + referenceValue*scalingFactor_L);
 			referenceData_short [i] = (short )(scalingOffset_L + referenceValue*scalingFactor_L);
 			referenceData_int   [i] = (int   )(scalingOffset_L + referenceValue*scalingFactor_L);
@@ -7939,12 +8097,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_L_D() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final long scalingOffset_L = (long) 1.2;
-		final long scalingFactor_L = (long) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final long scalingOffset_L = (long) scalingOffset;
+		final long scalingFactor_L = (long) scalingFactor;
 		final int numSamples = 10;
 		final double[] values = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (double) (scalingOffset_L + i*scalingFactor_L);
+			values[i] = (double) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
@@ -8011,7 +8171,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final double referenceValue = (double) (scalingOffset_L + i*scalingFactor_L);
+			final double referenceValue = (double) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_L + referenceValue*scalingFactor_L);
 			referenceData_short [i] = (short )(scalingOffset_L + referenceValue*scalingFactor_L);
 			referenceData_int   [i] = (int   )(scalingOffset_L + referenceValue*scalingFactor_L);
@@ -8050,12 +8210,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_F_B() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final float scalingOffset_F = (float) 1.2;
-		final float scalingFactor_F = (float) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final float scalingOffset_F = (float) scalingOffset;
+		final float scalingFactor_F = (float) scalingFactor;
 		final int numSamples = 10;
 		final byte[] values = new byte[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (byte) (scalingOffset_F + i*scalingFactor_F);
+			values[i] = (byte) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(1, numSamples);
@@ -8122,7 +8284,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final byte referenceValue = (byte) (scalingOffset_F + i*scalingFactor_F);
+			final byte referenceValue = (byte) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_F + referenceValue*scalingFactor_F);
 			referenceData_short [i] = (short )(scalingOffset_F + referenceValue*scalingFactor_F);
 			referenceData_int   [i] = (int   )(scalingOffset_F + referenceValue*scalingFactor_F);
@@ -8161,12 +8323,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_F_S() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final float scalingOffset_F = (float) 1.2;
-		final float scalingFactor_F = (float) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final float scalingOffset_F = (float) scalingOffset;
+		final float scalingFactor_F = (float) scalingFactor;
 		final int numSamples = 10;
 		final short[] values = new short[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (short) (scalingOffset_F + i*scalingFactor_F);
+			values[i] = (short) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(2, numSamples);
@@ -8233,7 +8397,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final short referenceValue = (short) (scalingOffset_F + i*scalingFactor_F);
+			final short referenceValue = (short) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_F + referenceValue*scalingFactor_F);
 			referenceData_short [i] = (short )(scalingOffset_F + referenceValue*scalingFactor_F);
 			referenceData_int   [i] = (int   )(scalingOffset_F + referenceValue*scalingFactor_F);
@@ -8272,12 +8436,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_F_I() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final float scalingOffset_F = (float) 1.2;
-		final float scalingFactor_F = (float) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final float scalingOffset_F = (float) scalingOffset;
+		final float scalingFactor_F = (float) scalingFactor;
 		final int numSamples = 10;
 		final int[] values = new int[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (int) (scalingOffset_F + i*scalingFactor_F);
+			values[i] = (int) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
@@ -8344,7 +8510,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final int referenceValue = (int) (scalingOffset_F + i*scalingFactor_F);
+			final int referenceValue = (int) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_F + referenceValue*scalingFactor_F);
 			referenceData_short [i] = (short )(scalingOffset_F + referenceValue*scalingFactor_F);
 			referenceData_int   [i] = (int   )(scalingOffset_F + referenceValue*scalingFactor_F);
@@ -8383,12 +8549,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_F_L() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final float scalingOffset_F = (float) 1.2;
-		final float scalingFactor_F = (float) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final float scalingOffset_F = (float) scalingOffset;
+		final float scalingFactor_F = (float) scalingFactor;
 		final int numSamples = 10;
 		final long[] values = new long[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (long) (scalingOffset_F + i*scalingFactor_F);
+			values[i] = (long) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
@@ -8455,7 +8623,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final long referenceValue = (long) (scalingOffset_F + i*scalingFactor_F);
+			final long referenceValue = (long) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_F + referenceValue*scalingFactor_F);
 			referenceData_short [i] = (short )(scalingOffset_F + referenceValue*scalingFactor_F);
 			referenceData_int   [i] = (int   )(scalingOffset_F + referenceValue*scalingFactor_F);
@@ -8494,12 +8662,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_F_F() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final float scalingOffset_F = (float) 1.2;
-		final float scalingFactor_F = (float) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final float scalingOffset_F = (float) scalingOffset;
+		final float scalingFactor_F = (float) scalingFactor;
 		final int numSamples = 10;
 		final float[] values = new float[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (float) (scalingOffset_F + i*scalingFactor_F);
+			values[i] = (float) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
@@ -8566,7 +8736,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final float referenceValue = (float) (scalingOffset_F + i*scalingFactor_F);
+			final float referenceValue = (float) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_F + referenceValue*scalingFactor_F);
 			referenceData_short [i] = (short )(scalingOffset_F + referenceValue*scalingFactor_F);
 			referenceData_int   [i] = (int   )(scalingOffset_F + referenceValue*scalingFactor_F);
@@ -8605,12 +8775,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_F_D() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final float scalingOffset_F = (float) 1.2;
-		final float scalingFactor_F = (float) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final float scalingOffset_F = (float) scalingOffset;
+		final float scalingFactor_F = (float) scalingFactor;
 		final int numSamples = 10;
 		final double[] values = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (double) (scalingOffset_F + i*scalingFactor_F);
+			values[i] = (double) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
@@ -8677,7 +8849,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final double referenceValue = (double) (scalingOffset_F + i*scalingFactor_F);
+			final double referenceValue = (double) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_F + referenceValue*scalingFactor_F);
 			referenceData_short [i] = (short )(scalingOffset_F + referenceValue*scalingFactor_F);
 			referenceData_int   [i] = (int   )(scalingOffset_F + referenceValue*scalingFactor_F);
@@ -8716,12 +8888,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_D_B() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final double scalingOffset_D = (double) 1.2;
-		final double scalingFactor_D = (double) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final double scalingOffset_D = (double) scalingOffset;
+		final double scalingFactor_D = (double) scalingFactor;
 		final int numSamples = 10;
 		final byte[] values = new byte[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (byte) (scalingOffset_D + i*scalingFactor_D);
+			values[i] = (byte) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(1, numSamples);
@@ -8788,7 +8962,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final byte referenceValue = (byte) (scalingOffset_D + i*scalingFactor_D);
+			final byte referenceValue = (byte) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_D + referenceValue*scalingFactor_D);
 			referenceData_short [i] = (short )(scalingOffset_D + referenceValue*scalingFactor_D);
 			referenceData_int   [i] = (int   )(scalingOffset_D + referenceValue*scalingFactor_D);
@@ -8827,12 +9001,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_D_S() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final double scalingOffset_D = (double) 1.2;
-		final double scalingFactor_D = (double) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final double scalingOffset_D = (double) scalingOffset;
+		final double scalingFactor_D = (double) scalingFactor;
 		final int numSamples = 10;
 		final short[] values = new short[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (short) (scalingOffset_D + i*scalingFactor_D);
+			values[i] = (short) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(2, numSamples);
@@ -8899,7 +9075,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final short referenceValue = (short) (scalingOffset_D + i*scalingFactor_D);
+			final short referenceValue = (short) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_D + referenceValue*scalingFactor_D);
 			referenceData_short [i] = (short )(scalingOffset_D + referenceValue*scalingFactor_D);
 			referenceData_int   [i] = (int   )(scalingOffset_D + referenceValue*scalingFactor_D);
@@ -8938,12 +9114,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_D_I() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final double scalingOffset_D = (double) 1.2;
-		final double scalingFactor_D = (double) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final double scalingOffset_D = (double) scalingOffset;
+		final double scalingFactor_D = (double) scalingFactor;
 		final int numSamples = 10;
 		final int[] values = new int[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (int) (scalingOffset_D + i*scalingFactor_D);
+			values[i] = (int) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
@@ -9010,7 +9188,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final int referenceValue = (int) (scalingOffset_D + i*scalingFactor_D);
+			final int referenceValue = (int) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_D + referenceValue*scalingFactor_D);
 			referenceData_short [i] = (short )(scalingOffset_D + referenceValue*scalingFactor_D);
 			referenceData_int   [i] = (int   )(scalingOffset_D + referenceValue*scalingFactor_D);
@@ -9049,12 +9227,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_D_L() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final double scalingOffset_D = (double) 1.2;
-		final double scalingFactor_D = (double) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final double scalingOffset_D = (double) scalingOffset;
+		final double scalingFactor_D = (double) scalingFactor;
 		final int numSamples = 10;
 		final long[] values = new long[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (long) (scalingOffset_D + i*scalingFactor_D);
+			values[i] = (long) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
@@ -9121,7 +9301,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final long referenceValue = (long) (scalingOffset_D + i*scalingFactor_D);
+			final long referenceValue = (long) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_D + referenceValue*scalingFactor_D);
 			referenceData_short [i] = (short )(scalingOffset_D + referenceValue*scalingFactor_D);
 			referenceData_int   [i] = (int   )(scalingOffset_D + referenceValue*scalingFactor_D);
@@ -9160,12 +9340,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_D_F() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final double scalingOffset_D = (double) 1.2;
-		final double scalingFactor_D = (double) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final double scalingOffset_D = (double) scalingOffset;
+		final double scalingFactor_D = (double) scalingFactor;
 		final int numSamples = 10;
 		final float[] values = new float[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (float) (scalingOffset_D + i*scalingFactor_D);
+			values[i] = (float) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(4, numSamples);
@@ -9232,7 +9414,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final float referenceValue = (float) (scalingOffset_D + i*scalingFactor_D);
+			final float referenceValue = (float) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_D + referenceValue*scalingFactor_D);
 			referenceData_short [i] = (short )(scalingOffset_D + referenceValue*scalingFactor_D);
 			referenceData_int   [i] = (int   )(scalingOffset_D + referenceValue*scalingFactor_D);
@@ -9271,12 +9453,14 @@ class GeneratedApiTests {
 	public void testReadWrite_D_D_D() {
 		final double t0_D = (double) 13.0;
 		final double dt_D = (double) 37.0;
-		final double scalingOffset_D = (double) 1.2;
-		final double scalingFactor_D = (double) 24.3;
+		final double scalingOffset = 1.2;
+		final double scalingFactor = 24.3;
+		final double scalingOffset_D = (double) scalingOffset;
+		final double scalingFactor_D = (double) scalingFactor;
 		final int numSamples = 10;
 		final double[] values = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			values[i] = (double) (scalingOffset_D + i*scalingFactor_D);
+			values[i] = (double) (scalingOffset + i*scalingFactor);
 		}
 		//writing
 		int fileSize = BinaryTimeseries.fileOffset(8, numSamples);
@@ -9343,7 +9527,7 @@ class GeneratedApiTests {
 		final  float[] referenceData_float  = new  float[numSamples];
 		final double[] referenceData_double = new double[numSamples];
 		for (int i=0; i<numSamples; ++i) {
-			final double referenceValue = (double) (scalingOffset_D + i*scalingFactor_D);
+			final double referenceValue = (double) (scalingOffset + i*scalingFactor);
 			referenceData_byte  [i] = (byte  )(scalingOffset_D + referenceValue*scalingFactor_D);
 			referenceData_short [i] = (short )(scalingOffset_D + referenceValue*scalingFactor_D);
 			referenceData_int   [i] = (int   )(scalingOffset_D + referenceValue*scalingFactor_D);

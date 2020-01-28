@@ -198,7 +198,7 @@ class BinaryTimeseries(object):
     
 if __name__=='__main__':
     
-    filename="/home/IPP-HGW/jons/04_PhD/00_programs/Minerva/Mdata/data/datasignalscache/w7x/180911033/qxt1/DATA.CH13.bts"
+    filename="../../test/resources/L_S_F.bts"
 
     with open(filename, "rb") as f:
         bts = BinaryTimeseries(f.fileno())
