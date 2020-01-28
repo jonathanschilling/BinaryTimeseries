@@ -13,6 +13,121 @@ import org.junit.jupiter.api.Test;
 
 public class GenerateTestData {
 
+	public static final byte[] time_dtypes = new byte[] {
+			BinaryTimeseries.DTYPE_LONG,
+			BinaryTimeseries.DTYPE_DOUBLE
+	};
+
+	public static final byte[] scaling_dtypes = new byte[] {
+			BinaryTimeseries.DTYPE_NONE,
+			BinaryTimeseries.DTYPE_BYTE,
+			BinaryTimeseries.DTYPE_SHORT,
+			BinaryTimeseries.DTYPE_INT,
+			BinaryTimeseries.DTYPE_LONG,
+			BinaryTimeseries.DTYPE_FLOAT,
+			BinaryTimeseries.DTYPE_DOUBLE
+	};
+
+	public static final byte[] data_dtypes = new byte[] {
+			BinaryTimeseries.DTYPE_BYTE,
+			BinaryTimeseries.DTYPE_SHORT,
+			BinaryTimeseries.DTYPE_INT,
+			BinaryTimeseries.DTYPE_LONG,
+			BinaryTimeseries.DTYPE_FLOAT,
+			BinaryTimeseries.DTYPE_DOUBLE
+	};
+
+	public static final int[] data_sizes = new int[] {
+			Byte.BYTES,
+			Short.BYTES,
+			Integer.BYTES,
+			Long.BYTES,
+			Float.BYTES,
+			Double.BYTES };
+	
+	public static final Map<Byte, String> javaName;
+	public static final Map<Byte, String> javaClassName;
+	static {
+		javaName = new HashMap<>();
+		javaName.put(BinaryTimeseries.DTYPE_NONE,   "null");
+		javaName.put(BinaryTimeseries.DTYPE_BYTE,   "byte");
+		javaName.put(BinaryTimeseries.DTYPE_SHORT,  "short");
+		javaName.put(BinaryTimeseries.DTYPE_INT,    "int");
+		javaName.put(BinaryTimeseries.DTYPE_LONG,   "long");
+		javaName.put(BinaryTimeseries.DTYPE_FLOAT,  "float");
+		javaName.put(BinaryTimeseries.DTYPE_DOUBLE, "double");
+		
+		javaClassName = new HashMap<>();
+		javaClassName.put(BinaryTimeseries.DTYPE_NONE,   "null");
+		javaClassName.put(BinaryTimeseries.DTYPE_BYTE,   "Byte");
+		javaClassName.put(BinaryTimeseries.DTYPE_SHORT,  "Short");
+		javaClassName.put(BinaryTimeseries.DTYPE_INT,    "Integer");
+		javaClassName.put(BinaryTimeseries.DTYPE_LONG,   "Long");
+		javaClassName.put(BinaryTimeseries.DTYPE_FLOAT,  "Float");
+		javaClassName.put(BinaryTimeseries.DTYPE_DOUBLE, "Double");
+	}
+	
+	// number of samples to put into the test files
+	public static final String numSamplesStr = "10";
+	public static final int numSamples = Integer.parseInt(numSamplesStr);
+
+	// t0 to put into the test files
+	public static final String t0Str = "13.0";
+	public static final double t0 = Double.parseDouble(t0Str);
+	public static final long t0_L = (long) t0;
+	public static final double t0_D = (double) t0;
+
+	// dt to put into the test files
+	public static final String dtStr = "37.0";
+	public static final double dt = Double.parseDouble(dtStr);
+	public static final long dt_L = (long) dt;
+	public static final double dt_D = (double) dt;
+
+	// offset o in the test files
+	public static final String scalingOffsetStr = "1.2";
+	public static final double scalingOffset = Double.parseDouble(scalingOffsetStr);
+	public static final byte scalingOffset_B = (byte) scalingOffset;
+	public static final short scalingOffset_S = (short) scalingOffset;
+	public static final int scalingOffset_I = (int) scalingOffset;
+	public static final long scalingOffset_L = (long) scalingOffset;
+	public static final float scalingOffset_F = (float) scalingOffset;
+	public static final double scalingOffset_D = (double) scalingOffset;
+
+	// scaling s in the test files
+	public static final String scalingFactorStr = "24.3";
+	public static final double scalingFactor = Double.parseDouble(scalingFactorStr);
+	public static final byte scalingFactor_B = (byte) scalingFactor;
+	public static final short scalingFactor_S = (short) scalingFactor;
+	public static final int scalingFactor_I = (int) scalingFactor;
+	public static final long scalingFactor_L = (long) scalingFactor;
+	public static final float scalingFactor_F = (float) scalingFactor;
+	public static final double scalingFactor_D = (double) scalingFactor;
+
+	// time series:
+	// idx |  time | raw value (=offset+scale*(t-t0))
+	//  0  |  13.0 |   1.2
+	//  1  |  50.0 |  25.5
+	//  2  |  87.0 |  49.8
+	//  3  | 124.0 |  74.1
+	//  4  | 161.0 |  98.4
+	//  5  | 198.0 | 122.7
+	//  6  | 235.0 | 147.0
+	//  7  | 272.0 | 171.3
+	//  8  | 309.0 | 195.6
+	//  9  | 346.0 | 219.9
+	
+	
+
+	// interval specification for testing of subset reading
+	public static final int numSamplesSubset = 5;
+	public static final int sourceOffset = 2;
+	public static final int targetOffset = 0;
+
+	public static final String t_lStr = "80.0";
+	public static final int expectedFirstIndexInside = 2;
+	public static final String t_uStr = "300.0";
+	public static final int expectedLastIndexInside = 7;
+	
 	public static void main(String[] args) {
 		generateTestData();
 	}
@@ -24,99 +139,7 @@ public class GenerateTestData {
 	 */
 	@Test
 	public static void generateTestData() {
-
-		final byte[] time_dtypes = new byte[] {
-				BinaryTimeseries.DTYPE_LONG,
-				BinaryTimeseries.DTYPE_DOUBLE
-		};
-
-		final byte[] scaling_dtypes = new byte[] {
-				BinaryTimeseries.DTYPE_NONE,
-				BinaryTimeseries.DTYPE_BYTE,
-				BinaryTimeseries.DTYPE_SHORT,
-				BinaryTimeseries.DTYPE_INT,
-				BinaryTimeseries.DTYPE_LONG,
-				BinaryTimeseries.DTYPE_FLOAT,
-				BinaryTimeseries.DTYPE_DOUBLE
-		};
-
-		final byte[] data_dtypes = new byte[] {
-				BinaryTimeseries.DTYPE_BYTE,
-				BinaryTimeseries.DTYPE_SHORT,
-				BinaryTimeseries.DTYPE_INT,
-				BinaryTimeseries.DTYPE_LONG,
-				BinaryTimeseries.DTYPE_FLOAT,
-				BinaryTimeseries.DTYPE_DOUBLE
-		};
-
 		
-		
-		final int[] data_sizes = new int[] {
-				Byte.BYTES,
-				Short.BYTES,
-				Integer.BYTES,
-				Long.BYTES,
-				Float.BYTES,
-				Double.BYTES };
-
-		final Map<Byte, String> javaName = new HashMap<>();
-		javaName.put(BinaryTimeseries.DTYPE_NONE, "null");
-		javaName.put(BinaryTimeseries.DTYPE_BYTE, "byte");
-		javaName.put(BinaryTimeseries.DTYPE_SHORT, "short");
-		javaName.put(BinaryTimeseries.DTYPE_INT, "int");
-		javaName.put(BinaryTimeseries.DTYPE_LONG, "long");
-		javaName.put(BinaryTimeseries.DTYPE_FLOAT, "float");
-		javaName.put(BinaryTimeseries.DTYPE_DOUBLE, "double");
-
-		// number of samples to put into the test files
-		final String numSamplesStr = "10";
-		final int numSamples = Integer.parseInt(numSamplesStr);
-
-		// t0 to put into the test files
-		final String t0Str = "13.0";
-		final double t0 = Double.parseDouble(t0Str);
-		final long t0_L = (long) t0;
-		final double t0_D = (double) t0;
-
-		// dt to put into the test files
-		final String dtStr = "37.0";
-		final double dt = Double.parseDouble(dtStr);
-		final long dt_L = (long) dt;
-		final double dt_D = (double) dt;
-
-		// offset o in the test files
-		final String scalingOffsetStr = "1.2";
-		final double scalingOffset = Double.parseDouble(scalingOffsetStr);
-		final byte scalingOffset_B = (byte) scalingOffset;
-		final short scalingOffset_S = (short) scalingOffset;
-		final int scalingOffset_I = (int) scalingOffset;
-		final long scalingOffset_L = (long) scalingOffset;
-		final float scalingOffset_F = (float) scalingOffset;
-		final double scalingOffset_D = (double) scalingOffset;
-
-		// scaling s in the test files
-		final String scalingFactorStr = "24.3";
-		final double scalingFactor = Double.parseDouble(scalingFactorStr);
-		final byte scalingFactor_B = (byte) scalingFactor;
-		final short scalingFactor_S = (short) scalingFactor;
-		final int scalingFactor_I = (int) scalingFactor;
-		final long scalingFactor_L = (long) scalingFactor;
-		final float scalingFactor_F = (float) scalingFactor;
-		final double scalingFactor_D = (double) scalingFactor;
-
-		// time series:
-		// idx |  time | raw value (=offset+scale*(t-t0))
-		//  0  |  13.0 |   1.2                           
-		//  1  |  50.0 |  25.5                           
-		//  2  |  87.0 |  49.8                           
-		//  3  | 124.0 |  74.1                           
-		//  4  | 161.0 |  98.4                           
-		//  5  | 198.0 | 122.7                           
-		//  6  | 235.0 | 147.0                           
-		//  7  | 272.0 | 171.3                           
-		//  8  | 309.0 | 195.6                           
-		//  9  | 346.0 | 219.9                           
-
 		// The following three nested loops go over all combinations of time type,
 		// scaling type and data type and generate the test time series for each
 		// of these combinations. The generated reference data is saved in files
