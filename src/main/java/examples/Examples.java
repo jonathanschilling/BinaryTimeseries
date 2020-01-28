@@ -144,7 +144,7 @@ public class Examples {
 			throw new RuntimeException("readback t0 is not original t0");
 		}
 		if (dt != dt_readback) {
-			throw new RuntimeException("readback dt is not original t0");
+			throw new RuntimeException("readback dt is not original dt");
 		}
 		if (signal_readback == null) {
 			throw new RuntimeException("readback signal is null");
@@ -298,7 +298,7 @@ public class Examples {
 			throw new RuntimeException("readback t0 is not original t0");
 		}
 		if (dt != dt_readback) {
-			throw new RuntimeException("readback dt is not original t0");
+			throw new RuntimeException("readback dt is not original dt");
 		}
 		if (signal_readback == null) {
 			throw new RuntimeException("readback signal is null");
