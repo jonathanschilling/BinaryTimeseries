@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Jan 21 08:04:45 2020
-
-@author: jons
+This is a class to save evenly-sampled time series data in a very simple and
+easy-to-read format. The key idea is to simply dump a header and then the raw
+data values one after another into a binary file. When you want to read only a
+small subset of the data, you can specify a time or an index range. A scaling
+and an offset can be defined for the data values (e.g. from an ADC). Examples
+of how to use this class can be found in Examples.py.
+ 
+@author: Jonathan Schilling (jonathan.schilling@mail.de)
+@version: 1.0.2 first official Python implementation
 """
 
 import mmap
@@ -20,7 +26,7 @@ def dtype2str(dtype):
     elif (dtype==6): return "double"
     else:            return "ERROR"
 
-def sizeof_dtype(dtype):
+def dtype_size(dtype):
     if   (dtype==0): return 0
     elif (dtype==1): return 1
     elif (dtype==2): return 2
