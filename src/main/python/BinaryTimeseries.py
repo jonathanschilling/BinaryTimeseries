@@ -48,7 +48,8 @@ class BinaryTimeseries(object):
     dtype_scaling = None
     offset = None
     scale  = None
-    raw_data = None
+    dtype_data = None
+    size_raw_sample = 0
     num_samples = None
     data_size = 0
     
@@ -166,6 +167,21 @@ class BinaryTimeseries(object):
     def get_dt(self):
         return self.dt
     
+    def get_dtype_scaling(self):
+        return self.dtype_scaling
+    
+    def get_offset(self):
+        return self.offset
+    
+    def get_scale(self):
+        return self.scale
+    
+    def get_dtype_data(self):
+        return self.dtype_data
+    
+    def get_num_samples(self):
+        return self.num_samples
+    
     def get_raw(self):
         raw_data = None
         # read raw data
@@ -182,21 +198,20 @@ class BinaryTimeseries(object):
             raw_data = struct.unpack(self.bo+str(self.num_samples)+'f', self._fmap.read(self.data_size))
         elif self.dtype_data==6: # double
             raw_data = struct.unpack(self.bo+str(self.num_samples)+'d', self._fmap.read(self.data_size))
-        return raw_data
+        return np.array(raw_data)
     
     def get_scaled(self):
         raw_data = self.get_raw()
-        scaled_data = None
          # apply the scaling if available
-        if   self.dtype_scaling==0: # no scaling
-            scaled_data = np.array(raw_data)
+        if self.dtype_scaling==0: # no scaling
+            return raw_data
         else:
-            scaled_data = np.add(np.multiply(np.array(raw_data), self.scale), self.offset)
-        return scaled_data
-    
+            return np.add(np.multiply(raw_data, self.scale), self.offset)
+        
     def get_raw_indexRange(self, fromIdx, numSamplesToRead):
         if (fromIdx<0 or fromIdx>self.num_samples-1):
-            raise ValueError("fromIdx "+str(fromIdx)+" out of range; allowed: 0 to "+str(self.num_samples-1))
+            raise ValueError("fromIdx "+str(fromIdx)+
+                             " out of range; allowed: 0 to "+str(self.num_samples-1))
         if (numSamplesToRead<=0 or fromIdx+numSamplesToRead>self.num_samples):
             raise ValueError("numSamplesToRead "+str(numSamplesToRead)+
                              " out of range; allowed 1 to "+str(self.num_samples-fromIdx))
@@ -222,7 +237,7 @@ class BinaryTimeseries(object):
     def get_scaled_indexRange(self, fromIdx, numSamplesToRead):
         raw_data = self.get_raw(fromIdx, numSamplesToRead)
          # apply the scaling if available
-        if   self.dtype_scaling==0: # no scaling
+        if self.dtype_scaling==0: # no scaling
             return raw_data
         else:
             return np.add(np.multiply(raw_data, self.scale), self.offset)
@@ -240,4 +255,4 @@ if __name__=='__main__':
     with open(filename, "rb") as f:
         with BinaryTimeseries(f.fileno()) as bts:
             raw_data = bts.get_raw_indexRange(0, 10)
-            
+            print(raw_data)

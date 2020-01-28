@@ -46,6 +46,7 @@ public class GenerateTestData {
 			Double.BYTES };
 	
 	public static final Map<Byte, String> javaName;
+	public static final Map<Byte, String> pythonName;
 	public static final Map<Byte, String> javaClassName;
 	static {
 		javaName = new HashMap<>();
@@ -56,6 +57,15 @@ public class GenerateTestData {
 		javaName.put(BinaryTimeseries.DTYPE_LONG,   "long");
 		javaName.put(BinaryTimeseries.DTYPE_FLOAT,  "float");
 		javaName.put(BinaryTimeseries.DTYPE_DOUBLE, "double");
+		
+		pythonName = new HashMap<>();
+		pythonName.put(BinaryTimeseries.DTYPE_NONE,   "None");
+		pythonName.put(BinaryTimeseries.DTYPE_BYTE,   "np.int8");
+		pythonName.put(BinaryTimeseries.DTYPE_SHORT,  "np.int16");
+		pythonName.put(BinaryTimeseries.DTYPE_INT,    "np.int32");
+		pythonName.put(BinaryTimeseries.DTYPE_LONG,   "np.int64");
+		pythonName.put(BinaryTimeseries.DTYPE_FLOAT,  "np.float32");
+		pythonName.put(BinaryTimeseries.DTYPE_DOUBLE, "np.float64");
 		
 		javaClassName = new HashMap<>();
 		javaClassName.put(BinaryTimeseries.DTYPE_NONE,   "null");
