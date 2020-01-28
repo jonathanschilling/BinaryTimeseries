@@ -12,6 +12,7 @@ of how to use this class can be found in Examples.py.
 @version: 1.0.2 first official Python implementation
 """
 
+import os
 import mmap
 import struct
 import numpy as np
@@ -55,125 +56,115 @@ class BinaryTimeseries(object):
     def __init__(self, mmap_fileno):
         
         # memory-map the file, size 0 means whole file, read-only for safety
-        fmap = mmap.mmap(mmap_fileno, 0, prot=mmap.PROT_READ)
+        fmap = mmap.mmap(mmap_fileno, 0, access=mmap.ACCESS_READ)
         
         # start at the beginning
-        self.fpos=0
+        fmap.seek(0)
         
         # try big-endian byte order first
-        endianessCheck = struct.unpack(self.bo+'h', fmap[self.fpos:self.fpos+2])
+        endianessCheck = struct.unpack(self.bo+'h', fmap.read(2))
         if (endianessCheck==256):
             # nope, input file is little-endian
             self.bo = '<'
             if self._debug: print("byteorder is little-endian")
         elif self._debug: print("byteorder is big-endian")
-        self.fpos += 2
         
         # determine dtype of timestamps
-        self.dtype_time = struct.unpack('b', fmap[self.fpos:self.fpos+1])[0]
+        self.dtype_time = struct.unpack('b', fmap.read(1))[0]
         if self.dtype_time==4 or self.dtype_time==6:
             if self._debug: print("dtype_time: "+dtype2str(self.dtype_time))
         else:
             raise ValueError("dtype_time is not 4 (long) or 6 (double), but "+str(self.dtype_time))
-        self.fpos+=1
         
         # read time axis specification
         if self.dtype_time==4: # long
-            self.t0 = struct.unpack(self.bo+'q', fmap[self.fpos:self.fpos+8])[0]
-            self.fpos+=8
-            self.dt = struct.unpack(self.bo+'q', fmap[self.fpos:self.fpos+8])[0]
-            self.fpos+=8
+            self.t0 = struct.unpack(self.bo+'q', fmap.read(8))[0]
+            self.dt = struct.unpack(self.bo+'q', fmap.read(8))[0]
         else: # double
-            self.t0 = struct.unpack(self.bo+'d', fmap[self.fpos:self.fpos+8])[0]
-            self.fpos+=8
-            self.dt = struct.unpack(self.bo+'d', fmap[self.fpos:self.fpos+8])[0]
-            self.fpos+=8
+            self.t0 = struct.unpack(self.bo+'d', fmap.read(8))[0]
+            self.dt = struct.unpack(self.bo+'d', fmap.read(8))[0]
         if self._debug:
             print("t0: "+str(self.t0))
             print("dt: "+str(self.dt))
         
         # read dtype of scaling
-        self.dtype_scaling = struct.unpack('b', fmap[self.fpos:self.fpos+1])[0]
+        self.dtype_scaling = struct.unpack('b', fmap.read(1))[0]
         if self.dtype_scaling>=0 and self.dtype_scaling<=6:
             if self._debug: print("dtype_scaling: "+dtype2str(self.dtype_scaling))
         else:
             raise ValueError("dtype_scaling is not in valid range (0..6), but "+str(self.dtype_scaling))
-        self.fpos+=1
         
         # read scaling parameters
+        if   self.dtype_scaling==0: # no scaling
+            fmap.seek(16, os.SEEK_CUR)
         if   self.dtype_scaling==1: # byte
-            self.offset = struct.unpack(        'b', fmap[self.fpos:self.fpos+1])[0]
-            self.fpos += 8
-            self.scale  = struct.unpack(        'b', fmap[self.fpos:self.fpos+1])[0]
-            self.fpos += 8
+            self.offset = struct.unpack(        'b', fmap.read(1))[0]
+            fmap.seek(7, os.SEEK_CUR)
+            self.scale  = struct.unpack(        'b', fmap.read(1))[0]
+            fmap.seek(7, os.SEEK_CUR)
         elif self.dtype_scaling==2: # short
-            self.offset = struct.unpack(self.bo+'h', fmap[self.fpos:self.fpos+2])[0]
-            self.fpos += 8
-            self.scale  = struct.unpack(self.bo+'h', fmap[self.fpos:self.fpos+2])[0]
-            self.fpos += 8
+            self.offset = struct.unpack(self.bo+'h', fmap.read(2))[0]
+            fmap.seek(6, os.SEEK_CUR)
+            self.scale  = struct.unpack(self.bo+'h', fmap.read(2))[0]
+            fmap.seek(6, os.SEEK_CUR)
         elif self.dtype_scaling==3: # int
-            self.offset = struct.unpack(self.bo+'i', fmap[self.fpos:self.fpos+4])[0]
-            self.fpos += 8
-            self.scale  = struct.unpack(self.bo+'i', fmap[self.fpos:self.fpos+4])[0]
-            self.fpos += 8
+            self.offset = struct.unpack(self.bo+'i', fmap.read(4))[0]
+            fmap.seek(4, os.SEEK_CUR)
+            self.scale  = struct.unpack(self.bo+'i', fmap.read(4))[0]
+            fmap.seek(4, os.SEEK_CUR)
         elif self.dtype_scaling==4: # long
-            self.offset = struct.unpack(self.bo+'q', fmap[self.fpos:self.fpos+8])[0]
-            self.fpos += 8
-            self.scale  = struct.unpack(self.bo+'q', fmap[self.fpos:self.fpos+8])[0]
-            self.fpos += 8
+            self.offset = struct.unpack(self.bo+'q', fmap.read(8))[0]
+            self.scale  = struct.unpack(self.bo+'q', fmap.read(8))[0]
         elif self.dtype_scaling==5: # float
-            self.offset = struct.unpack(self.bo+'f', fmap[self.fpos:self.fpos+4])[0]
-            self.fpos += 8
-            self.scale  = struct.unpack(self.bo+'f', fmap[self.fpos:self.fpos+4])[0]
-            self.fpos += 8
+            self.offset = struct.unpack(self.bo+'f', fmap.read(4))[0]
+            fmap.seek(4, os.SEEK_CUR)
+            self.scale  = struct.unpack(self.bo+'f', fmap.read(4))[0]
+            fmap.seek(4, os.SEEK_CUR)
         elif self.dtype_scaling==6: # double
-            self.offset = struct.unpack(self.bo+'d', fmap[self.fpos:self.fpos+8])[0]
-            self.fpos += 8
-            self.scale  = struct.unpack(self.bo+'d', fmap[self.fpos:self.fpos+8])[0]
-            self.fpos += 8
+            self.offset = struct.unpack(self.bo+'d', fmap.read(8))[0]
+            self.scale  = struct.unpack(self.bo+'d', fmap.read(8))[0]
         if self._debug:
             print("offset: "+str(self.offset))
             print(" scale: "+str(self.scale))
         
         # skip reserved bytes
-        self.fpos += 23
+        fmap.seek(23, os.SEEK_CUR)
         
         # read dtype of raw data
-        self.dtype_data = struct.unpack('b', fmap[self.fpos:self.fpos+1])[0]
+        self.dtype_data = struct.unpack('b', fmap.read(1))[0]
         if self.dtype_data>=1 and self.dtype_data<=6:
-            self.size_raw_sample = sizeof_dtype(self.dtype_data)
+            self.size_raw_sample = dtype_size(self.dtype_data)
             if self._debug: print("dtype_data: "+dtype2str(self.dtype_data))
         else:
             raise ValueError("dtype_data is not in valid range (1..6), but "+str(self.dtype_data))
-        self.fpos+=1
         
         # read number of samples
-        self.num_samples = struct.unpack(self.bo+'i', fmap[self.fpos:self.fpos+4])[0]
+        self.num_samples = struct.unpack(self.bo+'i', fmap.read(4))[0]
         if self._debug: print("num_samples: "+str(self.num_samples))
-        self.fpos+=4
         
         # check to see if an error was made in counting bytes
-        if (self.fpos != 64):
-            raise RuntimeError("fpos should be 64 after reading the header, but it is "+str(self.fpos))
+        if (fmap.tell() != 64):
+            raise RuntimeError("fpos should be 64 after reading the header, but it is "+str(fmap.tell()))
         
         # check if file size is large enough to fit all data specified in header
-        if len(fmap)<64+self.num_samples*self.size_raw_sample:
+        data_size = self.num_samples*self.size_raw_sample
+        if len(fmap)<64+data_size:
             raise RuntimeError("length of file not large enough; has "+str(len(fmap))
                 +", expected "+str(64+self.num_samples*self.size_raw_sample))
         
         # read raw data
         if   self.dtype_data==1: # byte
-            self.raw_data = struct.unpack(self.bo+str(self.num_samples)+'b', fmap[self.fpos:])
+            self.raw_data = struct.unpack(self.bo+str(self.num_samples)+'b', fmap.read(data_size))
         elif self.dtype_data==2: # short
-            self.raw_data = struct.unpack(self.bo+str(self.num_samples)+'h', fmap[self.fpos:])
+            self.raw_data = struct.unpack(self.bo+str(self.num_samples)+'h', fmap.read(data_size))
         elif self.dtype_data==3: # int
-            self.raw_data = struct.unpack(self.bo+str(self.num_samples)+'i', fmap[self.fpos:])
+            self.raw_data = struct.unpack(self.bo+str(self.num_samples)+'i', fmap.read(data_size))
         elif self.dtype_data==4: # long
-            self.raw_data = struct.unpack(self.bo+str(self.num_samples)+'q', fmap[self.fpos:])
+            self.raw_data = struct.unpack(self.bo+str(self.num_samples)+'q', fmap.read(data_size))
         elif self.dtype_data==5: # float
-            self.raw_data = struct.unpack(self.bo+str(self.num_samples)+'f', fmap[self.fpos:])
+            self.raw_data = struct.unpack(self.bo+str(self.num_samples)+'f', fmap.read(data_size))
         elif self.dtype_data==6: # double
-            self.raw_data = struct.unpack(self.bo+str(self.num_samples)+'d', fmap[self.fpos:])
+            self.raw_data = struct.unpack(self.bo+str(self.num_samples)+'d', fmap.read(data_size))
         
         # apply the scaling if available
         if   self.dtype_scaling==0: # no scaling
