@@ -39,8 +39,8 @@ def dtype_size(dtype):
 
 class BinaryTimeseries(object):
 
-    _debug = True
-    fpos = 0
+    _debug = False
+    _fmap = None
     bo = '>'
     dtype_time = None
     t0 = None
@@ -50,19 +50,20 @@ class BinaryTimeseries(object):
     scale  = None
     raw_data = None
     num_samples = None
-    raw_data = None
-    scaled_data = None
+    data_size = 0
     
     def __init__(self, mmap_fileno):
         
         # memory-map the file, size 0 means whole file, read-only for safety
-        fmap = mmap.mmap(mmap_fileno, 0, access=mmap.ACCESS_READ)
+        self._fmap = mmap.mmap(mmap_fileno, 0, access=mmap.ACCESS_READ)
         
         # start at the beginning
-        fmap.seek(0)
+        self._fmap.seek(0)
         
         # try big-endian byte order first
-        endianessCheck = struct.unpack(self.bo+'h', fmap.read(2))
+        endianessCheck = struct.unpack(self.bo+'h', self._fmap.read(2))[0]
+        if not (endianessCheck==1 or endianessCheck==256):
+            raise ValueError("endianessCheck is neither 1 or 256 but "+str(endianessCheck))
         if (endianessCheck==256):
             # nope, input file is little-endian
             self.bo = '<'
@@ -70,7 +71,7 @@ class BinaryTimeseries(object):
         elif self._debug: print("byteorder is big-endian")
         
         # determine dtype of timestamps
-        self.dtype_time = struct.unpack('b', fmap.read(1))[0]
+        self.dtype_time = struct.unpack('b', self._fmap.read(1))[0]
         if self.dtype_time==4 or self.dtype_time==6:
             if self._debug: print("dtype_time: "+dtype2str(self.dtype_time))
         else:
@@ -78,17 +79,17 @@ class BinaryTimeseries(object):
         
         # read time axis specification
         if self.dtype_time==4: # long
-            self.t0 = struct.unpack(self.bo+'q', fmap.read(8))[0]
-            self.dt = struct.unpack(self.bo+'q', fmap.read(8))[0]
+            self.t0 = struct.unpack(self.bo+'q', self._fmap.read(8))[0]
+            self.dt = struct.unpack(self.bo+'q', self._fmap.read(8))[0]
         else: # double
-            self.t0 = struct.unpack(self.bo+'d', fmap.read(8))[0]
-            self.dt = struct.unpack(self.bo+'d', fmap.read(8))[0]
+            self.t0 = struct.unpack(self.bo+'d', self._fmap.read(8))[0]
+            self.dt = struct.unpack(self.bo+'d', self._fmap.read(8))[0]
         if self._debug:
             print("t0: "+str(self.t0))
             print("dt: "+str(self.dt))
         
         # read dtype of scaling
-        self.dtype_scaling = struct.unpack('b', fmap.read(1))[0]
+        self.dtype_scaling = struct.unpack('b', self._fmap.read(1))[0]
         if self.dtype_scaling>=0 and self.dtype_scaling<=6:
             if self._debug: print("dtype_scaling: "+dtype2str(self.dtype_scaling))
         else:
@@ -96,42 +97,42 @@ class BinaryTimeseries(object):
         
         # read scaling parameters
         if   self.dtype_scaling==0: # no scaling
-            fmap.seek(16, os.SEEK_CUR)
-        if   self.dtype_scaling==1: # byte
-            self.offset = struct.unpack(        'b', fmap.read(1))[0]
-            fmap.seek(7, os.SEEK_CUR)
-            self.scale  = struct.unpack(        'b', fmap.read(1))[0]
-            fmap.seek(7, os.SEEK_CUR)
+            self._fmap.seek(16, os.SEEK_CUR)
+        elif self.dtype_scaling==1: # byte
+            self.offset = struct.unpack(        'b', self._fmap.read(1))[0]
+            self._fmap.seek(7, os.SEEK_CUR)
+            self.scale  = struct.unpack(        'b', self._fmap.read(1))[0]
+            self._fmap.seek(7, os.SEEK_CUR)
         elif self.dtype_scaling==2: # short
-            self.offset = struct.unpack(self.bo+'h', fmap.read(2))[0]
-            fmap.seek(6, os.SEEK_CUR)
-            self.scale  = struct.unpack(self.bo+'h', fmap.read(2))[0]
-            fmap.seek(6, os.SEEK_CUR)
+            self.offset = struct.unpack(self.bo+'h', self._fmap.read(2))[0]
+            self._fmap.seek(6, os.SEEK_CUR)
+            self.scale  = struct.unpack(self.bo+'h', self._fmap.read(2))[0]
+            self._fmap.seek(6, os.SEEK_CUR)
         elif self.dtype_scaling==3: # int
-            self.offset = struct.unpack(self.bo+'i', fmap.read(4))[0]
-            fmap.seek(4, os.SEEK_CUR)
-            self.scale  = struct.unpack(self.bo+'i', fmap.read(4))[0]
-            fmap.seek(4, os.SEEK_CUR)
+            self.offset = struct.unpack(self.bo+'i', self._fmap.read(4))[0]
+            self._fmap.seek(4, os.SEEK_CUR)
+            self.scale  = struct.unpack(self.bo+'i', self._fmap.read(4))[0]
+            self._fmap.seek(4, os.SEEK_CUR)
         elif self.dtype_scaling==4: # long
-            self.offset = struct.unpack(self.bo+'q', fmap.read(8))[0]
-            self.scale  = struct.unpack(self.bo+'q', fmap.read(8))[0]
+            self.offset = struct.unpack(self.bo+'q', self._fmap.read(8))[0]
+            self.scale  = struct.unpack(self.bo+'q', self._fmap.read(8))[0]
         elif self.dtype_scaling==5: # float
-            self.offset = struct.unpack(self.bo+'f', fmap.read(4))[0]
-            fmap.seek(4, os.SEEK_CUR)
-            self.scale  = struct.unpack(self.bo+'f', fmap.read(4))[0]
-            fmap.seek(4, os.SEEK_CUR)
+            self.offset = struct.unpack(self.bo+'f', self._fmap.read(4))[0]
+            self._fmap.seek(4, os.SEEK_CUR)
+            self.scale  = struct.unpack(self.bo+'f', self._fmap.read(4))[0]
+            self._fmap.seek(4, os.SEEK_CUR)
         elif self.dtype_scaling==6: # double
-            self.offset = struct.unpack(self.bo+'d', fmap.read(8))[0]
-            self.scale  = struct.unpack(self.bo+'d', fmap.read(8))[0]
+            self.offset = struct.unpack(self.bo+'d', self._fmap.read(8))[0]
+            self.scale  = struct.unpack(self.bo+'d', self._fmap.read(8))[0]
         if self._debug:
             print("offset: "+str(self.offset))
             print(" scale: "+str(self.scale))
         
         # skip reserved bytes
-        fmap.seek(23, os.SEEK_CUR)
+        self._fmap.seek(23, os.SEEK_CUR)
         
         # read dtype of raw data
-        self.dtype_data = struct.unpack('b', fmap.read(1))[0]
+        self.dtype_data = struct.unpack('b', self._fmap.read(1))[0]
         if self.dtype_data>=1 and self.dtype_data<=6:
             self.size_raw_sample = dtype_size(self.dtype_data)
             if self._debug: print("dtype_data: "+dtype2str(self.dtype_data))
@@ -139,42 +140,20 @@ class BinaryTimeseries(object):
             raise ValueError("dtype_data is not in valid range (1..6), but "+str(self.dtype_data))
         
         # read number of samples
-        self.num_samples = struct.unpack(self.bo+'i', fmap.read(4))[0]
+        self.num_samples = struct.unpack(self.bo+'i', self._fmap.read(4))[0]
         if self._debug: print("num_samples: "+str(self.num_samples))
         
         # check to see if an error was made in counting bytes
-        if (fmap.tell() != 64):
-            raise RuntimeError("fpos should be 64 after reading the header, but it is "+str(fmap.tell()))
+        current_pos = self._fmap.tell()
+        if (current_pos != 64):
+            raise RuntimeError("fpos should be 64 after reading the header, but it is "+str(current_pos))
         
         # check if file size is large enough to fit all data specified in header
-        data_size = self.num_samples*self.size_raw_sample
-        if len(fmap)<64+data_size:
-            raise RuntimeError("length of file not large enough; has "+str(len(fmap))
-                +", expected "+str(64+self.num_samples*self.size_raw_sample))
-        
-        # read raw data
-        if   self.dtype_data==1: # byte
-            self.raw_data = struct.unpack(self.bo+str(self.num_samples)+'b', fmap.read(data_size))
-        elif self.dtype_data==2: # short
-            self.raw_data = struct.unpack(self.bo+str(self.num_samples)+'h', fmap.read(data_size))
-        elif self.dtype_data==3: # int
-            self.raw_data = struct.unpack(self.bo+str(self.num_samples)+'i', fmap.read(data_size))
-        elif self.dtype_data==4: # long
-            self.raw_data = struct.unpack(self.bo+str(self.num_samples)+'q', fmap.read(data_size))
-        elif self.dtype_data==5: # float
-            self.raw_data = struct.unpack(self.bo+str(self.num_samples)+'f', fmap.read(data_size))
-        elif self.dtype_data==6: # double
-            self.raw_data = struct.unpack(self.bo+str(self.num_samples)+'d', fmap.read(data_size))
-        
-        # apply the scaling if available
-        if   self.dtype_scaling==0: # no scaling
-            self.scaled_data = np.array(self.raw_data)
-        else:
-            self.scaled_data = np.add(np.multiply(np.array(self.raw_data), self.scale), self.offset)
-        
-        # close the map
-        fmap.close()
-    
+        self.data_size = self.num_samples*self.size_raw_sample
+        if len(self._fmap)<64+self.data_size:
+            raise RuntimeError("length of file not large enough; has "+str(len(self._fmap))
+                +", expected "+str(64+self.data_size))
+       
     def set_debug(self, debug):
         self._debug = debug
     
@@ -187,15 +166,78 @@ class BinaryTimeseries(object):
     def get_dt(self):
         return self.dt
     
+    def get_raw(self):
+        raw_data = None
+        # read raw data
+        self._fmap.seek(64)
+        if   self.dtype_data==1: # byte
+            raw_data = struct.unpack(self.bo+str(self.num_samples)+'b', self._fmap.read(self.data_size))
+        elif self.dtype_data==2: # short
+            raw_data = struct.unpack(self.bo+str(self.num_samples)+'h', self._fmap.read(self.data_size))
+        elif self.dtype_data==3: # int
+            raw_data = struct.unpack(self.bo+str(self.num_samples)+'i', self._fmap.read(self.data_size))
+        elif self.dtype_data==4: # long
+            raw_data = struct.unpack(self.bo+str(self.num_samples)+'q', self._fmap.read(self.data_size))
+        elif self.dtype_data==5: # float
+            raw_data = struct.unpack(self.bo+str(self.num_samples)+'f', self._fmap.read(self.data_size))
+        elif self.dtype_data==6: # double
+            raw_data = struct.unpack(self.bo+str(self.num_samples)+'d', self._fmap.read(self.data_size))
+        return raw_data
     
+    def get_scaled(self):
+        raw_data = self.get_raw()
+        scaled_data = None
+         # apply the scaling if available
+        if   self.dtype_scaling==0: # no scaling
+            scaled_data = np.array(raw_data)
+        else:
+            scaled_data = np.add(np.multiply(np.array(raw_data), self.scale), self.offset)
+        return scaled_data
     
+    def get_raw_indexRange(self, fromIdx, numSamplesToRead):
+        if (fromIdx<0 or fromIdx>self.num_samples-1):
+            raise ValueError("fromIdx "+str(fromIdx)+" out of range; allowed: 0 to "+str(self.num_samples-1))
+        if (numSamplesToRead<=0 or fromIdx+numSamplesToRead>self.num_samples):
+            raise ValueError("numSamplesToRead "+str(numSamplesToRead)+
+                             " out of range; allowed 1 to "+str(self.num_samples-fromIdx))
+        
+        raw_data = None
+        # read raw data
+        self._fmap.seek(64+fromIdx*self.size_raw_sample)
+        read_size = numSamplesToRead*self.size_raw_sample
+        if   self.dtype_data==1: # byte
+            raw_data = struct.unpack(self.bo+str(numSamplesToRead)+'b', self._fmap.read(read_size))
+        elif self.dtype_data==2: # short
+            raw_data = struct.unpack(self.bo+str(numSamplesToRead)+'h', self._fmap.read(read_size))
+        elif self.dtype_data==3: # int
+            raw_data = struct.unpack(self.bo+str(numSamplesToRead)+'i', self._fmap.read(read_size))
+        elif self.dtype_data==4: # long
+            raw_data = struct.unpack(self.bo+str(numSamplesToRead)+'q', self._fmap.read(read_size))
+        elif self.dtype_data==5: # float
+            raw_data = struct.unpack(self.bo+str(numSamplesToRead)+'f', self._fmap.read(read_size))
+        elif self.dtype_data==6: # double
+            raw_data = struct.unpack(self.bo+str(numSamplesToRead)+'d', self._fmap.read(read_size))
+        return np.array(raw_data)
     
+    def get_scaled_indexRange(self, fromIdx, numSamplesToRead):
+        raw_data = self.get_raw(fromIdx, numSamplesToRead)
+         # apply the scaling if available
+        if   self.dtype_scaling==0: # no scaling
+            return raw_data
+        else:
+            return np.add(np.multiply(raw_data, self.scale), self.offset)
+        
+    def __enter__(self):
+        return self
     
-    
+    def __exit__(self, _type, _value, _tb):
+        self._fmap.close()
     
 if __name__=='__main__':
     
     filename="../../test/resources/L_S_F.bts"
 
     with open(filename, "rb") as f:
-        bts = BinaryTimeseries(f.fileno())
+        with BinaryTimeseries(f.fileno()) as bts:
+            raw_data = bts.get_raw_indexRange(0, 10)
+            

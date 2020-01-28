@@ -345,7 +345,8 @@ public class GenerateTestCode {
 						"if not bts_path in sys.path:\n" + 
 						"	sys.path.insert(0, bts_path)\n" + 
 						"from BinaryTimeseries import BinaryTimeseries\n" + 
-						"\n");
+						"\n" + 
+						"class GeneratedApiTests(unittest.TestCase):\n");
 				
 				for (int time_dtype_idx = 0; time_dtype_idx < time_dtypes.length; ++time_dtype_idx) {
 					final byte time_dtype = time_dtypes[time_dtype_idx];
@@ -369,10 +370,10 @@ public class GenerateTestCode {
 							final String filename = "../resources/"+testId+".bts";
 							
 							System.out.println(testId);
-							pw.println("# " + testId);
+							pw.println("	def test_" + testId+"(self):");
 							
-							pw.println("with open('"+filename+"', 'rb') as f:\n" + 
-									"	bts = BinaryTimeseries(f.fileno())");
+							pw.println("		with open('"+filename+"', 'rb') as f:\n" + 
+									"			bts = BinaryTimeseries(f.fileno())");
 
 //							
 //							
@@ -613,7 +614,8 @@ public class GenerateTestCode {
 					}
 				}
 				
-				
+				pw.println("if __name__ == '__main__':\n" + 
+						"    unittest.main()\n");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
