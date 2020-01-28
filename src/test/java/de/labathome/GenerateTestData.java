@@ -14,16 +14,16 @@ import org.junit.jupiter.api.Test;
 public class GenerateTestData {
 
 	public static void main(String[] args) {
-		GenerateTestData gen = new GenerateTestData();
-		gen.generateTestData();
+		generateTestData();
 	}
 
 	/**
 	 * This method generates files which should comply with the BinaryTimeseries specification.
 	 * These files will be used to test the Java and Python implementations of the BinaryTimeseries API.
+	 * If run as a JUnit test, the file offsets are checked for consistency with the specification.
 	 */
 	@Test
-	public void generateTestData() {
+	public static void generateTestData() {
 
 		final byte[] time_dtypes = new byte[] {
 				BinaryTimeseries.DTYPE_LONG,
@@ -117,14 +117,15 @@ public class GenerateTestData {
 		//  8  | 309.0 | 195.6
 		//  9  | 346.0 | 219.9
 
-		// interval for subset reading test
-		final int numSamplesSubset = 5;
-		final int sourceOffset = 2;
-		final int targetOffset = 0;
-
-		final String t_lStr = "80.0"; // => firstIndexInside = 2
-		final String t_uStr = "300.0"; // => lastIndexInside = 7
-
+		// The following three nested loops go over all combinations of time type,
+		// scaling type and data type and generate the test time series for each
+		// of these combinations. The generated reference data is saved in files
+		// src/test/resources/<tT + "_" + tS + "_" + tD>.bts, where tT is 'L' or 'D'
+		// for long or double timestamps, tS is one of 'N', ..., 'D' for the type
+		// of the scaling parameters and tD is one of 'B', 'S', ..., 'D' for the type
+		// of the raw data. An example filename therefore is 'L_S_F.bts'
+		// for long timestamps, short scaling offset and factor and float raw data.
+		
 		for (int time_dtype_idx = 0; time_dtype_idx < time_dtypes.length; ++time_dtype_idx) {
 			final byte time_dtype = time_dtypes[time_dtype_idx];
 			final String tT = BinaryTimeseries.dtypeStr(time_dtype);
