@@ -80,7 +80,10 @@ class BinaryTimeseries(object):
     #     with BinaryTimeseries(f.fileno()) as bts:
     #         print(bts.get_raw())
     # This permits use of in-memory mmaps as storage.
-    def __init__(self, file_nameOrNumber):
+    def __init__(self, file_nameOrNumber, debug=None):
+        if debug is not None:
+            self._debug = debug
+            
         if self._file is not None and not self._file.closed:
             self._file.close()
         
@@ -277,42 +280,42 @@ class BinaryTimeseries(object):
             return np.linspace(t_start, t_end, numSamplesToRead, dtype=np.int64)
         elif self.dtype_time==6: # double
             return np.linspace(t_start, t_end, numSamplesToRead, dtype=np.float64)
-        
-    # read all samples whose timestamps are between t_lower and t_upper
-    # and return the raw data; samples on the interval borders are included
-    def get_raw_timeRange(self, t_lower, t_upper):
+    
+    def get_indices_timeRange(self, t_lower, t_upper):
         if t_upper <= t_lower:
             raise ValueError("invalid time range given; please ensure t_lower < t_upper.")
         
+        idx_i = 0
+        idx_j = self.num_samples-1
+        
         if self.dtype_time==4: # long timestamps => integer ceil/floor
-            idx_i = 0
             if np.int64(t_lower) >= self.t0:
                 idx_i = np.int64((np.int64(t_lower) - self.t0 + self.dt - 1)/self.dt)
                 
-            idx_j = self.num_samples-1
             if np.int64(t_upper) <= self.t0 + self.num_samples*self.dt:
                 idx_j = np.int64((np.int64(t_upper) - self.t0) / self.dt)
             
-            if idx_j-idx_i+1 <= 0:
-                print("no samples present in given time interval")
-                return None
-            
-            return self.get_raw_indexRange(int(idx_i), int(idx_j-idx_i+1))
-                
         elif self.dtype_time==6: # long timestamps => regular ceil/floor
-            idx_i = 0
             if np.float64(t_lower) >= self.t0:
-                idx_i = np.ceil((np.float64(t_lower) - self.t0)/self.dt)
+                idx_i = np.int64(np.ceil((np.float64(t_lower) - self.t0)/self.dt))
             
-            idx_j = self.num_samples-1
             if np.float64(t_upper) <= self.t0 + self.num_samples*self.dt:
-                idx_j = np.floor((np.float64(t_upper) - self.t0)/self.dt)
+                idx_j = np.int64(np.floor((np.float64(t_upper) - self.t0)/self.dt))
             
-            if idx_j-idx_i+1 <= 0:
-                print("no samples present in given time interval")
+        if idx_j-idx_i+1 <= 0:
+                if self._debug: print("no samples present in given time interval")
                 return None
-            
-            return self.get_raw_indexRange(int(idx_i), int(idx_j-idx_i+1))
+        else:
+            return [idx_i, idx_j]
+    
+    # read all samples whose timestamps are between t_lower and t_upper
+    # and return the raw data; samples on the interval borders are included
+    def get_raw_timeRange(self, t_lower, t_upper):
+        indices = self.get_indices_timeRange(t_lower, t_upper)
+        if indices is not None:
+            idx_i = indices[0]
+            idx_j = indices[1]
+            return self.get_raw_indexRange(idx_i, idx_j-idx_i+1)
         else:
             return None
     
@@ -320,49 +323,22 @@ class BinaryTimeseries(object):
     # and return the data with scaling applied (if available);
     # samples on the interval borders are included
     def get_scaled_timeRange(self, t_lower, t_upper):
-        raw_data = self.get_raw_timeRange(t_lower, t_upper)
-         # apply the scaling if available
-        if self.dtype_scaling==0: # no scaling
-            return raw_data
-        elif raw_data is not None:
-            return np.add(np.multiply(raw_data, self.scale), self.offset)
-        return None
+        indices = self.get_indices_timeRange(t_lower, t_upper)
+        if indices is not None:
+            idx_i = indices[0]
+            idx_j = indices[1]
+            return self.get_scaled_indexRange(idx_i, idx_j-idx_i+1)
+        else:
+            return None
     
     # explicitly compute the timestamps of all samples between t_lower and t_upper;
     # samples on the interval borders are included
     def get_timestamps_timeRange(self, t_lower, t_upper):
-        if t_upper <= t_lower:
-            raise ValueError("invalid time range given; please ensure t_lower < t_upper.")
-        
-        if self.dtype_time==4: # long timestamps => integer ceil/floor
-            idx_i = 0
-            if np.int64(t_lower) >= self.t0:
-                idx_i = np.int64((np.int64(t_lower) - self.t0 + self.dt - 1)/self.dt)
-                
-            idx_j = self.num_samples-1
-            if np.int64(t_upper) <= self.t0 + self.num_samples*self.dt:
-                idx_j = np.int64((np.int64(t_upper) - self.t0) / self.dt)
-            
-            if idx_j-idx_i+1 <= 0:
-                print("no samples present in given time interval")
-                return None
-            
-            return self.get_timestamps_indexRange(int(idx_i), int(idx_j-idx_i+1))
-                
-        elif self.dtype_time==6: # long timestamps => regular ceil/floor
-            idx_i = 0
-            if np.float64(t_lower) >= self.t0:
-                idx_i = np.ceil((np.float64(t_lower) - self.t0)/self.dt)
-            
-            idx_j = self.num_samples-1
-            if np.float64(t_upper) <= self.t0 + self.num_samples*self.dt:
-                idx_j = np.floor((np.float64(t_upper) - self.t0)/self.dt)
-            
-            if idx_j-idx_i+1 <= 0:
-                print("no samples present in given time interval")
-                return None
-            
-            return self.get_timestamps_indexRange(int(idx_i), int(idx_j-idx_i+1))
+        indices = self.get_indices_timeRange(t_lower, t_upper)
+        if indices is not None:
+            idx_i = indices[0]
+            idx_j = indices[1]
+            return self.get_timestamps_indexRange(idx_i, idx_j-idx_i+1)
         else:
             return None
         
