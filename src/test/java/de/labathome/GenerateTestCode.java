@@ -389,24 +389,23 @@ public class GenerateTestCode {
 							}
 
 							// read reference file and start comparing
-							pw.println("        with open('../resources/"+testId+".bts', 'rb') as f:\n" + 
-									"            with BinaryTimeseries(f.fileno()) as bts:\n" + 
-									"                self.assertEqual(bts.get_dtype_time(), "+time_dtype+")\n" + 
-									"                self.assertEqual(bts.get_t0(), "+ptT+"("+t0Str+"))\n" + 
-									"                self.assertEqual(bts.get_dt(), "+ptT+"("+dtStr+"))");
+							pw.println("        with BinaryTimeseries('../resources/"+testId+".bts') as bts:\n" + 
+									"            self.assertEqual(bts.get_dtype_time(), "+time_dtype+")\n" + 
+									"            self.assertEqual(bts.get_t0(), "+ptT+"("+t0Str+"))\n" + 
+									"            self.assertEqual(bts.get_dt(), "+ptT+"("+dtStr+"))");
 
-							pw.println("                self.assertEqual(bts.get_dtype_scaling(), "+scaling_dtype+")");
+							pw.println("            self.assertEqual(bts.get_dtype_scaling(), "+scaling_dtype+")");
 							if (scaling_dtype != BinaryTimeseries.DTYPE_NONE) {
-								pw.println("                self.assertEqual(bts.get_offset(), "+ptS+"("+scalingOffsetStr+"))");
-								pw.println("                self.assertEqual(bts.get_scale(), "+ptS+"("+scalingFactorStr+"))");
+								pw.println("            self.assertEqual(bts.get_offset(), "+ptS+"("+scalingOffsetStr+"))");
+								pw.println("            self.assertEqual(bts.get_scale(), "+ptS+"("+scalingFactorStr+"))");
 							}
 							
 							// actual data
-							pw.println("                self.assertEqual(bts.get_dtype_data(), "+data_dtype+")\n" + 
-									"                self.assertEqual(bts.get_num_samples(), "+numSamplesStr+")\n" + 
-									"                self.assertTrue(np.allclose(bts.get_raw(), raw_data))");
+							pw.println("            self.assertEqual(bts.get_dtype_data(), "+data_dtype+")\n" + 
+									"            self.assertEqual(bts.get_num_samples(), "+numSamplesStr+")\n" + 
+									"            self.assertTrue(np.allclose(bts.get_raw(), raw_data))");
 							if (scaling_dtype != BinaryTimeseries.DTYPE_NONE) {
-								pw.println("                self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))");
+								pw.println("            self.assertTrue(np.allclose(bts.get_scaled(), scaled_data))");
 							}
 
 							//							

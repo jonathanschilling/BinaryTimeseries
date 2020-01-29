@@ -40,6 +40,7 @@ def dtype_size(dtype):
 class BinaryTimeseries(object):
 
     _debug = False
+    _file = None
     _fmap = None
     bo = '>'
     dtype_time = None
@@ -53,10 +54,20 @@ class BinaryTimeseries(object):
     num_samples = None
     data_size = 0
     
-    def __init__(self, mmap_fileno):
+    def __init__(self, file_nameOrNumber):
+        if self._fmap is not None and not self._fmap.closed:
+            self._fmap.close()
+        if self._file is not None and not self._file.closed:
+            self._file.close()
         
-        # memory-map the file, size 0 means whole file, read-only for safety
-        self._fmap = mmap.mmap(mmap_fileno, 0, access=mmap.ACCESS_READ)
+        if type(file_nameOrNumber) is str:
+            self._file = open(file_nameOrNumber, 'rb')
+            # memory-map the file, size 0 means whole file, read-only for safety
+            self._fmap = mmap.mmap(self._file.fileno(), 0, access=mmap.ACCESS_READ)
+        elif type(file_nameOrNumber) is int:
+            self._file= None
+            # memory-map the file, size 0 means whole file, read-only for safety
+            self._fmap = mmap.mmap(file_nameOrNumber, 0, access=mmap.ACCESS_READ)
         
         # start at the beginning
         self._fmap.seek(0)
@@ -154,34 +165,55 @@ class BinaryTimeseries(object):
         if len(self._fmap)<64+self.data_size:
             raise RuntimeError("length of file not large enough; has "+str(len(self._fmap))
                 +", expected "+str(64+self.data_size))
-       
+      
+    # needed for 'with BinaryTimeseries(filename) as bts:'
+    def __enter__(self):
+        return self
+    
+    # needed for 'with BinaryTimeseries(filename) as bts:'
+    def __exit__(self, _type, _value, _tb):
+        if self._fmap is not None and not self._fmap.closed:
+            self._fmap.close()
+        if self._file is not None and not self._file.closed:
+            self._file.close()
+        
+    # if debug is set to True, generate debug output during reading the file
     def set_debug(self, debug):
         self._debug = debug
     
+    # query the data type of the timestamps; 4: long, 6: double
     def get_dtype_time(self):
         return self.dtype_time
     
+    # query the reference timestamp t_0
     def get_t0(self):
         return self.t0
     
+    # query the sampling interval \Delta t
     def get_dt(self):
         return self.dt
     
+    # query the data type of the scaling parameters; can be 0 (no scaling) to 6 (double)
     def get_dtype_scaling(self):
         return self.dtype_scaling
     
+    # query the scaling offset; None if no scaling is present
     def get_offset(self):
         return self.offset
     
+    # query the scaling factor; None if no scaling is present
     def get_scale(self):
         return self.scale
     
+    # query the data type of the raw samples; can be 1 (byte) to 6 (double)
     def get_dtype_data(self):
         return self.dtype_data
     
+    # query the number of samples; can be 1, ..., (2^31-1)
     def get_num_samples(self):
         return self.num_samples
     
+    # read all available samples and return the raw data array
     def get_raw(self):
         raw_data = None
         # read raw data
@@ -200,6 +232,7 @@ class BinaryTimeseries(object):
             raw_data = struct.unpack(self.bo+str(self.num_samples)+'d', self._fmap.read(self.data_size))
         return np.array(raw_data)
     
+    # read all available samples and return the data with scaling applied (if available)
     def get_scaled(self):
         raw_data = self.get_raw()
          # apply the scaling if available
@@ -208,6 +241,7 @@ class BinaryTimeseries(object):
         else:
             return np.add(np.multiply(raw_data, self.scale), self.offset)
         
+    # read numSamplesToRead samples starting at index fromIdx and return the raw data
     def get_raw_indexRange(self, fromIdx, numSamplesToRead):
         if (fromIdx<0 or fromIdx>self.num_samples-1):
             raise ValueError("fromIdx "+str(fromIdx)+
@@ -234,25 +268,29 @@ class BinaryTimeseries(object):
             raw_data = struct.unpack(self.bo+str(numSamplesToRead)+'d', self._fmap.read(read_size))
         return np.array(raw_data)
     
+    # read numSamplesToRead samples starting at index fromIdx and return the data with scaling applied (if available)
     def get_scaled_indexRange(self, fromIdx, numSamplesToRead):
-        raw_data = self.get_raw(fromIdx, numSamplesToRead)
+        raw_data = self.get_raw_indexRange(fromIdx, numSamplesToRead)
          # apply the scaling if available
         if self.dtype_scaling==0: # no scaling
             return raw_data
         else:
             return np.add(np.multiply(raw_data, self.scale), self.offset)
-        
-    def __enter__(self):
-        return self
     
-    def __exit__(self, _type, _value, _tb):
-        self._fmap.close()
+    # read all samples whose timestamps are between t_lower and t_upper
+    # and return the raw data
+    def get_raw_timeRange(self, t_lower, t_upper):
+        return None
+    
+    # read all samples whose timestamps are between t_lower and t_upper
+    # and return the data with scaling applied (if available)
+    def get_scaled_timeRange(self, t_lower, t_upper):
+        return None
     
 if __name__=='__main__':
     
     filename="../../test/resources/L_S_F.bts"
 
-    with open(filename, "rb") as f:
-        with BinaryTimeseries(f.fileno()) as bts:
-            raw_data = bts.get_raw_indexRange(0, 10)
-            print(raw_data)
+    with BinaryTimeseries(filename) as bts:
+        scaled_data = bts.get_scaled_indexRange(0, 10)
+        print(scaled_data)
