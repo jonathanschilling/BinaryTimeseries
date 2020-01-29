@@ -15,8 +15,7 @@ Inspired by an independent implementation by H. Thomsen.
 """
 
 import os
-import mmap
-import struct
+import array
 import numpy as np
 
 def dtype2str(dtype):
@@ -49,12 +48,20 @@ def dtype_size(dtype):
     elif (dtype==6): return 8
     else:            return None
 
+
+def read_skip8(f, dtype):
+    o = array.array(dtype2id(dtype))
+    o.fromfile(f, 1)
+    type_size = o.itemsize
+    if type_size < 8:
+        f.seek(8-type_size, os.SEEK_CUR)
+    return o
+
 class BinaryTimeseries(object):
 
     _debug = False
     _file = None
-    _fmap = None
-    bo = '>'
+    _byteswap = False
     dtype_time = None
     t0 = None
     dt = None
@@ -73,99 +80,78 @@ class BinaryTimeseries(object):
     #     with BinaryTimeseries(f.fileno()) as bts:
     #         print(bts.get_raw())
     # This permits use of in-memory mmaps as storage.
-    def __init__(self, file_nameOrNumber, debug=False):
-        self._debug = debug
-        
-        if self._fmap is not None and not self._fmap.closed:
-            self._fmap.close()
+    def __init__(self, file_nameOrNumber):
         if self._file is not None and not self._file.closed:
             self._file.close()
         
         if type(file_nameOrNumber) is str:
             self._file = open(file_nameOrNumber, 'rb')
-            # memory-map the file, size 0 means whole file, read-only for safety
-            self._fmap = mmap.mmap(self._file.fileno(), 0, access=mmap.ACCESS_READ)
-        elif type(file_nameOrNumber) is int:
-            self._file= None
-            # memory-map the file, size 0 means whole file, read-only for safety
-            self._fmap = mmap.mmap(file_nameOrNumber, 0, access=mmap.ACCESS_READ)
-        
-        # start at the beginning
-        self._fmap.seek(0)
+        else: # take whatever is given as a file and see how far we get...
+            self._file = file_nameOrNumber
         
         # try big-endian byte order first
-        endianessCheck = struct.unpack(self.bo+'h', self._fmap.read(2))[0]
+        endianessCheck_arr = array.array('h')
+        endianessCheck_arr.fromfile(self._file, 1)
+        endianessCheck = endianessCheck_arr[0]
         if not (endianessCheck==1 or endianessCheck==256):
             raise ValueError("endianessCheck is neither 1 or 256 but "+str(endianessCheck))
         if (endianessCheck==256):
             # nope, input file is little-endian
-            self.bo = '<'
-            if self._debug: print("byteorder is little-endian")
-        elif self._debug: print("byteorder is big-endian")
+            self._byteswap = True
+            if self._debug: print("bytes have to be swapped")
+        elif self._debug: print("byteorder is ok, no swapping needed")
         
         # determine dtype of timestamps
-        self.dtype_time = struct.unpack('b', self._fmap.read(1))[0]
+        dtype_time_arr = array.array('b')
+        dtype_time_arr.fromfile(self._file, 1)
+        self.dtype_time = dtype_time_arr[0]
         if self.dtype_time==4 or self.dtype_time==6:
             if self._debug: print("dtype_time: "+dtype2str(self.dtype_time))
         else:
             raise ValueError("dtype_time is not 4 (long) or 6 (double), but "+str(self.dtype_time))
         
         # read time axis specification
-        if self.dtype_time==4: # long
-            self.t0 = struct.unpack(self.bo+'q', self._fmap.read(8))[0]
-            self.dt = struct.unpack(self.bo+'q', self._fmap.read(8))[0]
-        else: # double
-            self.t0 = struct.unpack(self.bo+'d', self._fmap.read(8))[0]
-            self.dt = struct.unpack(self.bo+'d', self._fmap.read(8))[0]
+        t0_arr = read_skip8(self._file, self.dtype_time)
+        dt_arr = read_skip8(self._file, self.dtype_time)
+        if self._byteswap:
+            t0_arr.byteswap()
+            dt_arr.byteswap()
+        self.t0 = t0_arr[0]
+        self.dt = dt_arr[0]
         if self._debug:
             print("t0: "+str(self.t0))
             print("dt: "+str(self.dt))
         
         # read dtype of scaling
-        self.dtype_scaling = struct.unpack('b', self._fmap.read(1))[0]
+        dtype_scaling_arr = array.array('b')
+        dtype_scaling_arr.fromfile(self._file, 1)
+        self.dtype_scaling = dtype_scaling_arr[0]
         if self.dtype_scaling>=0 and self.dtype_scaling<=6:
             if self._debug: print("dtype_scaling: "+dtype2str(self.dtype_scaling))
         else:
             raise ValueError("dtype_scaling is not in valid range (0..6), but "+str(self.dtype_scaling))
         
-        # read scaling parameters
-        if   self.dtype_scaling==0: # no scaling
-            self._fmap.seek(16, os.SEEK_CUR)
-        elif self.dtype_scaling==1: # byte
-            self.offset = struct.unpack(        'b', self._fmap.read(1))[0]
-            self._fmap.seek(7, os.SEEK_CUR)
-            self.scale  = struct.unpack(        'b', self._fmap.read(1))[0]
-            self._fmap.seek(7, os.SEEK_CUR)
-        elif self.dtype_scaling==2: # short
-            self.offset = struct.unpack(self.bo+'h', self._fmap.read(2))[0]
-            self._fmap.seek(6, os.SEEK_CUR)
-            self.scale  = struct.unpack(self.bo+'h', self._fmap.read(2))[0]
-            self._fmap.seek(6, os.SEEK_CUR)
-        elif self.dtype_scaling==3: # int
-            self.offset = struct.unpack(self.bo+'i', self._fmap.read(4))[0]
-            self._fmap.seek(4, os.SEEK_CUR)
-            self.scale  = struct.unpack(self.bo+'i', self._fmap.read(4))[0]
-            self._fmap.seek(4, os.SEEK_CUR)
-        elif self.dtype_scaling==4: # long
-            self.offset = struct.unpack(self.bo+'q', self._fmap.read(8))[0]
-            self.scale  = struct.unpack(self.bo+'q', self._fmap.read(8))[0]
-        elif self.dtype_scaling==5: # float
-            self.offset = struct.unpack(self.bo+'f', self._fmap.read(4))[0]
-            self._fmap.seek(4, os.SEEK_CUR)
-            self.scale  = struct.unpack(self.bo+'f', self._fmap.read(4))[0]
-            self._fmap.seek(4, os.SEEK_CUR)
-        elif self.dtype_scaling==6: # double
-            self.offset = struct.unpack(self.bo+'d', self._fmap.read(8))[0]
-            self.scale  = struct.unpack(self.bo+'d', self._fmap.read(8))[0]
-        if self._debug:
-            print("offset: "+str(self.offset))
-            print(" scale: "+str(self.scale))
+        if self.dtype_scaling==0: # no scaling
+            self._file.seek(16, os.SEEK_CUR)
+        else:
+            offset_arr = read_skip8(self._file, self.dtype_scaling)
+            scale_arr  = read_skip8(self._file, self.dtype_scaling)
+            if self._byteswap:
+                offset_arr.byteswap()
+                scale_arr.byteswap()
+            self.offset = offset_arr[0]
+            self.scale  = scale_arr[0]
+            if self._debug:
+                print("offset: "+str(self.offset))
+                print(" scale: "+str(self.scale))
         
         # skip reserved bytes
-        self._fmap.seek(23, os.SEEK_CUR)
+        self._file.seek(23, os.SEEK_CUR)
         
         # read dtype of raw data
-        self.dtype_data = struct.unpack('b', self._fmap.read(1))[0]
+        dtype_data_arr = array.array('b')
+        dtype_data_arr.fromfile(self._file, 1)
+        self.dtype_data = dtype_data_arr[0]
         if self.dtype_data>=1 and self.dtype_data<=6:
             self.size_raw_sample = dtype_size(self.dtype_data)
             if self._debug: print("dtype_data: "+dtype2str(self.dtype_data))
@@ -173,29 +159,25 @@ class BinaryTimeseries(object):
             raise ValueError("dtype_data is not in valid range (1..6), but "+str(self.dtype_data))
         
         # read number of samples
-        self.num_samples = struct.unpack(self.bo+'i', self._fmap.read(4))[0]
+        num_samples_arr = array.array('i')
+        num_samples_arr.fromfile(self._file, 1)
+        if self._byteswap:
+            num_samples_arr.byteswap()
+        self.num_samples = num_samples_arr[0]
         if self._debug: print("num_samples: "+str(self.num_samples))
         
         # check to see if an error was made in counting bytes
-        current_pos = self._fmap.tell()
+        current_pos = self._file.tell()
         if (current_pos != 64):
             raise RuntimeError("position in input should be 64 after reading the header, "
                                + "but it is "+str(current_pos))
         
-        # check if file size is large enough to fit all data specified in header
-        self.data_size = self.num_samples*self.size_raw_sample
-        if len(self._fmap)<64+self.data_size:
-            raise RuntimeError("length of file not large enough; has "+str(len(self._fmap))
-                +", expected "+str(64+self.data_size))
-      
     # needed for 'with BinaryTimeseries(filename) as bts:'
     def __enter__(self):
         return self
     
     # needed for 'with BinaryTimeseries(filename) as bts:'
     def __exit__(self, _type, _value, _tb):
-        if self._fmap is not None and not self._fmap.closed:
-            self._fmap.close()
         if self._file is not None and not self._file.closed:
             self._file.close()
         
@@ -247,10 +229,10 @@ class BinaryTimeseries(object):
         
         raw_data = None
         # read raw data
-        self._fmap.seek(64+fromIdx*self.size_raw_sample)
-        read_size = numSamplesToRead*self.size_raw_sample
-        unpack_str = self.bo+str(numSamplesToRead)+dtype2id(self.dtype_data)
-        raw_data = struct.unpack(unpack_str, self._fmap.read(read_size))
+        self._file.seek(64+fromIdx*self.size_raw_sample)
+        raw_data_arr = array.array(dtype2id(self.dtype_data))
+        raw_data_arr.fromfile(self._file, numSamplesToRead)
+        raw_data = raw_data_arr[:]
         return np.array(raw_data)
     
     # read numSamplesToRead samples starting at index fromIdx and return the data with scaling applied (if available)

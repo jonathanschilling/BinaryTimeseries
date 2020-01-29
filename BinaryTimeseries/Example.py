@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import os
 from BinaryTimeseries import BinaryTimeseries
 
 # read all available samples
@@ -25,6 +24,7 @@ with BinaryTimeseries('../src/test/resources/L_D_D.bts') as bts:
     print("timestamps between t_lower=45 and t_upper=200:")
     print(bts.get_timestamps_timeRange(45, 200))
 
+import os
 # list the t0 values of all files in a given directory
 folder = "/data/jonathan/datasignalscache/w7x/180918045/"
 #for qxt in ["qxt1/", "qxt2/", "qxt3/", "qxt4/"]:
@@ -54,17 +54,17 @@ with BinaryTimeseries(fname) as bts:
     plt.tight_layout()
 
 #%%
-
-import sys
-rbts_path = "/home/jonathan/Uni/04_PhD/00_programs/MHDpython/minfisher"
-if not rbts_path in sys.path:
-    sys.path.insert(0, rbts_path)
-    
-from readbinarytimeseries import readbinarytimeseries
-
-# 150...200 ms --> clearly faster!
-start = time.time()
-scaled_data = readbinarytimeseries(fname, quiet=False)
-end = time.time()
-print("reading took ", end - start, "s")
-
+#
+#import sys
+#rbts_path = "/home/jonathan/Uni/04_PhD/00_programs/MHDpython/minfisher"
+#if not rbts_path in sys.path:
+#    sys.path.insert(0, rbts_path)
+#    
+#from readbinarytimeseries import readbinarytimeseries
+#
+## 150...200 ms --> clearly faster!
+#start = time.time()
+#scaled_data = readbinarytimeseries(fname, quiet=False)
+#end = time.time()
+#print("reading took ", end - start, "s")
+#

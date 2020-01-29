@@ -338,16 +338,13 @@ public class GenerateTestCode {
 	 */
 	public static void generatePythonTestCode() {
 
-		try (FileWriter fw = new FileWriter("src/test/python/GeneratedApiTests.py")) {
+		try (FileWriter fw = new FileWriter("BinaryTimeseries/GeneratedApiTests.py")) {
 			try (PrintWriter pw = new PrintWriter(fw)) {
 
 				pw.println("# -*- coding: utf-8 -*-\n" +
 						"import unittest\n" + 
 						"import sys\n" + 
 						"import numpy as np\n" + 
-						"bts_path = '../../main/python'\n" + 
-						"if not bts_path in sys.path:\n" + 
-						"    sys.path.insert(0, bts_path)\n" + 
 						"from BinaryTimeseries import BinaryTimeseries\n" + 
 						"\n" + 
 						"o = "+de.labathome.GenerateTestData.scalingOffsetStr+"\n" + 
@@ -389,7 +386,7 @@ public class GenerateTestCode {
 							}
 
 							// read reference file and start comparing
-							pw.println("        with BinaryTimeseries('../resources/"+testId+".bts') as bts:\n" + 
+							pw.println("        with BinaryTimeseries('../src/test/resources/"+testId+".bts') as bts:\n" + 
 									"            self.assertEqual(bts.get_dtype_time(), "+time_dtype+")\n" + 
 									"            self.assertEqual(bts.get_t0(), "+ptT+"("+t0Str+"))\n" + 
 									"            self.assertEqual(bts.get_dt(), "+ptT+"("+dtStr+"))");
