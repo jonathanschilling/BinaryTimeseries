@@ -27,6 +27,16 @@ def dtype2str(dtype):
     elif (dtype==6): return "double"
     else:            return "ERROR"
 
+def dtype2id(dtype):
+    if   (dtype==0): raise ValueError("dtype has to be 1...6 and not "+str(dtype))
+    elif (dtype==1): return 'b'
+    elif (dtype==2): return 'h'
+    elif (dtype==3): return 'i'
+    elif (dtype==4): return 'q'
+    elif (dtype==5): return 'f'
+    elif (dtype==6): return 'd'
+    else:            raise ValueError("dtype has to be 1...6 and not "+str(dtype))
+    
 def dtype_size(dtype):
     if   (dtype==0): return 0
     elif (dtype==1): return 1
@@ -218,18 +228,8 @@ class BinaryTimeseries(object):
         raw_data = None
         # read raw data
         self._fmap.seek(64)
-        if   self.dtype_data==1: # byte
-            raw_data = struct.unpack(self.bo+str(self.num_samples)+'b', self._fmap.read(self.data_size))
-        elif self.dtype_data==2: # short
-            raw_data = struct.unpack(self.bo+str(self.num_samples)+'h', self._fmap.read(self.data_size))
-        elif self.dtype_data==3: # int
-            raw_data = struct.unpack(self.bo+str(self.num_samples)+'i', self._fmap.read(self.data_size))
-        elif self.dtype_data==4: # long
-            raw_data = struct.unpack(self.bo+str(self.num_samples)+'q', self._fmap.read(self.data_size))
-        elif self.dtype_data==5: # float
-            raw_data = struct.unpack(self.bo+str(self.num_samples)+'f', self._fmap.read(self.data_size))
-        elif self.dtype_data==6: # double
-            raw_data = struct.unpack(self.bo+str(self.num_samples)+'d', self._fmap.read(self.data_size))
+        unpack_str = self.bo+str(self.num_samples)+dtype2id(self.dtype_data)
+        raw_data = struct.unpack(unpack_str, self._fmap.read(self.data_size))
         return np.array(raw_data)
     
     # read all available samples and return the data with scaling applied (if available)
@@ -238,8 +238,9 @@ class BinaryTimeseries(object):
          # apply the scaling if available
         if self.dtype_scaling==0: # no scaling
             return raw_data
-        else:
+        elif raw_data is not None:
             return np.add(np.multiply(raw_data, self.scale), self.offset)
+        return None
         
     # read numSamplesToRead samples starting at index fromIdx and return the raw data
     def get_raw_indexRange(self, fromIdx, numSamplesToRead):
@@ -254,18 +255,8 @@ class BinaryTimeseries(object):
         # read raw data
         self._fmap.seek(64+fromIdx*self.size_raw_sample)
         read_size = numSamplesToRead*self.size_raw_sample
-        if   self.dtype_data==1: # byte
-            raw_data = struct.unpack(self.bo+str(numSamplesToRead)+'b', self._fmap.read(read_size))
-        elif self.dtype_data==2: # short
-            raw_data = struct.unpack(self.bo+str(numSamplesToRead)+'h', self._fmap.read(read_size))
-        elif self.dtype_data==3: # int
-            raw_data = struct.unpack(self.bo+str(numSamplesToRead)+'i', self._fmap.read(read_size))
-        elif self.dtype_data==4: # long
-            raw_data = struct.unpack(self.bo+str(numSamplesToRead)+'q', self._fmap.read(read_size))
-        elif self.dtype_data==5: # float
-            raw_data = struct.unpack(self.bo+str(numSamplesToRead)+'f', self._fmap.read(read_size))
-        elif self.dtype_data==6: # double
-            raw_data = struct.unpack(self.bo+str(numSamplesToRead)+'d', self._fmap.read(read_size))
+        unpack_str = self.bo+str(numSamplesToRead)+dtype2id(self.dtype_data)
+        raw_data = struct.unpack(unpack_str, self._fmap.read(read_size))
         return np.array(raw_data)
     
     # read numSamplesToRead samples starting at index fromIdx and return the data with scaling applied (if available)
@@ -274,23 +265,61 @@ class BinaryTimeseries(object):
          # apply the scaling if available
         if self.dtype_scaling==0: # no scaling
             return raw_data
-        else:
+        elif raw_data is not None:
             return np.add(np.multiply(raw_data, self.scale), self.offset)
+        return None
     
     # read all samples whose timestamps are between t_lower and t_upper
     # and return the raw data
     def get_raw_timeRange(self, t_lower, t_upper):
-        return None
+        if t_upper <= t_lower:
+            raise ValueError("invalid time range given; please ensure t_lower < t_upper.")
+        
+        if self.dtype_time==4: # long timestamps => integer ceil/floor
+            idx_i = 0
+            if np.int64(t_lower) >= self.t0:
+                idx_i = np.int64((np.int64(t_lower) - self.t0 + self.dt - 1)/self.dt)
+                
+            idx_j = self.num_samples-1
+            if np.int64(t_upper) <= self.t0 + self.num_samples*self.dt:
+                idx_j = np.int64((np.int64(t_upper) - self.t0) / self.dt)
+            
+            if idx_j-idx_i+1 <= 0:
+                print("no samples present in given time interval")
+                return None
+            
+            return self.get_raw_indexRange(int(idx_i), int(idx_j-idx_i+1))
+                
+        elif self.dtype_time==6: # long timestamps => regular ceil/floor
+            idx_i = 0
+            if np.float64(t_lower) >= self.t0:
+                idx_i = np.ceil((np.float64(t_lower) - self.t0)/self.dt)
+            
+            idx_j = self.num_samples-1
+            if np.float64(t_upper) <= self.t0 + self.num_samples*self.dt:
+                idx_j = np.floor((np.float64(t_upper) - self.t0)/self.dt)
+            
+            if idx_j-idx_i+1 <= 0:
+                print("no samples present in given time interval")
+                return None
+            
+            return self.get_raw_indexRange(int(idx_i), int(idx_j-idx_i+1))
     
     # read all samples whose timestamps are between t_lower and t_upper
     # and return the data with scaling applied (if available)
     def get_scaled_timeRange(self, t_lower, t_upper):
+        raw_data = self.get_raw_timeRange(t_lower, t_upper)
+         # apply the scaling if available
+        if self.dtype_scaling==0: # no scaling
+            return raw_data
+        elif raw_data is not None:
+            return np.add(np.multiply(raw_data, self.scale), self.offset)
         return None
     
-if __name__=='__main__':
-    
-    filename="../../test/resources/L_S_F.bts"
-
-    with BinaryTimeseries(filename) as bts:
-        scaled_data = bts.get_scaled_indexRange(0, 10)
-        print(scaled_data)
+#if __name__=='__main__':
+#    
+#    filename="../../test/resources/L_S_F.bts"
+#
+#    with BinaryTimeseries(filename) as bts:
+#        data = bts.get_scaled_timeRange(14, 50+37)
+#        print(data)
