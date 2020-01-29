@@ -34,3 +34,6 @@ hs_err_pid*
 # python
 __pycache__
 *.pyc
+/dist/
+/build/
+/BinaryTimeseries.egg-info/
