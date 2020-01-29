@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import unittest
-import sys
 import numpy as np
 from BinaryTimeseries import BinaryTimeseries
 
