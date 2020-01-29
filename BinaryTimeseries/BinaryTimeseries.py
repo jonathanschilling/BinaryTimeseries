@@ -73,7 +73,9 @@ class BinaryTimeseries(object):
     #     with BinaryTimeseries(f.fileno()) as bts:
     #         print(bts.get_raw())
     # This permits use of in-memory mmaps as storage.
-    def __init__(self, file_nameOrNumber):
+    def __init__(self, file_nameOrNumber, debug=False):
+        self._debug = debug
+        
         if self._fmap is not None and not self._fmap.closed:
             self._fmap.close()
         if self._file is not None and not self._file.closed:
@@ -177,7 +179,8 @@ class BinaryTimeseries(object):
         # check to see if an error was made in counting bytes
         current_pos = self._fmap.tell()
         if (current_pos != 64):
-            raise RuntimeError("fpos should be 64 after reading the header, but it is "+str(current_pos))
+            raise RuntimeError("position in input should be 64 after reading the header, "
+                               + "but it is "+str(current_pos))
         
         # check if file size is large enough to fit all data specified in header
         self.data_size = self.num_samples*self.size_raw_sample
