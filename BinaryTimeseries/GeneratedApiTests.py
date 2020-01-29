@@ -2,9 +2,6 @@
 import unittest
 import sys
 import numpy as np
-bts_path = '../../main/python'
-if not bts_path in sys.path:
-    sys.path.insert(0, bts_path)
 from BinaryTimeseries import BinaryTimeseries
 
 o = 1.2
@@ -15,7 +12,7 @@ class GeneratedApiTests(unittest.TestCase):
         raw_data = np.zeros([10], dtype=np.int8)
         for i in range(10):
             raw_data[i] = np.int8(o+i*s)
-        with BinaryTimeseries('../resources/L_N_B.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_N_B.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -27,7 +24,7 @@ class GeneratedApiTests(unittest.TestCase):
         raw_data = np.zeros([10], dtype=np.int16)
         for i in range(10):
             raw_data[i] = np.int16(o+i*s)
-        with BinaryTimeseries('../resources/L_N_S.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_N_S.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -39,7 +36,7 @@ class GeneratedApiTests(unittest.TestCase):
         raw_data = np.zeros([10], dtype=np.int32)
         for i in range(10):
             raw_data[i] = np.int32(o+i*s)
-        with BinaryTimeseries('../resources/L_N_I.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_N_I.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -51,7 +48,7 @@ class GeneratedApiTests(unittest.TestCase):
         raw_data = np.zeros([10], dtype=np.int64)
         for i in range(10):
             raw_data[i] = np.int64(o+i*s)
-        with BinaryTimeseries('../resources/L_N_L.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_N_L.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -63,7 +60,7 @@ class GeneratedApiTests(unittest.TestCase):
         raw_data = np.zeros([10], dtype=np.float32)
         for i in range(10):
             raw_data[i] = np.float32(o+i*s)
-        with BinaryTimeseries('../resources/L_N_F.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_N_F.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -75,7 +72,7 @@ class GeneratedApiTests(unittest.TestCase):
         raw_data = np.zeros([10], dtype=np.float64)
         for i in range(10):
             raw_data[i] = np.float64(o+i*s)
-        with BinaryTimeseries('../resources/L_N_D.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_N_D.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -88,7 +85,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int8(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int8(s), dtype=np.int64), np.int8(o))
-        with BinaryTimeseries('../resources/L_B_B.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_B_B.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -104,7 +101,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int16(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int8(s), dtype=np.int64), np.int8(o))
-        with BinaryTimeseries('../resources/L_B_S.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_B_S.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -120,7 +117,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int32(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int8(s), dtype=np.int64), np.int8(o))
-        with BinaryTimeseries('../resources/L_B_I.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_B_I.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -136,7 +133,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int64(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int8(s), dtype=np.int64), np.int8(o))
-        with BinaryTimeseries('../resources/L_B_L.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_B_L.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -152,7 +149,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.float32(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int8(s), dtype=np.float64), np.int8(o))
-        with BinaryTimeseries('../resources/L_B_F.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_B_F.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -168,7 +165,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.float64(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int8(s), dtype=np.float64), np.int8(o))
-        with BinaryTimeseries('../resources/L_B_D.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_B_D.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -184,7 +181,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int8(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int16(s), dtype=np.int64), np.int16(o))
-        with BinaryTimeseries('../resources/L_S_B.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_S_B.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -200,7 +197,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int16(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int16(s), dtype=np.int64), np.int16(o))
-        with BinaryTimeseries('../resources/L_S_S.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_S_S.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -216,7 +213,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int32(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int16(s), dtype=np.int64), np.int16(o))
-        with BinaryTimeseries('../resources/L_S_I.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_S_I.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -232,7 +229,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int64(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int16(s), dtype=np.int64), np.int16(o))
-        with BinaryTimeseries('../resources/L_S_L.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_S_L.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -248,7 +245,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.float32(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int16(s), dtype=np.float64), np.int16(o))
-        with BinaryTimeseries('../resources/L_S_F.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_S_F.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -264,7 +261,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.float64(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int16(s), dtype=np.float64), np.int16(o))
-        with BinaryTimeseries('../resources/L_S_D.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_S_D.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -280,7 +277,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int8(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int32(s), dtype=np.int64), np.int32(o))
-        with BinaryTimeseries('../resources/L_I_B.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_I_B.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -296,7 +293,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int16(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int32(s), dtype=np.int64), np.int32(o))
-        with BinaryTimeseries('../resources/L_I_S.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_I_S.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -312,7 +309,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int32(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int32(s), dtype=np.int64), np.int32(o))
-        with BinaryTimeseries('../resources/L_I_I.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_I_I.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -328,7 +325,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int64(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int32(s), dtype=np.int64), np.int32(o))
-        with BinaryTimeseries('../resources/L_I_L.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_I_L.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -344,7 +341,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.float32(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int32(s), dtype=np.float64), np.int32(o))
-        with BinaryTimeseries('../resources/L_I_F.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_I_F.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -360,7 +357,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.float64(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int32(s), dtype=np.float64), np.int32(o))
-        with BinaryTimeseries('../resources/L_I_D.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_I_D.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -376,7 +373,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int8(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int64(s), dtype=np.int64), np.int64(o))
-        with BinaryTimeseries('../resources/L_L_B.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_L_B.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -392,7 +389,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int16(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int64(s), dtype=np.int64), np.int64(o))
-        with BinaryTimeseries('../resources/L_L_S.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_L_S.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -408,7 +405,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int32(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int64(s), dtype=np.int64), np.int64(o))
-        with BinaryTimeseries('../resources/L_L_I.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_L_I.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -424,7 +421,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int64(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int64(s), dtype=np.int64), np.int64(o))
-        with BinaryTimeseries('../resources/L_L_L.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_L_L.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -440,7 +437,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.float32(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int64(s), dtype=np.float64), np.int64(o))
-        with BinaryTimeseries('../resources/L_L_F.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_L_F.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -456,7 +453,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.float64(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int64(s), dtype=np.float64), np.int64(o))
-        with BinaryTimeseries('../resources/L_L_D.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_L_D.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -472,7 +469,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int8(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.float32(s), dtype=np.float64), np.float32(o))
-        with BinaryTimeseries('../resources/L_F_B.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_F_B.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -488,7 +485,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int16(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.float32(s), dtype=np.float64), np.float32(o))
-        with BinaryTimeseries('../resources/L_F_S.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_F_S.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -504,7 +501,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int32(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.float32(s), dtype=np.float64), np.float32(o))
-        with BinaryTimeseries('../resources/L_F_I.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_F_I.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -520,7 +517,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int64(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.float32(s), dtype=np.float64), np.float32(o))
-        with BinaryTimeseries('../resources/L_F_L.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_F_L.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -536,7 +533,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.float32(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.float32(s), dtype=np.float64), np.float32(o))
-        with BinaryTimeseries('../resources/L_F_F.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_F_F.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -552,7 +549,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.float64(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.float32(s), dtype=np.float64), np.float32(o))
-        with BinaryTimeseries('../resources/L_F_D.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_F_D.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -568,7 +565,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int8(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.float64(s), dtype=np.float64), np.float64(o))
-        with BinaryTimeseries('../resources/L_D_B.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_D_B.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -584,7 +581,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int16(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.float64(s), dtype=np.float64), np.float64(o))
-        with BinaryTimeseries('../resources/L_D_S.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_D_S.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -600,7 +597,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int32(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.float64(s), dtype=np.float64), np.float64(o))
-        with BinaryTimeseries('../resources/L_D_I.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_D_I.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -616,7 +613,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int64(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.float64(s), dtype=np.float64), np.float64(o))
-        with BinaryTimeseries('../resources/L_D_L.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_D_L.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -632,7 +629,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.float32(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.float64(s), dtype=np.float64), np.float64(o))
-        with BinaryTimeseries('../resources/L_D_F.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_D_F.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -648,7 +645,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.float64(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.float64(s), dtype=np.float64), np.float64(o))
-        with BinaryTimeseries('../resources/L_D_D.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/L_D_D.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 4)
             self.assertEqual(bts.get_t0(), np.int64(13.0))
             self.assertEqual(bts.get_dt(), np.int64(37.0))
@@ -663,7 +660,7 @@ class GeneratedApiTests(unittest.TestCase):
         raw_data = np.zeros([10], dtype=np.int8)
         for i in range(10):
             raw_data[i] = np.int8(o+i*s)
-        with BinaryTimeseries('../resources/D_N_B.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_N_B.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -675,7 +672,7 @@ class GeneratedApiTests(unittest.TestCase):
         raw_data = np.zeros([10], dtype=np.int16)
         for i in range(10):
             raw_data[i] = np.int16(o+i*s)
-        with BinaryTimeseries('../resources/D_N_S.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_N_S.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -687,7 +684,7 @@ class GeneratedApiTests(unittest.TestCase):
         raw_data = np.zeros([10], dtype=np.int32)
         for i in range(10):
             raw_data[i] = np.int32(o+i*s)
-        with BinaryTimeseries('../resources/D_N_I.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_N_I.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -699,7 +696,7 @@ class GeneratedApiTests(unittest.TestCase):
         raw_data = np.zeros([10], dtype=np.int64)
         for i in range(10):
             raw_data[i] = np.int64(o+i*s)
-        with BinaryTimeseries('../resources/D_N_L.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_N_L.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -711,7 +708,7 @@ class GeneratedApiTests(unittest.TestCase):
         raw_data = np.zeros([10], dtype=np.float32)
         for i in range(10):
             raw_data[i] = np.float32(o+i*s)
-        with BinaryTimeseries('../resources/D_N_F.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_N_F.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -723,7 +720,7 @@ class GeneratedApiTests(unittest.TestCase):
         raw_data = np.zeros([10], dtype=np.float64)
         for i in range(10):
             raw_data[i] = np.float64(o+i*s)
-        with BinaryTimeseries('../resources/D_N_D.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_N_D.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -736,7 +733,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int8(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int8(s), dtype=np.int64), np.int8(o))
-        with BinaryTimeseries('../resources/D_B_B.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_B_B.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -752,7 +749,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int16(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int8(s), dtype=np.int64), np.int8(o))
-        with BinaryTimeseries('../resources/D_B_S.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_B_S.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -768,7 +765,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int32(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int8(s), dtype=np.int64), np.int8(o))
-        with BinaryTimeseries('../resources/D_B_I.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_B_I.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -784,7 +781,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int64(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int8(s), dtype=np.int64), np.int8(o))
-        with BinaryTimeseries('../resources/D_B_L.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_B_L.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -800,7 +797,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.float32(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int8(s), dtype=np.float64), np.int8(o))
-        with BinaryTimeseries('../resources/D_B_F.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_B_F.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -816,7 +813,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.float64(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int8(s), dtype=np.float64), np.int8(o))
-        with BinaryTimeseries('../resources/D_B_D.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_B_D.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -832,7 +829,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int8(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int16(s), dtype=np.int64), np.int16(o))
-        with BinaryTimeseries('../resources/D_S_B.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_S_B.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -848,7 +845,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int16(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int16(s), dtype=np.int64), np.int16(o))
-        with BinaryTimeseries('../resources/D_S_S.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_S_S.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -864,7 +861,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int32(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int16(s), dtype=np.int64), np.int16(o))
-        with BinaryTimeseries('../resources/D_S_I.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_S_I.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -880,7 +877,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int64(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int16(s), dtype=np.int64), np.int16(o))
-        with BinaryTimeseries('../resources/D_S_L.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_S_L.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -896,7 +893,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.float32(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int16(s), dtype=np.float64), np.int16(o))
-        with BinaryTimeseries('../resources/D_S_F.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_S_F.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -912,7 +909,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.float64(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int16(s), dtype=np.float64), np.int16(o))
-        with BinaryTimeseries('../resources/D_S_D.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_S_D.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -928,7 +925,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int8(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int32(s), dtype=np.int64), np.int32(o))
-        with BinaryTimeseries('../resources/D_I_B.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_I_B.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -944,7 +941,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int16(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int32(s), dtype=np.int64), np.int32(o))
-        with BinaryTimeseries('../resources/D_I_S.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_I_S.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -960,7 +957,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int32(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int32(s), dtype=np.int64), np.int32(o))
-        with BinaryTimeseries('../resources/D_I_I.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_I_I.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -976,7 +973,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int64(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int32(s), dtype=np.int64), np.int32(o))
-        with BinaryTimeseries('../resources/D_I_L.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_I_L.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -992,7 +989,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.float32(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int32(s), dtype=np.float64), np.int32(o))
-        with BinaryTimeseries('../resources/D_I_F.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_I_F.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -1008,7 +1005,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.float64(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int32(s), dtype=np.float64), np.int32(o))
-        with BinaryTimeseries('../resources/D_I_D.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_I_D.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -1024,7 +1021,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int8(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int64(s), dtype=np.int64), np.int64(o))
-        with BinaryTimeseries('../resources/D_L_B.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_L_B.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -1040,7 +1037,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int16(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int64(s), dtype=np.int64), np.int64(o))
-        with BinaryTimeseries('../resources/D_L_S.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_L_S.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -1056,7 +1053,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int32(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int64(s), dtype=np.int64), np.int64(o))
-        with BinaryTimeseries('../resources/D_L_I.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_L_I.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -1072,7 +1069,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int64(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int64(s), dtype=np.int64), np.int64(o))
-        with BinaryTimeseries('../resources/D_L_L.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_L_L.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -1088,7 +1085,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.float32(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int64(s), dtype=np.float64), np.int64(o))
-        with BinaryTimeseries('../resources/D_L_F.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_L_F.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -1104,7 +1101,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.float64(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.int64(s), dtype=np.float64), np.int64(o))
-        with BinaryTimeseries('../resources/D_L_D.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_L_D.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -1120,7 +1117,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int8(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.float32(s), dtype=np.float64), np.float32(o))
-        with BinaryTimeseries('../resources/D_F_B.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_F_B.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -1136,7 +1133,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int16(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.float32(s), dtype=np.float64), np.float32(o))
-        with BinaryTimeseries('../resources/D_F_S.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_F_S.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -1152,7 +1149,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int32(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.float32(s), dtype=np.float64), np.float32(o))
-        with BinaryTimeseries('../resources/D_F_I.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_F_I.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -1168,7 +1165,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int64(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.float32(s), dtype=np.float64), np.float32(o))
-        with BinaryTimeseries('../resources/D_F_L.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_F_L.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -1184,7 +1181,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.float32(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.float32(s), dtype=np.float64), np.float32(o))
-        with BinaryTimeseries('../resources/D_F_F.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_F_F.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -1200,7 +1197,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.float64(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.float32(s), dtype=np.float64), np.float32(o))
-        with BinaryTimeseries('../resources/D_F_D.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_F_D.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -1216,7 +1213,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int8(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.float64(s), dtype=np.float64), np.float64(o))
-        with BinaryTimeseries('../resources/D_D_B.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_D_B.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -1232,7 +1229,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int16(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.float64(s), dtype=np.float64), np.float64(o))
-        with BinaryTimeseries('../resources/D_D_S.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_D_S.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -1248,7 +1245,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int32(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.float64(s), dtype=np.float64), np.float64(o))
-        with BinaryTimeseries('../resources/D_D_I.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_D_I.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -1264,7 +1261,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.int64(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.float64(s), dtype=np.float64), np.float64(o))
-        with BinaryTimeseries('../resources/D_D_L.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_D_L.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -1280,7 +1277,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.float32(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.float64(s), dtype=np.float64), np.float64(o))
-        with BinaryTimeseries('../resources/D_D_F.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_D_F.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))
@@ -1296,7 +1293,7 @@ class GeneratedApiTests(unittest.TestCase):
         for i in range(10):
             raw_data[i] = np.float64(o+i*s)
         scaled_data = np.add(np.multiply(raw_data, np.float64(s), dtype=np.float64), np.float64(o))
-        with BinaryTimeseries('../resources/D_D_D.bts') as bts:
+        with BinaryTimeseries('../src/test/resources/D_D_D.bts') as bts:
             self.assertEqual(bts.get_dtype_time(), 6)
             self.assertEqual(bts.get_t0(), np.float64(13.0))
             self.assertEqual(bts.get_dt(), np.float64(37.0))

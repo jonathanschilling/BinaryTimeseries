@@ -232,6 +232,8 @@ class BinaryTimeseries(object):
         self._file.seek(64+fromIdx*self.size_raw_sample)
         raw_data_arr = array.array(dtype2id(self.dtype_data))
         raw_data_arr.fromfile(self._file, numSamplesToRead)
+        if self._byteswap:
+            raw_data_arr.byteswap()
         raw_data = raw_data_arr[:]
         return np.array(raw_data)
     
@@ -242,7 +244,11 @@ class BinaryTimeseries(object):
         if self.dtype_scaling==0: # no scaling
             return raw_data
         elif raw_data is not None:
-            return np.add(np.multiply(raw_data, self.scale), self.offset)
+            if self.dtype_scaling==5 or self.dtype_scaling==6 or self.dtype_data==5 or self.dtype_data == 6:
+                # floating-point results can be expected
+                return np.add(np.multiply(raw_data, self.scale, dtype=np.float64), self.offset)
+            else:
+                return np.add(np.multiply(raw_data, self.scale, dtype=np.int64), self.offset)
         return None
     
     # given a sample index, compute the corresponding timestamp
