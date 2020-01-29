@@ -65,11 +65,15 @@ The latest release is available on Maven Central:
 <dependency>
 	<groupId>de.labathome</groupId>
 	<artifactId>BinaryTimeseries</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 </dependency>
 ```
 
-A Python implementation of this file format is work-in-progress and will likely be published on PyPI.
+A (currently read-only) Python implementation of this file format is available on [PyPI](https://pypi.org/project/BinaryTimeseries/):
+
+```
+pip install BinaryTimeseries
+```
 
 ## Documentation
 The specification of this file format is available as a PDF in this repository:

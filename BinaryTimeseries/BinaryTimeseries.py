@@ -7,7 +7,9 @@ data values one after another into a binary file. When you want to read only a
 small subset of the data, you can specify a time or an index range. A scaling
 and an offset can be defined for the data values (e.g. from an ADC). Examples
 of how to use this class can be found in Examples.py.
- 
+
+Inspired by an independent implementation by H. Thomsen.
+
 @author: Jonathan Schilling (jonathan.schilling@mail.de)
 @version: 1.0.2 first official Python implementation
 """
@@ -64,6 +66,13 @@ class BinaryTimeseries(object):
     num_samples = None
     data_size = 0
     
+    # Opens a BinaryTimeseries and read the header.
+    # file_nameOrNumber can be a str specifying a filename or 
+    # a fileno, as e.g. used in
+    # with open('filename.bts', 'rb') as f:
+    #     with BinaryTimeseries(f.fileno()) as bts:
+    #         print(bts.get_raw())
+    # This permits use of in-memory mmaps as storage.
     def __init__(self, file_nameOrNumber):
         if self._fmap is not None and not self._fmap.closed:
             self._fmap.close()
@@ -222,31 +231,13 @@ class BinaryTimeseries(object):
     # query the number of samples; can be 1, ..., (2^31-1)
     def get_num_samples(self):
         return self.num_samples
-    
-    # read all available samples and return the raw data array
-    def get_raw(self):
-        raw_data = None
-        # read raw data
-        self._fmap.seek(64)
-        unpack_str = self.bo+str(self.num_samples)+dtype2id(self.dtype_data)
-        raw_data = struct.unpack(unpack_str, self._fmap.read(self.data_size))
-        return np.array(raw_data)
-    
-    # read all available samples and return the data with scaling applied (if available)
-    def get_scaled(self):
-        raw_data = self.get_raw()
-         # apply the scaling if available
-        if self.dtype_scaling==0: # no scaling
-            return raw_data
-        elif raw_data is not None:
-            return np.add(np.multiply(raw_data, self.scale), self.offset)
-        return None
         
     # read numSamplesToRead samples starting at index fromIdx and return the raw data
     def get_raw_indexRange(self, fromIdx, numSamplesToRead):
         if (fromIdx<0 or fromIdx>self.num_samples-1):
             raise ValueError("fromIdx "+str(fromIdx)+
                              " out of range; allowed: 0 to "+str(self.num_samples-1))
+        
         if (numSamplesToRead<=0 or fromIdx+numSamplesToRead>self.num_samples):
             raise ValueError("numSamplesToRead "+str(numSamplesToRead)+
                              " out of range; allowed 1 to "+str(self.num_samples-fromIdx))
@@ -269,8 +260,35 @@ class BinaryTimeseries(object):
             return np.add(np.multiply(raw_data, self.scale), self.offset)
         return None
     
+    # given a sample index, compute the corresponding timestamp
+    def get_t0_index(self, fromIdx):
+        if (fromIdx<0 or fromIdx>self.num_samples-1):
+            raise ValueError("fromIdx "+str(fromIdx)+
+                             " out of range; allowed: 0 to "+str(self.num_samples-1))
+        
+        subset_t0 = self.t0 + self.dt*fromIdx
+        return subset_t0
+    
+    # explicitly compute all timestamps in a given index range,
+    # e.g. for plotting, where a timestamp is required for each sample
+    def get_timestamps_indexRange(self, fromIdx, numSamplesToRead):
+        if (fromIdx<0 or fromIdx>self.num_samples-1):
+            raise ValueError("fromIdx "+str(fromIdx)+
+                             " out of range; allowed: 0 to "+str(self.num_samples-1))
+        
+        if (numSamplesToRead<=0 or fromIdx+numSamplesToRead>self.num_samples):
+            raise ValueError("numSamplesToRead "+str(numSamplesToRead)+
+                             " out of range; allowed 1 to "+str(self.num_samples-fromIdx))
+        
+        t_start = self.t0 + self.dt*fromIdx
+        t_end   = t_start + self.dt*(numSamplesToRead-1)
+        if self.dtype_time==4: # long
+            return np.linspace(t_start, t_end, numSamplesToRead, dtype=np.int64)
+        elif self.dtype_time==6: # double
+            return np.linspace(t_start, t_end, numSamplesToRead, dtype=np.float64)
+        
     # read all samples whose timestamps are between t_lower and t_upper
-    # and return the raw data
+    # and return the raw data; samples on the interval borders are included
     def get_raw_timeRange(self, t_lower, t_upper):
         if t_upper <= t_lower:
             raise ValueError("invalid time range given; please ensure t_lower < t_upper.")
@@ -304,9 +322,12 @@ class BinaryTimeseries(object):
                 return None
             
             return self.get_raw_indexRange(int(idx_i), int(idx_j-idx_i+1))
+        else:
+            return None
     
     # read all samples whose timestamps are between t_lower and t_upper
-    # and return the data with scaling applied (if available)
+    # and return the data with scaling applied (if available);
+    # samples on the interval borders are included
     def get_scaled_timeRange(self, t_lower, t_upper):
         raw_data = self.get_raw_timeRange(t_lower, t_upper)
          # apply the scaling if available
@@ -316,10 +337,52 @@ class BinaryTimeseries(object):
             return np.add(np.multiply(raw_data, self.scale), self.offset)
         return None
     
-#if __name__=='__main__':
-#    
-#    filename="../../test/resources/L_S_F.bts"
-#
-#    with BinaryTimeseries(filename) as bts:
-#        data = bts.get_scaled_timeRange(14, 50+37)
-#        print(data)
+    # explicitly compute the timestamps of all samples between t_lower and t_upper;
+    # samples on the interval borders are included
+    def get_timestamps_timeRange(self, t_lower, t_upper):
+        if t_upper <= t_lower:
+            raise ValueError("invalid time range given; please ensure t_lower < t_upper.")
+        
+        if self.dtype_time==4: # long timestamps => integer ceil/floor
+            idx_i = 0
+            if np.int64(t_lower) >= self.t0:
+                idx_i = np.int64((np.int64(t_lower) - self.t0 + self.dt - 1)/self.dt)
+                
+            idx_j = self.num_samples-1
+            if np.int64(t_upper) <= self.t0 + self.num_samples*self.dt:
+                idx_j = np.int64((np.int64(t_upper) - self.t0) / self.dt)
+            
+            if idx_j-idx_i+1 <= 0:
+                print("no samples present in given time interval")
+                return None
+            
+            return self.get_timestamps_indexRange(int(idx_i), int(idx_j-idx_i+1))
+                
+        elif self.dtype_time==6: # long timestamps => regular ceil/floor
+            idx_i = 0
+            if np.float64(t_lower) >= self.t0:
+                idx_i = np.ceil((np.float64(t_lower) - self.t0)/self.dt)
+            
+            idx_j = self.num_samples-1
+            if np.float64(t_upper) <= self.t0 + self.num_samples*self.dt:
+                idx_j = np.floor((np.float64(t_upper) - self.t0)/self.dt)
+            
+            if idx_j-idx_i+1 <= 0:
+                print("no samples present in given time interval")
+                return None
+            
+            return self.get_timestamps_indexRange(int(idx_i), int(idx_j-idx_i+1))
+        else:
+            return None
+        
+    # read all available samples and return the raw data array
+    def get_raw(self):
+        return self.get_raw_indexRange(0, self.num_samples)
+    
+    # read all available samples and return the data with scaling applied (if available)
+    def get_scaled(self):
+        return self.get_scaled_indexRange(0, self.num_samples)
+    
+    # explicitly compute all timestamps for all samples in this BinaryTimeseries
+    def get_timestamps(self):
+        return self.get_timestamps_indexRange(0, self.num_samples)
