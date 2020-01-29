@@ -12,6 +12,7 @@ Inspired by an independent implementation by H. Thomsen.
 
 @author: Jonathan Schilling (jonathan.schilling@mail.de)
 @version: 1.0.2 first official Python implementation
+@version: 1.0.3 add explicit close() method in Python implementation
 """
 
 import os
@@ -176,6 +177,11 @@ class BinaryTimeseries(object):
         if (current_pos != 64):
             raise RuntimeError("position in input should be 64 after reading the header, "
                                + "but it is "+str(current_pos))
+    
+    # explicitly close the link to the given file
+    def close(self):
+        if self._file is not None and not self._file.closed:
+            self._file.close()
         
     # needed for 'with BinaryTimeseries(filename) as bts:'
     def __enter__(self):
@@ -183,8 +189,7 @@ class BinaryTimeseries(object):
     
     # needed for 'with BinaryTimeseries(filename) as bts:'
     def __exit__(self, _type, _value, _tb):
-        if self._file is not None and not self._file.closed:
-            self._file.close()
+        self.close()
         
     # if debug is set to True, generate debug output during reading the file
     def set_debug(self, debug):

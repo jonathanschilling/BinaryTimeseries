@@ -13,6 +13,8 @@ import java.nio.ByteBuffer;
  * @author Jonathan Schilling (jonathan.schilling@mail.de)
  * @version 1.0.0 first published version
  * @version 1.0.1 fixed wrong endianess value
+ * @version 1.0.2 first official Python implementation
+ * @version 1.0.3 add explicit close() method in Python implementation
  */
 public class BinaryTimeseries {
 

@@ -5,7 +5,7 @@
 
 	<groupId>de.labathome</groupId>
 	<artifactId>BinaryTimeseries</artifactId>
-	<version>1.0.2</version>
+	<version>1.0.3</version>
 
 	<name>BinaryTimeseries</name>
 	<description>A binary timeseries storage format, where the time axis is given via an expression.</description>
