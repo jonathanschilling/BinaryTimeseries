@@ -91,6 +91,8 @@ class BinaryTimeseries(object):
             self._file = open(file_nameOrNumber, 'rb')
         else: # take whatever is given as a file and see how far we get...
             self._file = file_nameOrNumber
+            if hasattr(self._file, 'seek'):
+                self._file.seek(0)
         
         # try big-endian byte order first
         endianessCheck_arr = array.array('h')
