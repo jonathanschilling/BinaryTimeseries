@@ -56,6 +56,12 @@ data. Having an equally spaced time axis allows to compute the data indices insi
 and using the definitions in Sec. 3 of the documentation (see below), the offsets in the file can be computed for seeking to the computed
 position in the file and reading only the required data from there on.
 
+## Documentation
+The specification of this file format is available as a PDF in this repository:
+[Binary Timeseries File Format Specification](https://github.com/jonathanschilling/BinaryTimeseries/blob/master/doc/BinaryTimeseries.pdf).
+
+The LaTeX source code and the compiled PDF of this specification are also embedded (as resources) in the `jar` of the Java implementation on Maven Central.
+
 ## Implementation
 A Java implementation of this file format using a `ByteBuffer` as the file abstraction layer is available in this repository.
 
@@ -75,9 +81,10 @@ A (currently read-only) Python implementation of this file format is available o
 pip install BinaryTimeseries
 ```
 
-## Documentation
-The specification of this file format is available as a PDF in this repository:
-[Binary Timeseries File Format Specification](https://github.com/jonathanschilling/BinaryTimeseries/blob/master/doc/BinaryTimeseries.pdf).
+## Useage
+A starting point on how to use these classes is given in the following example files:
 
-The LaTeX source code and the compiled PDF of this specification are also embedded (as resources) in the `jar` of the Java implementation on Maven Central.
+[src/main/java/examples/Examples.java](https://github.com/jonathanschilling/BinaryTimeseries/blob/master/src/main/java/examples/Examples.java)
+
+[BinaryTimeseries/Examples.py](https://github.com/jonathanschilling/BinaryTimeseries/blob/master/BinaryTimeseries/Examples.py)
 
