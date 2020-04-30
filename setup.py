@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="BinaryTimeseries",
-    version="1.0.3",
+    version="1.0.4",
     author="Jonathan Schilling",
     author_email="jonathan.schilling@mail.de",
     description="A binary timeseries storage format, where the time axis is given via an expression.",

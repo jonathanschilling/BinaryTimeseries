@@ -11,8 +11,6 @@ of how to use this class can be found in Examples.py.
 Inspired by an independent implementation by H. Thomsen.
 
 @author: Jonathan Schilling (jonathan.schilling@mail.de)
-@version: 1.0.2 first official Python implementation
-@version: 1.0.3 add explicit close() method in Python implementation
 """
 
 import os

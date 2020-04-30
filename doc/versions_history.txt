@@ -1,0 +1,6 @@
+ 1.0.0 first published version
+ 1.0.1 fixed wrong endianess value
+ 1.0.2 first official Python implementation
+ 1.0.3 add explicit close() method in Python implementation
+ 1.0.4 use de-labathome-parent in pom.xml
+ 
