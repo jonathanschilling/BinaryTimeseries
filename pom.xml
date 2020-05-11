@@ -26,7 +26,18 @@
 		<url>${jonathanschilling.git.url}${project.name}/issues</url>
 		<system>GitLab Issues</system>
 	</issueManagement>
-
+	
+	<distributionManagement>
+		<repository>
+			<id>minerva-central</id>
+			<url>https://repo.minerva-central.net/repository/maven-releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>minerva-central</id>
+			<url>https://repo.minerva-central.net/repository/maven-snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+	
 	<build>
 		<resources>
 			<resource>
