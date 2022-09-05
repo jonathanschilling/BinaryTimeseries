@@ -84,7 +84,8 @@ pip install BinaryTimeseries
 ## Useage
 A starting point on how to use these classes is given in the following example files:
 
-[src/main/java/examples/Examples.java](https://github.com/jonathanschilling/BinaryTimeseries/blob/master/src/main/java/examples/Examples.java)
+[src/main/java/examples/Examples.java](src/main/java/examples/Examples.java)
 
-[BinaryTimeseries/Examples.py](https://github.com/jonathanschilling/BinaryTimeseries/blob/master/BinaryTimeseries/Examples.py)
+[BinaryTimeseries/Examples.py](BinaryTimeseries/Examples.py)
 
+[src/main/cpp/binarytimeseries.cpp](src/main/cpp/binarytimeseries.cpp)
